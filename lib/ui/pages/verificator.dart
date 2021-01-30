@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hgc/cubit/member_cubit.dart';
@@ -7,6 +9,8 @@ import 'package:hgc/ui/pages/Courses_detail/courseDetail.dart';
 import 'package:hgc/ui/pages/match_record.dart';
 import 'package:hgc/ui/widgets/txtsearchfield.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' show Client;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Verificator extends StatefulWidget {
   Verificator({Key key}) : super(key: key);
@@ -17,11 +21,41 @@ class Verificator extends StatefulWidget {
 
 class _VerificatorState extends State<Verificator> {
   ScrollController _scrollController;
+  final _debouncer = Debouncer(milliseconds: 500);
+  List<Member> filtered_member = List();
+
+  bool _hasMore;
+  int pageNumber;
+  bool _error;
+  bool _loading;
+  final int _defaultPhotosPerPageCount = 10;
+  List<Member> _member = List();
+  final int _nextPageThreshold = 5;
+  var test;
+
+  Future<List<Member>> search(String search) async {
+    await Future.delayed(Duration(seconds: 2));
+    return List.generate(search.length, (int index) {
+      return Member(
+        name: "${search}",
+      );
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+    _hasMore = true;
+    pageNumber = 1;
+    _error = false;
+    _loading = true;
+    filtered_member = _member;
+    filtered_member.sort((a, b) {
+      test = a.name.toLowerCase().compareTo(b.name.toLowerCase());
+      return test;
+    });
+    showMember();
   }
 
   @override
@@ -52,28 +86,74 @@ class _VerificatorState extends State<Verificator> {
             margin: EdgeInsets.only(top: 20),
             child: Column(
               children: <Widget>[
-                txtsearchfield(
+                Container(
+                  width: size.width * 0.90,
                   height: 37.0,
-                  hint: "Select Member/Partner",
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.0),
+                    color: const Color(0xffffffff),
+                    border:
+                        Border.all(width: 1.0, color: const Color(0xffd8d8d8)),
+                  ),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      suffixIcon: Icon(Icons.search),
+                      contentPadding: EdgeInsets.only(bottom: 15, left: 14),
+                      hintText: "Select Member/Partner",
+                      hintStyle: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 14,
+                        color: const Color(0xff9a9a9a),
+                      ),
+                      border: InputBorder.none,
+                    ),
+                    onChanged: (value) {
+                      _debouncer.run(() {
+                        setState(() {
+                          print("Berhasil");
+                          filtered_member = _member
+                              .where((element) => (element.name
+                                  .toLowerCase()
+                                  .contains(value.toLowerCase())))
+                              .toList();
+                        });
+                      });
+                    },
+                  ),
                 ),
                 SizedBox(
                   height: 15.0,
                 ),
-                FutureBuilder(
-                  future: MemberApi().showMember(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text("${snapshot.error}"),
-                      );
-                    } else if (snapshot.hasData) {
-                      List<Member> member = snapshot.data;
-                      return _buildListView(member);
+                Builder(
+                  builder: (context) {
+                    if (filtered_member.isEmpty) {
+                      if (_loading) {
+                        return Center(
+                            child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: CircularProgressIndicator(),
+                        ));
+                      } else if (_error) {
+                        return Center(
+                            child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              _loading = true;
+                              _error = false;
+                              showMember();
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Text(
+                                "Error while loading Verificator, tap to try again"),
+                          ),
+                        ));
+                      }
                     } else {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return _buildListView();
                     }
+                    return Container();
                   },
                 )
               ],
@@ -84,16 +164,43 @@ class _VerificatorState extends State<Verificator> {
     );
   }
 
-  Widget _buildListView(List<Member> member) {
+  Widget _buildListView() {
     Size size = MediaQuery.of(context).size;
     return Container(
       width: size.width,
       height: size.height,
       margin: EdgeInsets.only(bottom: 70),
       child: ListView.builder(
-        itemCount: member.length,
+        itemCount: filtered_member.length + (_hasMore ? 1 : 0),
         itemBuilder: (context, index) {
-          Member user = member[index];
+          Member user = filtered_member[index];
+          if (index == filtered_member.length - _nextPageThreshold) {
+            showMember();
+          }
+          if (index == filtered_member.length) {
+            if (_error) {
+              return Center(
+                  child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _loading = true;
+                    _error = false;
+                    showMember();
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text("Error while loading Member, tap to try again"),
+                ),
+              ));
+            } else {
+              return Center(
+                  child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: CircularProgressIndicator(),
+              ));
+            }
+          }
           return Column(
             children: [
               GestureDetector(
@@ -174,5 +281,49 @@ class _VerificatorState extends State<Verificator> {
         },
       ),
     );
+  }
+
+  showMember() async {
+    final String request = "https://halogolfclub.com";
+    Client client = Client();
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var token = localStorage.getString('token');
+
+    final response = await client.get("$request/api/members?page=${pageNumber}",
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer $token"
+        });
+
+    try {
+      var data = memberFromJson(response.body);
+
+      setState(() {
+        _hasMore = data.length == _defaultPhotosPerPageCount;
+        _loading = false;
+        pageNumber = pageNumber + 1;
+        _member.addAll(data);
+      });
+    } catch (e) {
+      setState(() {
+        _loading = false;
+        _error = true;
+      });
+    }
+  }
+}
+
+class Debouncer {
+  final int milliseconds;
+  VoidCallback action;
+  Timer _timer;
+
+  Debouncer({this.milliseconds});
+
+  run(VoidCallback action) {
+    if (null != _timer) {
+      _timer.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
   }
 }

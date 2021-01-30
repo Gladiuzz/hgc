@@ -424,8 +424,12 @@ class _MatchRecordState extends State<MatchRecord> {
                                                             InkWell(
                                                               onTap: () {
                                                                 var data = {
-                                                                  'pair_id':
-                                                                      "318",
+                                                                  'pair_id': context
+                                                                      .bloc<
+                                                                          MemberCubit>()
+                                                                      .member
+                                                                      .id
+                                                                      .toString(),
                                                                   'golf_id': context
                                                                       .bloc<
                                                                           CourseCubit>()

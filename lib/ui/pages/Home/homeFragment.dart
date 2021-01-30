@@ -88,7 +88,7 @@ class _HomeFragmentState extends State<HomeFragment> {
                                     context.bloc<UserCubit>().user.image != null
                                         ? DecorationImage(
                                             image: NetworkImage(
-                                                '${(context.bloc<UserCubit>().state as UserLoaded).user.image}'),
+                                                '${context.bloc<UserCubit>().user.image}'),
                                             fit: BoxFit.cover,
                                           )
                                         : DecorationImage(
@@ -545,7 +545,7 @@ class _HomeFragmentState extends State<HomeFragment> {
                             child: Text("${snapshot.error}"),
                           );
                         } else if (snapshot.hasData) {
-                          List<Tournaments> tournament = snapshot.data;
+                          List<Tournamentss> tournament = snapshot.data;
                           return _buildListView(tournament);
                         } else {
                           return Center(
@@ -624,7 +624,7 @@ class _HomeFragmentState extends State<HomeFragment> {
     );
   }
 
-  Widget _buildListView(List<Tournaments> tournament) {
+  Widget _buildListView(List<Tournamentss> tournament) {
     Size size = MediaQuery.of(context).size;
     return Container(
       height: 110,
@@ -633,13 +633,15 @@ class _HomeFragmentState extends State<HomeFragment> {
           scrollDirection: Axis.horizontal,
           itemCount: tournament.length,
           itemBuilder: (BuildContext context, int index) {
-            Tournaments turnament = tournament[index];
+            Tournamentss turnament = tournament[index];
             return InkWell(
               onTap: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => TournamentDetail(),
+                      builder: (context) => TournamentDetail(
+                        tournaments: turnament,
+                      ),
                     ));
               },
               child: Container(

@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hgc/model/tournament_model.dart';
 
 class TournamentDetail extends StatefulWidget {
-  TournamentDetail({Key key}) : super(key: key);
+  Tournamentss tournaments;
+  TournamentDetail({this.tournaments});
 
   @override
   _TournamentDetailState createState() => _TournamentDetailState();
@@ -45,8 +47,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                   height: 218.0,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: const AssetImage('assets/images/tournament.jpg'),
-                      fit: BoxFit.cover,
+                      image: NetworkImage('${widget.tournaments.image}'),
                     ),
                   ),
                 ),
@@ -54,20 +55,20 @@ class _TournamentDetailState extends State<TournamentDetail> {
                   height: 19,
                 ),
                 Text(
-                  'Pride Of The Nation',
+                  '${widget.tournaments.name}',
                   style: TextStyle(
                     fontFamily: 'Lato',
                     fontSize: 18,
                     color: const Color(0xff000000),
                     fontWeight: FontWeight.w700,
                   ),
-                  textAlign: TextAlign.left,
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(
                   height: 7,
                 ),
                 Text(
-                  '22 November 2020',
+                  '${widget.tournaments.date}',
                   style: TextStyle(
                     fontFamily: 'Lato',
                     fontSize: 14,

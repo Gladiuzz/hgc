@@ -103,14 +103,6 @@ class _HomeState extends State<Home> {
     Size size = MediaQuery.of(context).size;
     return Container(
         child: Scaffold(
-      drawer: Drawer(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[const Text('This is the drawer')],
-          ),
-        ),
-      ),
       body: PersistentTabView(
         controller: _controller,
         screens: _screen,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,6 +15,8 @@ import 'package:hgc/ui/pages/onboarding.dart';
 import 'package:hgc/ui/pages/sign_in.dart';
 import 'package:hgc/ui/widgets/txtsearchfield.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' show Client;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Course extends StatefulWidget {
   String title;
@@ -24,26 +28,35 @@ class Course extends StatefulWidget {
 }
 
 class _CourseState extends State<Course> {
-  PageController _pageController = PageController();
-  List<Widget> _screen = [
-    HomeFragment(),
-    SignInPage(),
-    Onboarding(),
-    Onboarding(),
-    Onboarding()
-  ];
-  int _selectedIndex = 0;
-  void _onPageChanged(int index) {
-    setState(() {
-      _selectedIndex = index;
-      print(index);
+  final _debouncer = Debouncer(milliseconds: 500);
+  List<Courses> filtered_course = List();
+
+  bool _hasMore;
+  int pageNumber;
+  bool _error;
+  bool _loading;
+  final int _defaultPhotosPerPageCount = 20;
+  List<Courses> _course = List();
+  final int _nextPageThreshold = 5;
+
+  Future<List<Courses>> search(String search) async {
+    await Future.delayed(Duration(seconds: 2));
+    return List.generate(search.length, (int index) {
+      return Courses(
+        name: "${search}",
+      );
     });
   }
 
-  void _onItemTapped(int selectedIndex) {
-    setState(() {
-      _pageController.jumpToPage(selectedIndex);
-    });
+  @override
+  void initState() {
+    super.initState();
+    _hasMore = true;
+    pageNumber = 1;
+    _error = false;
+    _loading = true;
+    filtered_course = _course;
+    showCourse();
   }
 
   @override
@@ -75,38 +88,78 @@ class _CourseState extends State<Course> {
               margin: EdgeInsets.only(top: 20),
               child: Column(
                 children: <Widget>[
-                  txtsearchfield(
+                  Container(
+                    width: size.width * 0.90,
                     height: 37.0,
-                    hint: "Select City",
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5.0),
+                      color: const Color(0xffffffff),
+                      border: Border.all(
+                          width: 1.0, color: const Color(0xffd8d8d8)),
+                    ),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        suffixIcon: Icon(Icons.search),
+                        contentPadding: EdgeInsets.only(bottom: 15, left: 14),
+                        hintText: "Select Course",
+                        hintStyle: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 14,
+                          color: const Color(0xff9a9a9a),
+                        ),
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (value) {
+                        _debouncer.run(() {
+                          setState(() {
+                            print("Berhasil");
+                            filtered_course = _course
+                                .where((element) => (element.name
+                                    .toLowerCase()
+                                    .contains(value.toLowerCase())))
+                                .toList();
+                          });
+                        });
+                      },
+                    ),
                   ),
                   SizedBox(
                     height: 15.0,
                   ),
-                  Container(
-                    width: size.width,
-                    height: size.height,
-                    padding: EdgeInsets.only(bottom: 20),
-                    decoration: BoxDecoration(
-                      color: const Color(0xffffffff),
-                    ),
-                    child: FutureBuilder(
-                      future: CoursesApi().showCourses(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
+                  Builder(
+                    builder: (context) {
+                      if (filtered_course.isEmpty) {
+                        if (_loading) {
                           return Center(
-                            child: Text("${snapshot.error}"),
-                          );
-                        } else if (snapshot.hasData) {
-                          List<Courses> course = snapshot.data;
-                          return _buildListView(course);
-                        } else {
-                          return Center(
+                              child: Padding(
+                            padding: const EdgeInsets.all(8),
                             child: CircularProgressIndicator(),
-                          );
+                          ));
+                        } else if (_error) {
+                          return Center(
+                              child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _loading = true;
+                                _error = false;
+                                showCourse();
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(
+                                  "Error while loading Course, tap to try again"),
+                            ),
+                          ));
                         }
-                      },
-                    ),
-                  ),
+                      } else {
+                        return Container(
+                            margin: EdgeInsets.only(bottom: 100.0),
+                            child: _buildListView());
+                      }
+                      return Container();
+                    },
+                  )
                 ],
               ),
             ),
@@ -116,16 +169,44 @@ class _CourseState extends State<Course> {
     );
   }
 
-  Widget _buildListView(List<Courses> course) {
+  Widget _buildListView() {
     Size size = MediaQuery.of(context).size;
     return Container(
       width: size.width,
+      height: size.height * .68,
       margin: EdgeInsets.only(bottom: 50),
       child: ListView.builder(
         shrinkWrap: true,
-        itemCount: course.length,
+        itemCount: filtered_course.length + (_hasMore ? 1 : 0),
         itemBuilder: (context, index) {
-          Courses arena = course[index];
+          Courses arena = filtered_course[index];
+          if (index == filtered_course.length - _nextPageThreshold) {
+            showCourse();
+          }
+          if (index == filtered_course.length) {
+            if (_error) {
+              return Center(
+                  child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _loading = true;
+                    _error = false;
+                    showCourse();
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text("Error while loading Course, tap to try again"),
+                ),
+              ));
+            } else {
+              return Center(
+                  child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: CircularProgressIndicator(),
+              ));
+            }
+          }
           return Column(
             children: [
               GestureDetector(
@@ -191,5 +272,49 @@ class _CourseState extends State<Course> {
         },
       ),
     );
+  }
+
+  showCourse() async {
+    final String request = "https://halogolfclub.com";
+    Client client = Client();
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var token = localStorage.getString('token');
+
+    final response = await client
+        .get("$request/api/golf-courses?page=${pageNumber}", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    try {
+      var data = courseFromJson(response.body);
+
+      setState(() {
+        _hasMore = data.length == _defaultPhotosPerPageCount;
+        _loading = false;
+        pageNumber = pageNumber + 1;
+        _course.addAll(data);
+      });
+    } catch (e) {
+      setState(() {
+        _loading = false;
+        _error = true;
+      });
+    }
+  }
+}
+
+class Debouncer {
+  final int milliseconds;
+  VoidCallback action;
+  Timer _timer;
+
+  Debouncer({this.milliseconds});
+
+  run(VoidCallback action) {
+    if (null != _timer) {
+      _timer.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
   }
 }

@@ -69,7 +69,7 @@ class _ProfileState extends State<Profile> {
                           image: context.bloc<UserCubit>().user.image != null
                               ? DecorationImage(
                                   image: NetworkImage(
-                                      '${(context.bloc<UserCubit>().state as UserLoaded).user.image}'),
+                                      '${context.bloc<UserCubit>().user.image}'),
                                   fit: BoxFit.cover,
                                 )
                               : DecorationImage(
@@ -88,7 +88,7 @@ class _ProfileState extends State<Profile> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              '${(context.bloc<UserCubit>().state as UserLoaded).user.name}',
+                              '${context.bloc<UserCubit>().user.name}',
                               style: TextStyle(
                                 fontFamily: 'Lato',
                                 fontSize: 20,
@@ -101,7 +101,7 @@ class _ProfileState extends State<Profile> {
                               height: 3.0,
                             ),
                             Text(
-                              '${(context.bloc<UserCubit>().state as UserLoaded).user.type}',
+                              '${context.bloc<UserCubit>().user.type}',
                               style: TextStyle(
                                 fontFamily: 'Lato',
                                 fontSize: 13,

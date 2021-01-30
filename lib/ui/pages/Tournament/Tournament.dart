@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hgc/model/tournament_model.dart';
+import 'package:hgc/service/TournamentAPI.dart';
 import 'package:hgc/ui/pages/Tournament/TournamentDetail.dart';
 import 'package:hgc/ui/widgets/txtsearchfield.dart';
 
@@ -11,6 +15,32 @@ class Tournament extends StatefulWidget {
 }
 
 class _TournamentState extends State<Tournament> {
+  ScrollController _scrollController;
+  final _debouncer = Debouncer(milliseconds: 500);
+  List<Tournamentss> tournaments = List();
+  List<Tournamentss> filtered_tournaments = List();
+
+  Future<List<Tournamentss>> search(String search) async {
+    await Future.delayed(Duration(seconds: 2));
+    return List.generate(search.length, (int index) {
+      return Tournamentss(
+        name: "${search}",
+      );
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    TournamentApi().showTournament().then((tournamentOnServer) {
+      setState(() {
+        tournaments = tournamentOnServer;
+        filtered_tournaments = tournamentOnServer;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -41,15 +71,85 @@ class _TournamentState extends State<Tournament> {
               margin: EdgeInsets.only(left: 20, right: 20, top: 20),
               child: Column(
                 children: <Widget>[
-                  txtsearchfield(
+                  Container(
+                    width: size.width * 0.90,
                     height: 37.0,
-                    hint: "Search Tournament",
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5.0),
+                      color: const Color(0xffffffff),
+                      border: Border.all(
+                          width: 1.0, color: const Color(0xffd8d8d8)),
+                    ),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        suffixIcon: Icon(Icons.search),
+                        contentPadding: EdgeInsets.only(bottom: 15, left: 14),
+                        hintText: "Select Tournament",
+                        hintStyle: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 14,
+                          color: const Color(0xff9a9a9a),
+                        ),
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (value) {
+                        _debouncer.run(() {
+                          setState(() {
+                            print("Berhasil");
+                            filtered_tournaments = tournaments
+                                .where((element) => (element.name
+                                    .toLowerCase()
+                                    .contains(value.toLowerCase())))
+                                .toList();
+                          });
+                        });
+                      },
+                    ),
                   ),
                   SizedBox(
                     height: 20,
                   ),
+                  FutureBuilder(
+                    future: TournamentApi().showTournament(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text("Terjadi Kesalahab"),
+                        );
+                      } else if (snapshot.hasData) {
+                        List<Tournamentss> tournament = snapshot.data;
+                        return _buildListView(filtered_tournaments);
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListView(List<Tournamentss> tournament) {
+    Size size = MediaQuery.of(context).size;
+    return Column(
+      children: [
+        Container(
+          width: size.width,
+          height: size.height * 0.68,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: tournament.length,
+            itemBuilder: (context, index) {
+              Tournamentss turnament = tournament[index];
+              return Column(
+                children: [
                   Container(
-                    height: 245,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
                       color: const Color(0xffffffff),
@@ -71,8 +171,7 @@ class _TournamentState extends State<Tournament> {
                               topRight: Radius.circular(10.0),
                             ),
                             image: DecorationImage(
-                              image: const AssetImage(
-                                  'assets/images/tournament.jpg'),
+                              image: NetworkImage('${turnament.image}'),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -86,21 +185,24 @@ class _TournamentState extends State<Tournament> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Text(
-                                    'Pride Of The Nation',
-                                    style: TextStyle(
-                                      fontFamily: 'Lato',
-                                      fontSize: 14,
-                                      color: const Color(0xff000000),
-                                      fontWeight: FontWeight.w700,
+                                  Container(
+                                    width: 160,
+                                    child: Text(
+                                      '${turnament.name}',
+                                      style: TextStyle(
+                                        fontFamily: 'Lato',
+                                        fontSize: 14,
+                                        color: const Color(0xff000000),
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      textAlign: TextAlign.left,
                                     ),
-                                    textAlign: TextAlign.left,
                                   ),
                                   SizedBox(
                                     height: 18,
                                   ),
                                   Text(
-                                    '22 November 2020',
+                                    '${turnament.date.toString()}',
                                     style: TextStyle(
                                       fontFamily: 'Lato',
                                       fontSize: 11,
@@ -116,8 +218,9 @@ class _TournamentState extends State<Tournament> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            TournamentDetail(),
+                                        builder: (context) => TournamentDetail(
+                                          tournaments: turnament,
+                                        ),
                                       ));
                                 },
                                 child: Container(
@@ -143,16 +246,40 @@ class _TournamentState extends State<Tournament> {
                               ),
                             ],
                           ),
+                        ),
+                        SizedBox(
+                          height: 20,
                         )
                       ],
                     ),
                   ),
+                  SizedBox(
+                    height: 30.0,
+                  )
                 ],
-              ),
-            ),
+              );
+            },
           ),
         ),
-      ),
+        SizedBox(
+          height: 120.0,
+        )
+      ],
     );
+  }
+}
+
+class Debouncer {
+  final int milliseconds;
+  VoidCallback action;
+  Timer _timer;
+
+  Debouncer({this.milliseconds});
+
+  run(VoidCallback action) {
+    if (null != _timer) {
+      _timer.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
   }
 }

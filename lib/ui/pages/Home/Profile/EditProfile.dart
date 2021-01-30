@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -85,6 +87,9 @@ class _EditProfileState extends State<EditProfile> {
               child: Column(
                 children: <Widget>[
                   GestureDetector(
+                    onTap: () {
+                      print("get image");
+                    },
                     child: Container(
                       width: 140.0,
                       height: 139.0,
@@ -144,7 +149,8 @@ class _EditProfileState extends State<EditProfile> {
                             height: 5,
                           ),
                           txtFormField(
-                            controller: _controllerFullName..text = name,
+                            controller: _controllerFullName
+                              ..text = context.bloc<UserCubit>().user.name,
                             height: 45.0,
                             hint: "Full Name",
                           ),
