@@ -173,7 +173,7 @@ class _CourseState extends State<Course> {
     Size size = MediaQuery.of(context).size;
     return Container(
       width: size.width,
-      height: size.height * .68,
+      height: size.height * .75,
       margin: EdgeInsets.only(bottom: 50),
       child: ListView.builder(
         shrinkWrap: true,

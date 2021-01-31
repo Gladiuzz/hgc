@@ -121,32 +121,26 @@ class _HomeFragmentState extends State<HomeFragment> {
                               builder: (context) {
                                 if (context.bloc<UserCubit>().user.handicap ==
                                     null) {
-                                  return SizedBox(
-                                    width: 154.0,
-                                    child: Text(
-                                      'Current Handicap: -',
-                                      style: TextStyle(
-                                        fontFamily: 'Lato',
-                                        fontSize: 14,
-                                        color: const Color(0xffb90b0c),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      textAlign: TextAlign.center,
+                                  return Text(
+                                    'Current Handicap: -',
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontSize: 14,
+                                      color: const Color(0xffb90b0c),
+                                      fontWeight: FontWeight.w500,
                                     ),
+                                    textAlign: TextAlign.center,
                                   );
                                 } else {
-                                  return SizedBox(
-                                    width: 154.0,
-                                    child: Text(
-                                      'Current Handicap: ${context.bloc<UserCubit>().user.handicap}',
-                                      style: TextStyle(
-                                        fontFamily: 'Lato',
-                                        fontSize: 14,
-                                        color: const Color(0xffb90b0c),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      textAlign: TextAlign.center,
+                                  return Text(
+                                    'Current Handicap: ${context.bloc<UserCubit>().user.handicap}',
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontSize: 14,
+                                      color: const Color(0xffb90b0c),
+                                      fontWeight: FontWeight.w500,
                                     ),
+                                    textAlign: TextAlign.center,
                                   );
                                 }
                               },

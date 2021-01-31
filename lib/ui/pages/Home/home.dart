@@ -35,6 +35,12 @@ class _HomeState extends State<Home> {
     Profile()
   ];
   int _selectedIndex = 0;
+  void _onPageChanged(int index) {
+    setState(() {
+      _selectedIndex = index;
+      print(index);
+    });
+  }
 
   @override
   void initState() {
@@ -51,46 +57,46 @@ class _HomeState extends State<Home> {
     });
   }
 
-  List<PersistentBottomNavBarItem> _navBarsItems() {
-    return [
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.home),
-        title: "Home",
-        activeColor: const Color(0xffb90b0c),
-        inactiveColor: Colors.grey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.history),
-        title: ("History"),
-        activeColor: const Color(0xffb90b0c),
-        inactiveColor: Colors.grey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: SvgPicture.asset(
-          _selectedIndex == 2
-              ? "assets/icons/golf_sticks_aktif.svg"
-              : "assets/icons/golf_sticks_aktif.svg",
-          height: 50.0,
-          width: 50.0,
-        ),
-        activeColor: const Color(0xffb90b0c),
-        inactiveColor: Colors.grey,
-        title: ("Play"),
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.mail),
-        title: ("Inbox"),
-        activeColor: const Color(0xffb90b0c),
-        inactiveColor: Colors.grey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(Icons.person),
-        title: ("Profile"),
-        activeColor: const Color(0xffb90b0c),
-        inactiveColor: Colors.grey,
-      ),
-    ];
-  }
+  // List<PersistentBottomNavBarItem> _navBarsItems() {
+  //   return [
+  //     PersistentBottomNavBarItem(
+  //       icon: Icon(Icons.home),
+  //       title: "Home",
+  //       activeColor: const Color(0xffb90b0c),
+  //       inactiveColor: Colors.grey,
+  //     ),
+  //     PersistentBottomNavBarItem(
+  //       icon: Icon(Icons.history),
+  //       title: ("History"),
+  //       activeColor: const Color(0xffb90b0c),
+  //       inactiveColor: Colors.grey,
+  //     ),
+  //     PersistentBottomNavBarItem(
+  //       icon: SvgPicture.asset(
+  //         _selectedIndex == 2
+  //             ? "assets/icons/golf_sticks_aktif.svg"
+  //             : "assets/icons/golf_sticks_aktif.svg",
+  //         height: 50.0,
+  //         width: 50.0,
+  //       ),
+  //       activeColor: const Color(0xffb90b0c),
+  //       inactiveColor: Colors.grey,
+  //       title: ("Play"),
+  //     ),
+  //     PersistentBottomNavBarItem(
+  //       icon: Icon(Icons.mail),
+  //       title: ("Inbox"),
+  //       activeColor: const Color(0xffb90b0c),
+  //       inactiveColor: Colors.grey,
+  //     ),
+  //     PersistentBottomNavBarItem(
+  //       icon: Icon(Icons.person),
+  //       title: ("Profile"),
+  //       activeColor: const Color(0xffb90b0c),
+  //       inactiveColor: Colors.grey,
+  //     ),
+  //   ];
+  // }
 
   void _onItemTapped(int selectedIndex) {
     setState(() {
@@ -101,25 +107,113 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Container(
-        child: Scaffold(
-      body: PersistentTabView(
-        controller: _controller,
-        screens: _screen,
-        items: _navBarsItems(),
-        confineInSafeArea: true,
-        backgroundColor: Colors.white,
-        handleAndroidBackButtonPress: true,
-        resizeToAvoidBottomInset: true,
-        stateManagement: true,
-        navBarHeight: MediaQuery.of(context).viewInsets.bottom > 0
-            ? 0.0
-            : kBottomNavigationBarHeight,
-        hideNavigationBarWhenKeyboardShows: true,
-        popActionScreens: PopActionScreensType.once,
-        bottomScreenMargin: 0.0,
-        navBarStyle: NavBarStyle.style6,
+    return Scaffold(
+      body: PageView(
+        controller: _pageController,
+        children: _screen,
+        onPageChanged: _onPageChanged,
+        physics: NeverScrollableScrollPhysics(),
+        scrollDirection: Axis.vertical,
       ),
-    ));
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: _onItemTapped,
+        currentIndex: _selectedIndex,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Color(0xffed2025),
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+              color:
+                  _selectedIndex == 0 ? const Color(0xffb90b0c) : Colors.grey,
+            ),
+            title: Text(
+              'Home',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 12,
+                color: Color(_selectedIndex == 0 ? 0xffed2025 : 0xff888888),
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.history,
+                color:
+                    _selectedIndex == 1 ? const Color(0xffb90b0c) : Colors.grey,
+              ),
+              title: Text(
+                'History',
+                style: TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: 12,
+                  color: Color(_selectedIndex == 1 ? 0xffed2025 : 0xff888888),
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              )),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              _selectedIndex == 2
+                  ? "assets/icons/golf_sticks_aktif.svg"
+                  : "assets/icons/golf_sticks.svg",
+              height: 22.0,
+              width: 22.0,
+            ),
+            title: Container(
+              margin: EdgeInsets.only(top: 4),
+              child: Text(
+                'Play',
+                style: TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: 12,
+                  color: Color(_selectedIndex == 2 ? 0xffed2025 : 0xff888888),
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.mail,
+              color:
+                  _selectedIndex == 3 ? const Color(0xffb90b0c) : Colors.grey,
+            ),
+            title: Text(
+              'Inbox',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 12,
+                color: Color(_selectedIndex == 3 ? 0xffed2025 : 0xff888888),
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person,
+              color:
+                  _selectedIndex == 4 ? const Color(0xffb90b0c) : Colors.grey,
+            ),
+            title: Text(
+              'Profile',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 12,
+                color: Color(_selectedIndex == 4 ? 0xffed2025 : 0xff888888),
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

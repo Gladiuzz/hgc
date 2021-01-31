@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,6 +13,8 @@ import 'package:hgc/ui/pages/match_scoring/MatchSummary.dart';
 import 'package:hgc/ui/pages/register.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hgc/ui/widgets/Dialog/Dialogs.dart';
+import 'package:http/http.dart' show Client;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HistoryMatch extends StatefulWidget {
   @override
@@ -23,6 +27,25 @@ class _HistoryMatchState extends State<HistoryMatch> {
     setState(() {
       _showPassword = !_showPassword;
     });
+  }
+
+  bool _hasMore;
+  int pageNumber;
+  bool _error;
+  bool _loading;
+  final int _defaultPhotosPerPageCount = 10;
+  List<Matches> _match = List();
+  final int _nextPageThreshold = 5;
+  var test;
+
+  @override
+  void initState() {
+    super.initState();
+    _hasMore = true;
+    pageNumber = 1;
+    _error = false;
+    _loading = true;
+    showMatches();
   }
 
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
@@ -40,21 +63,36 @@ class _HistoryMatchState extends State<HistoryMatch> {
               SizedBox(
                 height: 15,
               ),
-              FutureBuilder(
-                future: MatchApi().showMatch(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text("${snapshot.error}"),
-                    );
-                  } else if (snapshot.hasData) {
-                    List<Matches> match = snapshot.data;
-                    return _buildListView(match);
+              Builder(
+                builder: (context) {
+                  if (_match.isEmpty) {
+                    if (_loading) {
+                      return Center(
+                          child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: CircularProgressIndicator(),
+                      ));
+                    } else if (_error) {
+                      return Center(
+                          child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _loading = true;
+                            _error = false;
+                            showMatches();
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Text(
+                              "Error while loading Matches, tap to try again"),
+                        ),
+                      ));
+                    }
                   } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return _buildListView();
                   }
+                  return Container();
                 },
               ),
               SizedBox(
@@ -67,15 +105,42 @@ class _HistoryMatchState extends State<HistoryMatch> {
     );
   }
 
-  Widget _buildListView(List<Matches> match) {
+  Widget _buildListView() {
     Size size = MediaQuery.of(context).size;
     return Container(
       child: Expanded(
         child: ListView.builder(
           shrinkWrap: true,
-          itemCount: match.length,
+          itemCount: _match.length + (_hasMore ? 1 : 0),
           itemBuilder: (context, index) {
-            Matches matches = match[index];
+            Matches matches = _match[index];
+            if (index == _match.length - _nextPageThreshold) {
+              showMatches();
+            }
+            if (index == _match.length) {
+              if (_error) {
+                return Center(
+                    child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _loading = true;
+                      _error = false;
+                      showMatches();
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text("Error while loading Member, tap to try again"),
+                  ),
+                ));
+              } else {
+                return Center(
+                    child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: CircularProgressIndicator(),
+                ));
+              }
+            }
             return Container(
               width: 374,
               height: 239,
@@ -316,5 +381,50 @@ class _HistoryMatchState extends State<HistoryMatch> {
 
   void _showDetailHistory() async {
     Dialogs().showLoadingDialog(context);
+  }
+
+  showMatches() async {
+    final String request = "https://halogolfclub.com";
+    Client client = Client();
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var token = localStorage.getString('token');
+
+    final response = await client
+        .get("$request/api/matches/v2?page=${pageNumber}", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    try {
+      var data = json.decode(response.body);
+      var matches = List<Matches>.from(
+          data['data'].map((item) => Matches.fromJson(item)));
+
+      setState(() {
+        _hasMore = matches.length == _defaultPhotosPerPageCount;
+        _loading = false;
+        pageNumber = pageNumber + 1;
+        _match.addAll(matches);
+      });
+    } catch (e) {
+      setState(() {
+        _loading = false;
+        _error = true;
+      });
+    }
+
+    // if (response.statusCode == 200) {
+    //   print(response.body);
+    //   var data = json.decode(response.body);
+
+    //   //  List<Matches> value = Matches.fromJson(data['data']);
+
+    //   return List<Matches>.from(
+    //       data['data'].map((item) => Matches.fromJson(item)));
+    // } else {
+    //   print(response.body);
+    //   var data = matchFromJson(response.body);
+    //   return data;
+    // }
   }
 }

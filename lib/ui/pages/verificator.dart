@@ -168,8 +168,7 @@ class _VerificatorState extends State<Verificator> {
     Size size = MediaQuery.of(context).size;
     return Container(
       width: size.width,
-      height: size.height,
-      margin: EdgeInsets.only(bottom: 70),
+      height: size.height * .75,
       child: ListView.builder(
         itemCount: filtered_member.length + (_hasMore ? 1 : 0),
         itemBuilder: (context, index) {

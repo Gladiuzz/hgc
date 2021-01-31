@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hgc/model/tournament_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TournamentDetail extends StatefulWidget {
   Tournamentss tournaments;
@@ -101,7 +102,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                             height: 8,
                           ),
                           Text(
-                            '4/30',
+                            '${widget.tournaments.attendance.waitingListCount}/${widget.tournaments.attendance.waitingLimit}',
                             style: TextStyle(
                               fontFamily: 'Lato',
                               fontSize: 16,
@@ -131,7 +132,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                             height: 8,
                           ),
                           Text(
-                            '58/80',
+                            '${widget.tournaments.attendance.reservesCount}/${widget.tournaments.attendance.reserveLimit}',
                             style: TextStyle(
                               fontFamily: 'Lato',
                               fontSize: 16,
@@ -160,7 +161,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                             height: 8,
                           ),
                           Text(
-                            '26',
+                            '${widget.tournaments.handicapLimit}',
                             style: TextStyle(
                               fontFamily: 'Lato',
                               fontSize: 16,
@@ -222,23 +223,30 @@ class _TournamentDetailState extends State<TournamentDetail> {
                         SizedBox(
                           height: 23,
                         ),
-                        Container(
-                          width: size.width,
-                          height: 45,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5.0),
-                            color: const Color(0xff2698dd),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'CONTACT OUR PIC',
-                              style: TextStyle(
-                                fontFamily: 'Lato',
-                                fontSize: 16,
-                                color: const Color(0xffffffff),
-                                fontWeight: FontWeight.w700,
+                        InkWell(
+                          onTap: () {
+                            print(widget.tournaments.contact.phoneNumber);
+                            launch(
+                                ('tel://${widget.tournaments.contact.phoneNumber}'));
+                          },
+                          child: Container(
+                            width: size.width,
+                            height: 45,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5.0),
+                              color: const Color(0xff2698dd),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'CONTACT OUR PIC',
+                                style: TextStyle(
+                                  fontFamily: 'Lato',
+                                  fontSize: 16,
+                                  color: const Color(0xffffffff),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),

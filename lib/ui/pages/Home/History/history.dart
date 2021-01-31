@@ -21,6 +21,7 @@ class _HistoryState extends State<History> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xffffffff),
+          automaticallyImplyLeading: false,
           title: Text(
             'History',
             style: TextStyle(

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:date_time_picker/date_time_picker.dart';
@@ -6,9 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hgc/cubit/user_cubit.dart';
 import 'package:hgc/service/UserAPI.dart';
+import 'package:hgc/service/imageAPI.dart';
 import 'package:hgc/ui/pages/Home/Profile/Profile.dart';
+import 'package:hgc/ui/pages/Home/home.dart';
 import 'package:hgc/ui/widgets/txtformfield.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProfile extends StatefulWidget {
   EditProfile({Key key}) : super(key: key);
@@ -21,6 +25,11 @@ class _EditProfileState extends State<EditProfile> {
   int selectedRadio;
   var name, birth_date, phone_number, email, company_name, instagram;
   var image;
+  File _image;
+
+  // void baseImage() {
+  //   String base64Image = base64Encode(_image.readAsBytesSync());
+  // }
 
   TextEditingController _controllerFullName = TextEditingController();
   TextEditingController _controllerPhoneNumber = TextEditingController();
@@ -53,6 +62,24 @@ class _EditProfileState extends State<EditProfile> {
     });
   }
 
+  _imgFromCamera() async {
+    File image = await ImagePicker.pickImage(
+        source: ImageSource.camera, imageQuality: 50);
+
+    setState(() {
+      _image = image;
+    });
+  }
+
+  _imgFromGallery() async {
+    File image = await ImagePicker.pickImage(
+        source: ImageSource.gallery, imageQuality: 50);
+
+    setState(() {
+      _image = image;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -64,11 +91,7 @@ class _EditProfileState extends State<EditProfile> {
             titleSpacing: 0.0,
             leading: IconButton(
               icon: Icon(Icons.arrow_back_ios, color: const Color(0xffb90b0c)),
-              onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Profile(),
-                  )),
+              onPressed: () => Navigator.pop(context),
             ),
             title: Text(
               'Edit Profile',
@@ -89,40 +112,63 @@ class _EditProfileState extends State<EditProfile> {
                   GestureDetector(
                     onTap: () {
                       print("get image");
+                      _showPicker(context);
                     },
                     child: Container(
-                      width: 140.0,
-                      height: 139.0,
                       margin: EdgeInsets.only(top: 30.0),
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
-                        image: context.bloc<UserCubit>().user.image != null
-                            ? DecorationImage(
-                                image: NetworkImage(
-                                    '${(context.bloc<UserCubit>().state as UserLoaded).user.image}'),
-                                fit: BoxFit.cover,
-                              )
-                            : DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/default_avatar.jpg'),
-                                fit: BoxFit.cover,
-                              ),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 55,
+                            backgroundColor: Color(0xffFDCF09),
+                            child: _image != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(55),
+                                    child: Image.file(_image,
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover),
+                                  )
+                                : Container(
+                                    width: 100.0,
+                                    height: 100.0,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(50),
+                                      image: context
+                                                  .bloc<UserCubit>()
+                                                  .user
+                                                  .image !=
+                                              null
+                                          ? DecorationImage(
+                                              image: NetworkImage(
+                                                  '${(context.bloc<UserCubit>().state as UserLoaded).user.image}'),
+                                              fit: BoxFit.cover,
+                                            )
+                                          : DecorationImage(
+                                              image: AssetImage(
+                                                  'assets/images/default_avatar.jpg'),
+                                              fit: BoxFit.cover,
+                                            ),
+                                    ),
+                                  ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            'Upload Photo',
+                            style: TextStyle(
+                              fontFamily: 'Lato',
+                              fontSize: 18,
+                              color: const Color(0xff858585),
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    'Upload Photo',
-                    style: TextStyle(
-                      fontFamily: 'Lato',
-                      fontSize: 18,
-                      color: const Color(0xff858585),
-                      fontWeight: FontWeight.w700,
-                    ),
-                    textAlign: TextAlign.center,
                   ),
                   SizedBox(
                     height: 12,
@@ -494,6 +540,7 @@ class _EditProfileState extends State<EditProfile> {
                       child: RaisedButton(
                         onPressed: () {
                           _editProfile();
+                          _editAvatar();
                         },
                         color: const Color(0xffb90b0c),
                         child: Center(
@@ -519,6 +566,14 @@ class _EditProfileState extends State<EditProfile> {
         ),
       ),
     );
+  }
+
+  void _editAvatar() async {
+    // var data = {'image': _image};
+    print(_image.path);
+    ImageAPI().updateAvatar(_image.path).then((value) async {
+      print(value);
+    });
   }
 
   void _editProfile() async {
@@ -553,7 +608,7 @@ class _EditProfileState extends State<EditProfile> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => Profile(),
+                builder: (context) => Home(),
               ));
           Fluttertoast.showToast(
               msg: "Update Success",
@@ -567,5 +622,35 @@ class _EditProfileState extends State<EditProfile> {
       }
       // print(value);
     });
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Photo Library'),
+                      onTap: () {
+                        _imgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _imgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 }
