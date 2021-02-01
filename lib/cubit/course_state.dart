@@ -10,7 +10,7 @@ abstract class CourseState extends Equatable {
 class CourseInitial extends CourseState {}
 
 class CourseLoaded extends CourseState {
-  final Courses course;
+  final Coursesz course;
 
   CourseLoaded(this.course);
 

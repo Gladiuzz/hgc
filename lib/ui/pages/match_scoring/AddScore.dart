@@ -2,6 +2,8 @@ import 'package:adobe_xd/pinned.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hgc/cubit/score_cubit.dart';
+import 'package:hgc/cubit/scorecourse_cubit.dart';
+import 'package:hgc/model/ScoreCourse.dart';
 import 'package:hgc/ui/widgets/Dialog/Direct_score.dart';
 import 'package:hgc/ui/widgets/Dialog/Discard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,11 +24,35 @@ class AddScore extends StatefulWidget {
 }
 
 class _AddScoreState extends State<AddScore> {
+  var total_score;
+  var totals;
   static const int numItems = 9;
   List<bool> selected = List<bool>.generate(numItems, (index) => false);
+
+  @override
+  void initState() {
+    super.initState();
+    total_score = context.bloc<ScorecourseCubit>().scoreCourse.data.totalScore;
+  }
+
+  Map<String, int> score = {};
+
+  void scorePerHole(id_hole, value) {
+    totals = 0;
+    context.bloc<ScorecourseCubit>().scoreCourse.data.holes.forEach((element) {
+      totals += element.score;
+      print(totals);
+    });
+
+    return totals;
+  }
+
+  TextEditingController _controllerTotalScore = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final node = FocusScope.of(context);
     return Container(
       child: SafeArea(
         child: Scaffold(
@@ -102,46 +128,72 @@ class _AddScoreState extends State<AddScore> {
                               label: Text('Total Score'),
                             ),
                           ],
-                          rows: List<DataRow>.generate(
-                            numItems,
-                            (index) => DataRow(
-                              color: MaterialStateProperty.resolveWith<Color>(
-                                  (Set<MaterialState> states) {
-                                // All rows will have the same selected color.
-                                if (states.contains(MaterialState.selected))
-                                  return Theme.of(context)
-                                      .colorScheme
-                                      .primary
-                                      .withOpacity(0.5);
-                                // Even rows will have a grey color.
-                                if (index % 2 == 0) {
-                                  return Colors.white;
-                                }
-                                return const Color(
-                                    0xfff8f8f8); // Use default value for other states and odd rows.
-                              }),
-                              cells: <DataCell>[
-                                DataCell(Text('$index')),
-                                DataCell(Text('365.00')),
-                                DataCell(Text('155.00')),
-                                DataCell(Text('155.00')),
-                                DataCell(
-                                  Container(
-                                    width: 51.0,
-                                    height: 24.0,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(3.0),
-                                      color: const Color(0xffffffff),
-                                      border: Border.all(
-                                          width: 1.0,
-                                          color: const Color(0xffbababa)),
+                          rows: context
+                              .bloc<ScorecourseCubit>()
+                              .scoreCourse
+                              .data
+                              .holes
+                              .map(
+                                (index) => DataRow(
+                                  color:
+                                      MaterialStateProperty.resolveWith<Color>(
+                                          (Set<MaterialState> states) {
+                                    // All rows will have the same selected color.
+                                    if (states.contains(MaterialState.selected))
+                                      return Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(0.5);
+                                    // Even rows will have a grey color.
+                                    if (index.id % 2 == 0) {
+                                      return Colors.white;
+                                    }
+                                    return const Color(
+                                        0xfff8f8f8); // Use default value for other states and odd rows.
+                                  }),
+                                  cells: <DataCell>[
+                                    DataCell(Text('# ${index.index}')),
+                                    DataCell(Text('${index.par}')),
+                                    DataCell(Text('${index.handicap}')),
+                                    DataCell(Text('${index.distance}')),
+                                    DataCell(
+                                      Container(
+                                        width: 51.0,
+                                        height: 24.0,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(3.0),
+                                          color: const Color(0xffffffff),
+                                          border: Border.all(
+                                              width: 1.0,
+                                              color: const Color(0xffbababa)),
+                                        ),
+                                        child: TextFormField(
+                                          maxLength: 2,
+                                          textAlign: TextAlign.center,
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            hintStyle: TextStyle(
+                                              fontFamily: 'Roboto',
+                                              fontSize: 12,
+                                              color: const Color(0xff9a9a9a),
+                                            ),
+                                            border: InputBorder.none,
+                                            counterText: "",
+                                          ),
+                                          onEditingComplete: () =>
+                                              node.nextFocus(),
+                                          onChanged: (value) {
+                                            index.score = int.parse(value);
+                                            scorePerHole(index.id, value);
+                                          },
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                              selected: selected[index],
-                            ),
-                          ),
+                              )
+                              .toList(),
                         ),
                       ),
                     ],
@@ -156,6 +208,8 @@ class _AddScoreState extends State<AddScore> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
+                        Container(),
+                        Container(),
                         Container(),
                         Center(
                           child: Container(
@@ -174,14 +228,26 @@ class _AddScoreState extends State<AddScore> {
                         Container(
                           width: 51.0,
                           height: 24.0,
-                          margin: EdgeInsets.only(right: 47),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(3.0),
                             color: const Color(0xffffffff),
                             border: Border.all(
                                 width: 1.0, color: const Color(0xffbababa)),
                           ),
+                          child: totals == null
+                              ? TextFormField(
+                                  textAlign: TextAlign.center,
+                                  enabled: false,
+                                  controller: _controllerTotalScore..text = "",
+                                )
+                              : TextFormField(
+                                  textAlign: TextAlign.center,
+                                  enabled: false,
+                                  controller: _controllerTotalScore
+                                    ..text = totals.toString(),
+                                ),
                         ),
+                        Container(),
                       ],
                     ),
                   ),
@@ -195,7 +261,7 @@ class _AddScoreState extends State<AddScore> {
                     ),
                     child: Center(
                       child: Text(
-                        'SAVE',
+                        'Save',
                         style: TextStyle(
                           fontFamily: 'Lato',
                           fontSize: 16,

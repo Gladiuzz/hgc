@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:hgc/model/Pair.dart';
+import 'package:hgc/model/ScoreCourse.dart';
 import 'package:hgc/model/api_return_value.dart';
 import 'package:hgc/model/match.dart';
 import 'package:hgc/model/member.dart';
@@ -154,6 +155,64 @@ class MatchApi {
       print(response.body);
       var data = json.decode(response.body);
       return data;
+    }
+  }
+
+  showCourseScore(id_score, id_match) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    var url = "$request/api/matches/v2/${id_match}/scores/${id_score}";
+    print(url);
+
+    final response = await client.get("${url}", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      print(data);
+
+      ScoreCourse value = ScoreCourse.fromJson(data);
+
+      return value;
+    } else {
+      var data = json.decode(response.body);
+      print(data);
+
+      ScoreCourse value = ScoreCourse.fromJson(data);
+
+      return value;
+    }
+  }
+
+  saveScore(id_score, id_match) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    var url = "$request/api/matches/v2/${id_match}/scores/${id_score}";
+    print(url);
+
+    final response = await client.get("${url}", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      print(data);
+
+      ScoreCourse value = ScoreCourse.fromJson(data);
+
+      return value;
+    } else {
+      var data = json.decode(response.body);
+      print(data);
+
+      ScoreCourse value = ScoreCourse.fromJson(data);
+
+      return value;
     }
   }
 }

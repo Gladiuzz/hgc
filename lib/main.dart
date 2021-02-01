@@ -6,6 +6,7 @@ import 'package:hgc/cubit/member_cubit.dart';
 import 'package:hgc/cubit/pair_cubit.dart';
 import 'package:hgc/cubit/record_cubit.dart';
 import 'package:hgc/cubit/score_cubit.dart';
+import 'package:hgc/cubit/scorecourse_cubit.dart';
 import 'package:hgc/cubit/user_cubit.dart';
 import 'package:hgc/ui/pages/onboarding.dart';
 
@@ -44,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
         BlocProvider(create: (context) => ScoreCubit()),
         BlocProvider(create: (context) => PairCubit()),
         BlocProvider(create: (context) => RecordCubit()),
+        BlocProvider(create: (context) => ScorecourseCubit()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

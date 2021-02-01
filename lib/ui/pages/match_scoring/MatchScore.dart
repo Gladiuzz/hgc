@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hgc/cubit/match_cubit.dart';
 import 'package:hgc/cubit/score_cubit.dart';
+import 'package:hgc/cubit/scorecourse_cubit.dart';
 import 'package:hgc/service/GolfCourseAPI.dart';
 import 'package:hgc/service/MatchAPI.dart';
 import 'package:hgc/ui/pages/match_scoring/AddScore.dart';
 import 'package:hgc/ui/pages/match_scoring/MatchSummary.dart';
+import 'package:hgc/ui/widgets/Dialog/Dialogs.dart';
 import 'package:hgc/ui/widgets/Dialog/Discard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -114,7 +116,7 @@ class _MatchScoreState extends State<MatchScore> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        '#${widget.match_id}',
+                                        '#${context.bloc<MatchCubit>().matches.id}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -316,39 +318,52 @@ class _MatchScoreState extends State<MatchScore> {
                                   ),
                                   InkWell(
                                     onTap: () {
-                                      CoursesApi()
-                                          .showDetailCourse(context
-                                              .bloc<MatchCubit>()
-                                              .matches
-                                              .golfId)
+                                      Dialogs().showLoadingDialog(context);
+                                      MatchApi()
+                                          .showCourseScore(
+                                              context
+                                                  .bloc<MatchCubit>()
+                                                  .matches
+                                                  .scores[0]
+                                                  .id,
+                                              context
+                                                  .bloc<MatchCubit>()
+                                                  .matches
+                                                  .scores[0]
+                                                  .playerId)
                                           .then((value) {
-                                        print(value);
+                                        print("hah ${value}");
                                         context
-                                            .read<ScoreCubit>()
-                                            .getCourseScore(value);
+                                            .bloc<ScorecourseCubit>()
+                                            .getScoreCourse(value);
                                       });
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => AddScore(
-                                              split1: "test",
-                                              split2: "test",
-                                              id_match_player: context
-                                                  .bloc<MatchCubit>()
-                                                  .matches
-                                                  .id,
-                                              id_score: context
-                                                  .bloc<MatchCubit>()
-                                                  .matches
-                                                  .scores[0]
-                                                  .id,
-                                              course_name: context
-                                                  .bloc<MatchCubit>()
-                                                  .matches
-                                                  .scores[0]
-                                                  .courseName,
-                                            ),
-                                          ));
+                                      Future.delayed(
+                                          const Duration(milliseconds: 1000),
+                                          () {
+                                        Navigator.pop(context);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => AddScore(
+                                                split1: "test",
+                                                split2: "test",
+                                                id_match_player: context
+                                                    .bloc<MatchCubit>()
+                                                    .matches
+                                                    .id,
+                                                id_score: context
+                                                    .bloc<MatchCubit>()
+                                                    .matches
+                                                    .scores[0]
+                                                    .id,
+                                                course_name: context
+                                                    .bloc<MatchCubit>()
+                                                    .matches
+                                                    .scores[0]
+                                                    .courseName,
+                                              ),
+                                            ));
+                                      });
                                     },
                                     child: Container(
                                       height: 45.0,
@@ -358,17 +373,34 @@ class _MatchScoreState extends State<MatchScore> {
                                         color: const Color(0xffb90b0c),
                                       ),
                                       child: Center(
-                                        child: Text(
-                                          'ADD SCORE',
-                                          style: TextStyle(
-                                            fontFamily: 'Lato',
-                                            fontSize: 16,
-                                            color: const Color(0xffffffff),
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
+                                          child: context
+                                                      .bloc<MatchCubit>()
+                                                      .matches
+                                                      .scores[0]
+                                                      .totalScore ==
+                                                  0
+                                              ? Text(
+                                                  'ADD SCORE',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Lato',
+                                                    fontSize: 16,
+                                                    color:
+                                                        const Color(0xffffffff),
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                )
+                                              : Text(
+                                                  'EDIT SCORE',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Lato',
+                                                    fontSize: 16,
+                                                    color:
+                                                        const Color(0xffffffff),
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                )),
                                     ),
                                   ),
                                 ],
@@ -379,7 +411,6 @@ class _MatchScoreState extends State<MatchScore> {
                             height: 20.0,
                           ),
                           Container(
-                            height: 204,
                             margin: EdgeInsets.only(bottom: 30),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5.0),
@@ -470,96 +501,152 @@ class _MatchScoreState extends State<MatchScore> {
                                   SizedBox(
                                     height: 28.0,
                                   ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => AddScore(
-                                              split1: "test",
-                                              split2: "test",
-                                              id_match_player: context
-                                                  .bloc<MatchCubit>()
-                                                  .matches
-                                                  .id,
-                                              id_score: context
-                                                  .bloc<MatchCubit>()
-                                                  .matches
-                                                  .scores[1]
-                                                  .id,
-                                              course_name: context
-                                                  .bloc<MatchCubit>()
-                                                  .matches
-                                                  .scores[1]
-                                                  .courseName,
+                                  Builder(
+                                    builder: (context) {
+                                      if (context
+                                              .bloc<MatchCubit>()
+                                              .matches
+                                              .scores[0]
+                                              .totalScore !=
+                                          0) {
+                                        return InkWell(
+                                          onTap: () {
+                                            Dialogs()
+                                                .showLoadingDialog(context);
+                                            MatchApi()
+                                                .showCourseScore(
+                                                    context
+                                                        .bloc<MatchCubit>()
+                                                        .matches
+                                                        .scores[1]
+                                                        .id,
+                                                    context
+                                                        .bloc<MatchCubit>()
+                                                        .matches
+                                                        .scores[1]
+                                                        .playerId)
+                                                .then((value) {
+                                              print(
+                                                  "hah ${context.bloc<MatchCubit>().matches.scores[1].playerId}");
+                                              context
+                                                  .bloc<ScorecourseCubit>()
+                                                  .getScoreCourse(value);
+                                            });
+                                            Future.delayed(
+                                                const Duration(
+                                                    milliseconds: 1000), () {
+                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AddScore(
+                                                      split1: "test",
+                                                      split2: "test",
+                                                      id_match_player: context
+                                                          .bloc<MatchCubit>()
+                                                          .matches
+                                                          .id,
+                                                      id_score: context
+                                                          .bloc<MatchCubit>()
+                                                          .matches
+                                                          .scores[1]
+                                                          .id,
+                                                      course_name: context
+                                                          .bloc<MatchCubit>()
+                                                          .matches
+                                                          .scores[1]
+                                                          .courseName,
+                                                    ),
+                                                  ));
+                                            });
+                                          },
+                                          child: Container(
+                                            height: 45.0,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0),
+                                              color: const Color(0xffb90b0c),
                                             ),
-                                          ));
-                                    },
-                                    child: Container(
-                                      height: 45.0,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0),
-                                        color: const Color(0xffb90b0c),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          'ADD SCORE',
-                                          style: TextStyle(
-                                            fontFamily: 'Lato',
-                                            fontSize: 16,
-                                            color: const Color(0xffffffff),
-                                            fontWeight: FontWeight.w700,
+                                            child: Center(
+                                              child: Text(
+                                                'ADD SCORE',
+                                                style: TextStyle(
+                                                  fontFamily: 'Lato',
+                                                  fontSize: 16,
+                                                  color:
+                                                      const Color(0xffffffff),
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
                                           ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                        );
+                                      } else {
+                                        return Container();
+                                      }
+                                    },
+                                  )
                                 ],
                               ),
                             ),
                           ),
-                          InkWell(
-                            onTap: () {
-                              MatchApi()
-                                  .submitMatch(
-                                      context.read<MatchCubit>().matches.id)
-                                  .then((value) {
-                                Fluttertoast.showToast(
-                                    msg: "${value}",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM,
-                                    timeInSecForIosWeb: 1,
-                                    backgroundColor: Colors.grey,
-                                    textColor: Colors.white,
-                                    fontSize: 14.0);
-                              });
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MatchSummary(),
-                                  ));
-                            },
-                            child: Container(
-                              height: 45.0,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5.0),
-                                color: const Color(0xff3cd970),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'SUBMIT AND VIEW SUMMARY',
-                                  style: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontSize: 16,
-                                    color: const Color(0xff000000),
-                                    fontWeight: FontWeight.w700,
+                          Builder(
+                            builder: (context) {
+                              if (context
+                                      .bloc<MatchCubit>()
+                                      .matches
+                                      .scores[1]
+                                      .totalScore !=
+                                  0) {
+                                return InkWell(
+                                  onTap: () {
+                                    MatchApi()
+                                        .submitMatch(context
+                                            .read<MatchCubit>()
+                                            .matches
+                                            .id)
+                                        .then((value) {
+                                      Fluttertoast.showToast(
+                                          msg: "${value}",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.BOTTOM,
+                                          timeInSecForIosWeb: 1,
+                                          backgroundColor: Colors.grey,
+                                          textColor: Colors.white,
+                                          fontSize: 14.0);
+                                    });
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => MatchSummary(),
+                                        ));
+                                  },
+                                  child: Container(
+                                    height: 45.0,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      color: const Color(0xff3cd970),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'SUBMIT AND VIEW SUMMARY',
+                                        style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          fontSize: 16,
+                                          color: const Color(0xff000000),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
                                   ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
+                                );
+                              } else {
+                                return Container();
+                              }
+                            },
                           ),
                           SizedBox(
                             height: 13.0,

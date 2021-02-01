@@ -6,9 +6,10 @@ import 'package:hgc/ui/pages/Home/home.dart';
 import 'package:hgc/ui/pages/forgot_password.dart';
 import 'package:hgc/ui/pages/register.dart';
 import 'package:hgc/ui/pages/sign_in.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CourseInfo extends StatefulWidget {
-  Courses courses;
+  Coursesz courses;
 
   CourseInfo({this.courses});
 
@@ -69,7 +70,7 @@ class _CourseInfoState extends State<CourseInfo> {
                   SizedBox(
                     width: size.width * 0.90,
                     child: Text(
-                      '${widget.courses.address}',
+                      '${widget.courses.location.address}',
                       style: TextStyle(
                         fontFamily: 'Lato',
                         fontSize: 15,
@@ -96,7 +97,7 @@ class _CourseInfoState extends State<CourseInfo> {
                             width: 20.0,
                           ),
                           Text(
-                            '${widget.courses.contact_phone_number}',
+                            '${widget.courses.contact.phoneNumber}',
                             style: TextStyle(
                               fontFamily: 'Lato',
                               fontSize: 15,
@@ -123,7 +124,7 @@ class _CourseInfoState extends State<CourseInfo> {
                             width: 20.0,
                           ),
                           Text(
-                            '${widget.courses.contact_email}',
+                            '${widget.courses.contact.email}',
                             style: TextStyle(
                               fontFamily: 'Lato',
                               fontSize: 15,
@@ -149,15 +150,22 @@ class _CourseInfoState extends State<CourseInfo> {
                           SizedBox(
                             width: 22.0,
                           ),
-                          Text(
-                            'Click to open Google Maps location',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 15,
-                              color: const Color(0xffb90b0c),
-                              fontWeight: FontWeight.w500,
+                          InkWell(
+                            onTap: () {
+                              var url =
+                                  "https://www.google.com/maps/search/?api=1&query=${widget.courses.location.latitude},${widget.courses.location.longitude}";
+                              launch(url);
+                            },
+                            child: Text(
+                              'Click to open Google Maps location',
+                              style: TextStyle(
+                                fontFamily: 'Lato',
+                                fontSize: 15,
+                                color: const Color(0xffb90b0c),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.left,
                             ),
-                            textAlign: TextAlign.left,
                           )
                         ],
                       ),
@@ -174,15 +182,16 @@ class _CourseInfoState extends State<CourseInfo> {
                             width: 20.0,
                           ),
                           Container(
+                            width: size.width * .78,
                             child: Text(
-                              '${widget.courses.website_url}',
+                              '${widget.courses.contact.websiteUrl}',
                               style: TextStyle(
                                 fontFamily: 'Lato',
                                 fontSize: 15,
                                 color: const Color(0xff000000),
                                 fontWeight: FontWeight.w500,
                               ),
-                              textAlign: TextAlign.center,
+                              textAlign: TextAlign.left,
                             ),
                           ),
                           SizedBox(

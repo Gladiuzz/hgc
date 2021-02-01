@@ -5,6 +5,7 @@ import 'package:hgc/model/Pair.dart';
 import 'package:hgc/service/MatchAPI.dart';
 import 'package:hgc/ui/pages/Inbox/PairSummary.dart';
 import 'package:hgc/ui/pages/match_scoring/MatchScore.dart';
+import 'package:hgc/ui/widgets/Dialog/Dialogs.dart';
 import 'package:indonesia/indonesia.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -84,6 +85,7 @@ class _InboxState extends State<Inbox> {
           DateTime dateTime = DateTime.parse(inboxs.createdAt);
           return InkWell(
             onTap: () {
+              Dialogs().showLoadingDialog(context);
               print(inboxs.data.id);
               InboxAPI().getInboxDetail(inboxs.data.id).then((value) {
                 print("hah ${value}");
@@ -96,6 +98,9 @@ class _InboxState extends State<Inbox> {
                 Future.delayed(const Duration(milliseconds: 2000), () {
                   if (context.bloc<PairCubit>().pairs.data == null &&
                       context.bloc<MatchCubit>().matches == null) {
+                    setState(() {
+                      Navigator.pop(context);
+                    });
                     Fluttertoast.showToast(
                         msg: "Match Already Discard",
                         toastLength: Toast.LENGTH_SHORT,
@@ -106,6 +111,9 @@ class _InboxState extends State<Inbox> {
                         fontSize: 14.0);
                   } else if (context.bloc<PairCubit>().pairs.data == null) {
                     print("pair tidak ada");
+                    setState(() {
+                      Navigator.pop(context);
+                    });
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -113,6 +121,9 @@ class _InboxState extends State<Inbox> {
                         ));
                   } else {
                     print('match tidak ada');
+                    setState(() {
+                      Navigator.pop(context);
+                    });
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -126,7 +137,9 @@ class _InboxState extends State<Inbox> {
               width: size.width,
               height: 85.0,
               decoration: BoxDecoration(
-                color: const Color(0xffffffff),
+                color: inboxs.isRead == false
+                    ? const Color(0xffffffff)
+                    : const Color(0xffffffff),
               ),
               child: Row(
                 children: <Widget>[

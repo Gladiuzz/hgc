@@ -119,13 +119,12 @@ class _ProfileState extends State<Profile> {
                     height: 25.0,
                   ),
                   Container(
-                    width: 414.0,
-                    height: 352.0,
                     decoration: BoxDecoration(
                       color: const Color(0xffffffff),
                     ),
                     child: Container(
-                      margin: EdgeInsets.only(left: 20, right: 20, top: 25.8),
+                      margin: EdgeInsets.only(
+                          left: 20, right: 20, top: 25.8, bottom: 25.8),
                       child: Column(
                         children: <Widget>[
                           InkWell(
@@ -143,7 +142,7 @@ class _ProfileState extends State<Profile> {
                                   allowDrawingOutsideViewBox: true,
                                 ),
                                 Container(
-                                  margin: EdgeInsets.only(left: 28),
+                                  margin: EdgeInsets.only(left: 20),
                                   child: Column(
                                     children: <Widget>[
                                       Text(
@@ -558,7 +557,7 @@ class _ProfileState extends State<Profile> {
                                             ),
                                           ),
                                           Container(
-                                            margin: EdgeInsets.only(left: 28),
+                                            margin: EdgeInsets.only(left: 20),
                                             child: Column(
                                               children: <Widget>[
                                                 Text(
@@ -608,7 +607,7 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ),
                                 Container(
-                                  margin: EdgeInsets.only(left: 28),
+                                  margin: EdgeInsets.only(left: 26),
                                   child: Column(
                                     children: <Widget>[
                                       Text(
@@ -650,7 +649,7 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ),
                                 Container(
-                                  margin: EdgeInsets.only(left: 28),
+                                  margin: EdgeInsets.only(left: 26),
                                   child: Column(
                                     children: <Widget>[
                                       Text(
@@ -689,7 +688,7 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ),
                                 Container(
-                                  margin: EdgeInsets.only(left: 28),
+                                  margin: EdgeInsets.only(left: 24),
                                   child: Column(
                                     children: <Widget>[
                                       Text(

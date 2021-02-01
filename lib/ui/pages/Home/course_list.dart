@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,23 +29,27 @@ class CourseList extends StatefulWidget {
 
 class _CourseListState extends State<CourseList> {
   final _debouncer = Debouncer(milliseconds: 500);
-  List<Courses> filtered_course = List();
+  List<Coursesz> filtered_course = List();
 
   bool _hasMore;
   int pageNumber;
   bool _error;
   bool _loading;
   final int _defaultPhotosPerPageCount = 20;
-  List<Courses> _course = List();
+  List<Coursesz> _course = List();
   final int _nextPageThreshold = 5;
 
-  Future<List<Courses>> search(String search) async {
+  Future<List<Coursesz>> search(String search) async {
     await Future.delayed(Duration(seconds: 2));
     return List.generate(search.length, (int index) {
-      return Courses(
+      return Coursesz(
         name: "${search}",
       );
     });
+  }
+
+  Future refreshData() async {
+    showCourse();
   }
 
   @override
@@ -170,104 +175,106 @@ class _CourseListState extends State<CourseList> {
 
   Widget _buildListView() {
     Size size = MediaQuery.of(context).size;
-    return Container(
-      width: size.width,
-      height: size.height * .68,
-      margin: EdgeInsets.only(bottom: 100),
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: filtered_course.length + (_hasMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          Courses arena = filtered_course[index];
-          if (index == filtered_course.length - _nextPageThreshold) {
-            showCourse();
-          }
-          if (index == filtered_course.length) {
-            if (_error) {
-              return Center(
-                  child: InkWell(
-                onTap: () {
-                  setState(() {
-                    _loading = true;
-                    _error = false;
-                    showCourse();
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text("Error while loading Course, tap to try again"),
-                ),
-              ));
-            } else {
-              return Center(
-                  child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: CircularProgressIndicator(),
-              ));
+    return RefreshIndicator(
+      onRefresh: refreshData,
+      child: Container(
+        width: size.width,
+        height: size.height * .77,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: filtered_course.length + (_hasMore ? 1 : 0),
+          itemBuilder: (context, index) {
+            Coursesz arena = filtered_course[index];
+            if (index == filtered_course.length - _nextPageThreshold) {
+              showCourse();
             }
-          }
-          return Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  context.bloc<CourseCubit>().getCourse(arena);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MatchRecord(),
-                      ));
-                },
-                child: Container(
-                  width: size.width,
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        width: 55.0,
-                        height: 55.0,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage('${arena.image}'),
-                            fit: BoxFit.cover,
+            if (index == filtered_course.length) {
+              if (_error) {
+                return Center(
+                    child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _loading = true;
+                      _error = false;
+                      showCourse();
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text("Error while loading Course, tap to try again"),
+                  ),
+                ));
+              } else {
+                return Center(
+                    child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: CircularProgressIndicator(),
+                ));
+              }
+            }
+            return Column(
+              children: [
+                InkWell(
+                  onTap: () {
+                    context.bloc<CourseCubit>().getCourse(arena);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MatchRecord(),
+                        ));
+                  },
+                  child: Container(
+                    width: size.width,
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          width: 55.0,
+                          height: 55.0,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage('${arena.image}'),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 15.0,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            '${arena.name}',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 15,
-                              color: const Color(0xff000000),
-                              fontWeight: FontWeight.w700,
+                        SizedBox(
+                          width: 15.0,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              '${arena.name}',
+                              style: TextStyle(
+                                fontFamily: 'Lato',
+                                fontSize: 15,
+                                color: const Color(0xff000000),
+                                fontWeight: FontWeight.w700,
+                              ),
+                              textAlign: TextAlign.left,
                             ),
-                            textAlign: TextAlign.left,
-                          ),
-                          Text(
-                            '${arena.city_name}',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 12,
-                              color: const Color(0xff858585),
-                              fontWeight: FontWeight.w500,
+                            Text(
+                              '${arena.location.cityName}',
+                              style: TextStyle(
+                                fontFamily: 'Lato',
+                                fontSize: 12,
+                                color: const Color(0xff858585),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.left,
                             ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ],
-                      )
-                    ],
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Divider(),
-            ],
-          );
-        },
+                Divider(),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -285,7 +292,10 @@ class _CourseListState extends State<CourseList> {
     });
 
     try {
-      var data = courseFromJson(response.body);
+      var test = json.decode(response.body);
+
+      var data = List<Coursesz>.from(
+          test['data'].map((item) => Coursesz.fromJson(item)));
 
       setState(() {
         _hasMore = data.length == _defaultPhotosPerPageCount;

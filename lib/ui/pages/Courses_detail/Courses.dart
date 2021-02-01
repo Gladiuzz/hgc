@@ -5,7 +5,7 @@ import 'package:hgc/model/golfCourse.dart';
 import 'package:hgc/ui/pages/sign_in.dart';
 
 class Coursess extends StatefulWidget {
-  Courses courses;
+  Coursesz courses;
 
   Coursess({this.courses});
 

@@ -13,7 +13,7 @@ import 'package:hgc/ui/pages/onboarding.dart';
 import 'package:hgc/ui/pages/sign_in.dart';
 
 class CourseDetail extends StatefulWidget {
-  Courses courses;
+  Coursesz courses;
   CourseDetail({this.courses});
 
   @override

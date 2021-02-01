@@ -280,32 +280,21 @@ class _PlayState extends State<Play> {
                                             width: size.width,
                                             height: 45.0,
                                             decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              gradient: LinearGradient(
-                                                begin: Alignment(1.0, 0.0),
-                                                end: Alignment(-1.0, 0.0),
-                                                colors: [
-                                                  const Color(0xffa4d700),
-                                                  const Color(0xff346e0d)
-                                                ],
-                                                stops: [0.0, 1.0],
-                                              ),
+                                              image: DecorationImage(
+                                                  image: AssetImage(
+                                                      "assets/images/empty_btn.png")),
                                             ),
                                             child: Center(
-                                              child: SizedBox(
-                                                width: 211.0,
-                                                child: Text(
-                                                  'PLAY REGULAR MATCH',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Lato',
-                                                    fontSize: 16,
-                                                    color:
-                                                        const Color(0xffffffff),
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                                  textAlign: TextAlign.center,
+                                              child: Text(
+                                                'PLAY REGULAR MATCH',
+                                                style: TextStyle(
+                                                  fontFamily: 'Lato',
+                                                  fontSize: 16,
+                                                  color:
+                                                      const Color(0xffffffff),
+                                                  fontWeight: FontWeight.w700,
                                                 ),
+                                                textAlign: TextAlign.center,
                                               ),
                                             ),
                                           ),

@@ -5,11 +5,11 @@ import 'package:hgc/model/golfCourse.dart';
 part 'course_state.dart';
 
 class CourseCubit extends Cubit<CourseState> {
-  Courses course;
+  Coursesz course;
 
   CourseCubit() : super(CourseInitial());
 
-  Future<void> getCourse(Courses courses) async {
+  Future<void> getCourse(Coursesz courses) async {
     course = courses;
 
     print("testing ${course}");

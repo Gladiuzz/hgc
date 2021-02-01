@@ -14,6 +14,7 @@ import 'package:hgc/ui/pages/Home/home.dart';
 import 'package:hgc/ui/pages/match_scoring/MatchScore.dart';
 import 'package:hgc/ui/pages/verificator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hgc/ui/widgets/Dialog/Dialogs.dart';
 
 class MatchRecord extends StatefulWidget {
   MatchRecord({Key key}) : super(key: key);
@@ -423,6 +424,9 @@ class _MatchRecordState extends State<MatchRecord> {
                                                             ),
                                                             InkWell(
                                                               onTap: () {
+                                                                Dialogs()
+                                                                    .showLoadingDialog(
+                                                                        context);
                                                                 var data = {
                                                                   'pair_id': context
                                                                       .bloc<
@@ -444,6 +448,186 @@ class _MatchRecordState extends State<MatchRecord> {
                                                                           .toString(),
                                                                 };
 
+                                                                if (context
+                                                                        .bloc<
+                                                                            MemberCubit>()
+                                                                        .member
+                                                                        .id
+                                                                        .toString() ==
+                                                                    null) {
+                                                                  setState(() {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  });
+                                                                  Fluttertoast.showToast(
+                                                                      msg:
+                                                                          "The Pair Member field is required.",
+                                                                      toastLength:
+                                                                          Toast
+                                                                              .LENGTH_SHORT,
+                                                                      gravity: ToastGravity
+                                                                          .BOTTOM,
+                                                                      timeInSecForIosWeb:
+                                                                          1,
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .grey,
+                                                                      textColor:
+                                                                          Colors
+                                                                              .white,
+                                                                      fontSize:
+                                                                          14.0);
+                                                                } else {
+                                                                  MatchApi()
+                                                                      .createMatch(
+                                                                          data)
+                                                                      .then(
+                                                                          (value) {
+                                                                    if (value[
+                                                                            'data'] !=
+                                                                        null) {
+                                                                      Fluttertoast.showToast(
+                                                                          msg:
+                                                                              "A match has been created",
+                                                                          toastLength: Toast
+                                                                              .LENGTH_SHORT,
+                                                                          gravity: ToastGravity
+                                                                              .BOTTOM,
+                                                                          timeInSecForIosWeb:
+                                                                              1,
+                                                                          backgroundColor: Colors
+                                                                              .grey,
+                                                                          textColor: Colors
+                                                                              .white,
+                                                                          fontSize:
+                                                                              14.0);
+
+                                                                      MatchApi()
+                                                                          .showMatchDetail(value['data']
+                                                                              [
+                                                                              'id'])
+                                                                          .then(
+                                                                              (value) {
+                                                                        print(
+                                                                            value);
+                                                                        context
+                                                                            .bloc<MatchCubit>()
+                                                                            .getMatch(value);
+                                                                      });
+                                                                      Future.delayed(
+                                                                          const Duration(
+                                                                              milliseconds: 2000),
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        });
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder: (context) => MatchScore(
+                                                                                match_id: value['data']['id'],
+                                                                              ),
+                                                                            ));
+                                                                      });
+                                                                    } else if (value['errors']
+                                                                            [
+                                                                            'tees_id'] !=
+                                                                        null) {
+                                                                      setState(
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      });
+                                                                      Fluttertoast.showToast(
+                                                                          msg:
+                                                                              "${value['errors']['tees_id'][0]}",
+                                                                          toastLength: Toast
+                                                                              .LENGTH_SHORT,
+                                                                          gravity: ToastGravity
+                                                                              .BOTTOM,
+                                                                          timeInSecForIosWeb:
+                                                                              1,
+                                                                          backgroundColor: Colors
+                                                                              .grey,
+                                                                          textColor: Colors
+                                                                              .white,
+                                                                          fontSize:
+                                                                              14.0);
+                                                                    } else if (value['errors']
+                                                                            [
+                                                                            'golf_id'] !=
+                                                                        null) {
+                                                                      setState(
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      });
+                                                                      Fluttertoast.showToast(
+                                                                          msg:
+                                                                              "${value['errors']['golf_id'][0]}",
+                                                                          toastLength: Toast
+                                                                              .LENGTH_SHORT,
+                                                                          gravity: ToastGravity
+                                                                              .BOTTOM,
+                                                                          timeInSecForIosWeb:
+                                                                              1,
+                                                                          backgroundColor: Colors
+                                                                              .grey,
+                                                                          textColor: Colors
+                                                                              .white,
+                                                                          fontSize:
+                                                                              14.0);
+                                                                    } else if (value['errors']
+                                                                            [
+                                                                            'course_pair_id'] !=
+                                                                        null) {
+                                                                      setState(
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      });
+                                                                      Fluttertoast.showToast(
+                                                                          msg:
+                                                                              "${value['errors']['course_pair_id'][0]}",
+                                                                          toastLength: Toast
+                                                                              .LENGTH_SHORT,
+                                                                          gravity: ToastGravity
+                                                                              .BOTTOM,
+                                                                          timeInSecForIosWeb:
+                                                                              1,
+                                                                          backgroundColor: Colors
+                                                                              .grey,
+                                                                          textColor: Colors
+                                                                              .white,
+                                                                          fontSize:
+                                                                              14.0);
+                                                                    } else {
+                                                                      setState(
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      });
+                                                                      Fluttertoast.showToast(
+                                                                          msg:
+                                                                              "A match has been created",
+                                                                          toastLength: Toast
+                                                                              .LENGTH_SHORT,
+                                                                          gravity: ToastGravity
+                                                                              .BOTTOM,
+                                                                          timeInSecForIosWeb:
+                                                                              1,
+                                                                          backgroundColor: Colors
+                                                                              .grey,
+                                                                          textColor: Colors
+                                                                              .white,
+                                                                          fontSize:
+                                                                              14.0);
+                                                                    }
+                                                                  });
+                                                                }
+
                                                                 print(data);
 
                                                                 // context
@@ -456,107 +640,6 @@ class _MatchRecordState extends State<MatchRecord> {
                                                                 //   print(
                                                                 //       "ini value $value");
                                                                 // });
-
-                                                                MatchApi()
-                                                                    .createMatch(
-                                                                        data)
-                                                                    .then(
-                                                                        (value) {
-                                                                  if (value[
-                                                                          'data'] !=
-                                                                      null) {
-                                                                    Fluttertoast.showToast(
-                                                                        msg:
-                                                                            "${value}",
-                                                                        toastLength:
-                                                                            Toast
-                                                                                .LENGTH_SHORT,
-                                                                        gravity:
-                                                                            ToastGravity
-                                                                                .BOTTOM,
-                                                                        timeInSecForIosWeb:
-                                                                            1,
-                                                                        backgroundColor:
-                                                                            Colors
-                                                                                .grey,
-                                                                        textColor:
-                                                                            Colors
-                                                                                .white,
-                                                                        fontSize:
-                                                                            14.0);
-
-                                                                    MatchApi()
-                                                                        .showMatchDetail(value['data']
-                                                                            [
-                                                                            'id'])
-                                                                        .then(
-                                                                            (value) {
-                                                                      print(
-                                                                          value);
-                                                                      context
-                                                                          .bloc<
-                                                                              MatchCubit>()
-                                                                          .getMatch(
-                                                                              value);
-                                                                    });
-                                                                    Future.delayed(
-                                                                        const Duration(
-                                                                            milliseconds:
-                                                                                2000),
-                                                                        () {
-                                                                      Navigator.push(
-                                                                          context,
-                                                                          MaterialPageRoute(
-                                                                            builder: (context) =>
-                                                                                MatchScore(
-                                                                              match_id: value['data']['id'],
-                                                                            ),
-                                                                          ));
-                                                                    });
-                                                                  } else if (value[
-                                                                          'errors'] !=
-                                                                      null) {
-                                                                    Fluttertoast.showToast(
-                                                                        msg:
-                                                                            "${value['errors']}",
-                                                                        toastLength:
-                                                                            Toast
-                                                                                .LENGTH_SHORT,
-                                                                        gravity:
-                                                                            ToastGravity
-                                                                                .BOTTOM,
-                                                                        timeInSecForIosWeb:
-                                                                            1,
-                                                                        backgroundColor:
-                                                                            Colors
-                                                                                .grey,
-                                                                        textColor:
-                                                                            Colors
-                                                                                .white,
-                                                                        fontSize:
-                                                                            14.0);
-                                                                  } else {
-                                                                    Fluttertoast.showToast(
-                                                                        msg:
-                                                                            "${value['message']}",
-                                                                        toastLength:
-                                                                            Toast
-                                                                                .LENGTH_SHORT,
-                                                                        gravity:
-                                                                            ToastGravity
-                                                                                .BOTTOM,
-                                                                        timeInSecForIosWeb:
-                                                                            1,
-                                                                        backgroundColor:
-                                                                            Colors
-                                                                                .grey,
-                                                                        textColor:
-                                                                            Colors
-                                                                                .white,
-                                                                        fontSize:
-                                                                            14.0);
-                                                                  }
-                                                                });
                                                               },
                                                               child: Container(
                                                                 margin: EdgeInsets

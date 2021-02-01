@@ -42,6 +42,10 @@ class _VerificatorState extends State<Verificator> {
     });
   }
 
+  Future refreshData() async {
+    showMember();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -166,118 +170,121 @@ class _VerificatorState extends State<Verificator> {
 
   Widget _buildListView() {
     Size size = MediaQuery.of(context).size;
-    return Container(
-      width: size.width,
-      height: size.height * .75,
-      child: ListView.builder(
-        itemCount: filtered_member.length + (_hasMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          Member user = filtered_member[index];
-          if (index == filtered_member.length - _nextPageThreshold) {
-            showMember();
-          }
-          if (index == filtered_member.length) {
-            if (_error) {
-              return Center(
-                  child: InkWell(
-                onTap: () {
-                  setState(() {
-                    _loading = true;
-                    _error = false;
-                    showMember();
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text("Error while loading Member, tap to try again"),
-                ),
-              ));
-            } else {
-              return Center(
-                  child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: CircularProgressIndicator(),
-              ));
+    return RefreshIndicator(
+      onRefresh: refreshData,
+      child: Container(
+        width: size.width,
+        height: size.height * .75,
+        child: ListView.builder(
+          itemCount: filtered_member.length + (_hasMore ? 1 : 0),
+          itemBuilder: (context, index) {
+            Member user = filtered_member[index];
+            if (index == filtered_member.length - _nextPageThreshold) {
+              showMember();
             }
-          }
-          return Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  context.bloc<MemberCubit>().getVerificator(user);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MatchRecord(),
-                      ));
-                },
-                child: Container(
-                  width: size.width,
-                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Row(
-                    children: <Widget>[
-                      (user.image != null)
-                          ? Container(
-                              width: 55.0,
-                              height: 55.0,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                    Radius.elliptical(9999.0, 9999.0)),
-                                image: DecorationImage(
-                                  image: NetworkImage('${user.image}'),
-                                  fit: BoxFit.cover,
+            if (index == filtered_member.length) {
+              if (_error) {
+                return Center(
+                    child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _loading = true;
+                      _error = false;
+                      showMember();
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text("Error while loading Member, tap to try again"),
+                  ),
+                ));
+              } else {
+                return Center(
+                    child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: CircularProgressIndicator(),
+                ));
+              }
+            }
+            return Column(
+              children: [
+                InkWell(
+                  onTap: () {
+                    context.bloc<MemberCubit>().getVerificator(user);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MatchRecord(),
+                        ));
+                  },
+                  child: Container(
+                    width: size.width,
+                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: Row(
+                      children: <Widget>[
+                        (user.image != null)
+                            ? Container(
+                                width: 55.0,
+                                height: 55.0,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.elliptical(9999.0, 9999.0)),
+                                  image: DecorationImage(
+                                    image: NetworkImage('${user.image}'),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                width: 55.0,
+                                height: 55.0,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.elliptical(9999.0, 9999.0)),
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                        'assets/images/default_avatar.jpg'),
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                            )
-                          : Container(
-                              width: 55.0,
-                              height: 55.0,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                    Radius.elliptical(9999.0, 9999.0)),
-                                image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/default_avatar.jpg'),
-                                  fit: BoxFit.cover,
-                                ),
+                        SizedBox(
+                          width: 15.0,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              '${user.name}',
+                              style: TextStyle(
+                                fontFamily: 'Lato',
+                                fontSize: 15,
+                                color: const Color(0xff000000),
+                                fontWeight: FontWeight.w700,
                               ),
+                              textAlign: TextAlign.left,
                             ),
-                      SizedBox(
-                        width: 15.0,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            '${user.name}',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 15,
-                              color: const Color(0xff000000),
-                              fontWeight: FontWeight.w700,
+                            Text(
+                              '${user.type}',
+                              style: TextStyle(
+                                fontFamily: 'Lato',
+                                fontSize: 12,
+                                color: const Color(0xffbababa),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.left,
                             ),
-                            textAlign: TextAlign.left,
-                          ),
-                          Text(
-                            '${user.type}',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 12,
-                              color: const Color(0xffbababa),
-                              fontWeight: FontWeight.w500,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ],
-                      )
-                    ],
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Divider(),
-            ],
-          );
-        },
+                Divider(),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

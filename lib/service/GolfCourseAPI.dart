@@ -29,8 +29,10 @@ class CoursesApi {
 
     if (response.statusCode == 200) {
       print(response.body);
-      var data = courseFromJson(response.body);
-      return data;
+      var data = json.decode(response.body);
+
+      return List<Coursesz>.from(
+          data['data'].map((item) => Coursesz.fromJson(item)));
     } else {
       var data = courseFromJson(response.body);
       return data;

@@ -49,6 +49,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage('${widget.tournaments.image}'),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -211,14 +212,14 @@ class _TournamentDetailState extends State<TournamentDetail> {
                           height: 17,
                         ),
                         Text(
-                          'Contact our PIC (Tiwi) by clicking on the button below.',
+                          'Contact our PIC (${widget.tournaments.contact.pic}) by clicking on the button below.',
                           style: TextStyle(
                             fontFamily: 'Lato',
                             fontSize: 14,
                             color: const Color(0xff858585),
                             fontWeight: FontWeight.w500,
                           ),
-                          textAlign: TextAlign.left,
+                          textAlign: TextAlign.center,
                         ),
                         SizedBox(
                           height: 23,

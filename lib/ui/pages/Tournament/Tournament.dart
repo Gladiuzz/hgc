@@ -141,124 +141,127 @@ class _TournamentState extends State<Tournament> {
       children: [
         Container(
           width: size.width,
-          height: size.height * 0.68,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: tournament.length,
-            itemBuilder: (context, index) {
-              Tournamentss turnament = tournament[index];
-              return Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: const Color(0xffffffff),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0x29000000),
-                          offset: Offset(0, 0),
-                          blurRadius: 15,
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          height: 161,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10.0),
-                              topRight: Radius.circular(10.0),
-                            ),
-                            image: DecorationImage(
-                              image: NetworkImage('${turnament.image}'),
-                              fit: BoxFit.cover,
+          child: Expanded(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: tournament.length,
+              itemBuilder: (context, index) {
+                Tournamentss turnament = tournament[index];
+                return Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        color: const Color(0xffffffff),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0x29000000),
+                            offset: Offset(0, 0),
+                            blurRadius: 15,
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            height: 161,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10.0),
+                                topRight: Radius.circular(10.0),
+                              ),
+                              image: DecorationImage(
+                                image: NetworkImage('${turnament.image}'),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 20, top: 16, right: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Container(
-                                    width: 160,
-                                    child: Text(
-                                      '${turnament.name}',
+                          Container(
+                            margin:
+                                EdgeInsets.only(left: 20, top: 16, right: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
+                                      width: 160,
+                                      child: Text(
+                                        '${turnament.name}',
+                                        style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          fontSize: 14,
+                                          color: const Color(0xff000000),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 18,
+                                    ),
+                                    Text(
+                                      '${turnament.date.toString()}',
                                       style: TextStyle(
                                         fontFamily: 'Lato',
-                                        fontSize: 14,
+                                        fontSize: 11,
                                         color: const Color(0xff000000),
-                                        fontWeight: FontWeight.w700,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                       textAlign: TextAlign.left,
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 18,
-                                  ),
-                                  Text(
-                                    '${turnament.date.toString()}',
-                                    style: TextStyle(
-                                      fontFamily: 'Lato',
-                                      fontSize: 11,
-                                      color: const Color(0xff000000),
-                                      fontWeight: FontWeight.w500,
+                                  ],
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              TournamentDetail(
+                                            tournaments: turnament,
+                                          ),
+                                        ));
+                                  },
+                                  child: Container(
+                                    width: size.width * .30,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      color: const Color(0xffb90b0c),
                                     ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => TournamentDetail(
-                                          tournaments: turnament,
+                                    child: Center(
+                                      child: Text(
+                                        'VIEW DETAIL',
+                                        style: TextStyle(
+                                          fontFamily: 'Lato',
+                                          fontSize: 12,
+                                          color: const Color(0xffffffff),
+                                          fontWeight: FontWeight.w500,
                                         ),
-                                      ));
-                                },
-                                child: Container(
-                                  width: size.width * .30,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    color: const Color(0xffb90b0c),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      'VIEW DETAIL',
-                                      style: TextStyle(
-                                        fontFamily: 'Lato',
-                                        fontSize: 12,
-                                        color: const Color(0xffffffff),
-                                        fontWeight: FontWeight.w500,
+                                        textAlign: TextAlign.center,
                                       ),
-                                      textAlign: TextAlign.center,
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        )
-                      ],
+                          SizedBox(
+                            height: 20,
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 30.0,
-                  )
-                ],
-              );
-            },
+                    SizedBox(
+                      height: 30.0,
+                    )
+                  ],
+                );
+              },
+            ),
           ),
         ),
         SizedBox(

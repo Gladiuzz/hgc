@@ -27,6 +27,10 @@ class _HistoryApprovalState extends State<HistoryApproval> {
     });
   }
 
+  Future refreshData() async {
+    MatchApi().showMatchApproved();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -71,211 +75,214 @@ class _HistoryApprovalState extends State<HistoryApproval> {
     Size size = MediaQuery.of(context).size;
     return Container(
       child: Expanded(
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: match.length,
-          itemBuilder: (context, index) {
-            Pair matches = match[index];
-            return Builder(
-              builder: (context) {
-                if (matches.statusDisplay == "Approved") {
-                  return Container(
-                    width: 374,
-                    height: 239,
-                    margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5.0),
-                      color: const Color(0xffffffff),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0x0d000000),
-                          offset: Offset(0, 3),
-                          blurRadius: 15,
-                        ),
-                      ],
-                    ),
-                    child: Container(
-                      margin: EdgeInsets.only(left: 20, right: 20),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(top: 16),
-                            child: Text(
-                              'Match ID ${matches.id}',
-                              style: TextStyle(
-                                fontFamily: 'Lato',
-                                fontSize: 18,
-                                color: const Color(0xff000000),
-                                fontWeight: FontWeight.w600,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 9,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'Date',
-                                style: TextStyle(
-                                  fontFamily: 'Lato',
-                                  fontSize: 12,
-                                  color: const Color(0xff858585),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                              Text(
-                                '${matches.createdAtDisplay}',
-                                style: TextStyle(
-                                  fontFamily: 'Lato',
-                                  fontSize: 12,
-                                  color: const Color(0xff000000),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                textAlign: TextAlign.right,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 9,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'Course Name',
-                                style: TextStyle(
-                                  fontFamily: 'Lato',
-                                  fontSize: 12,
-                                  color: const Color(0xff858585),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                              Text(
-                                '${matches.golfName}',
-                                style: TextStyle(
-                                  fontFamily: 'Lato',
-                                  fontSize: 12,
-                                  color: const Color(0xff000000),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                textAlign: TextAlign.right,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 9,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'Total Score',
-                                style: TextStyle(
-                                  fontFamily: 'Lato',
-                                  fontSize: 12,
-                                  color: const Color(0xff858585),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                              Text(
-                                '${matches.totalScore}',
-                                style: TextStyle(
-                                  fontFamily: 'Lato',
-                                  fontSize: 12,
-                                  color: const Color(0xff000000),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                textAlign: TextAlign.right,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 9,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'Status',
-                                style: TextStyle(
-                                  fontFamily: 'Lato',
-                                  fontSize: 12,
-                                  color: const Color(0xff858585),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                              Text(
-                                '${matches.statusDisplay}',
-                                style: TextStyle(
-                                  fontFamily: 'Lato',
-                                  fontSize: 14,
-                                  color: const Color(0xff3cd970),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                textAlign: TextAlign.right,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 25.0,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              InboxAPI()
-                                  .getInboxDetail(matches.id)
-                                  .then((value) {
-                                print(value);
-                                context.bloc<PairCubit>().getPair(value);
-                              });
-                              Future.delayed(const Duration(milliseconds: 2000),
-                                  () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => PairSummary(),
-                                    ));
-                              });
-                            },
-                            child: Container(
-                              width: size.width * 0.90,
-                              height: 45,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5.0),
-                                color: const Color(0xffb90b0c),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'VIEW DETAIL',
-                                  style: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontSize: 16,
-                                    color: const Color(0xffffffff),
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
+        child: RefreshIndicator(
+          onRefresh: refreshData,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: match.length,
+            itemBuilder: (context, index) {
+              Pair matches = match[index];
+              return Builder(
+                builder: (context) {
+                  if (matches.statusDisplay == "Approved") {
+                    return Container(
+                      width: 374,
+                      height: 239,
+                      margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5.0),
+                        color: const Color(0xffffffff),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0x0d000000),
+                            offset: Offset(0, 3),
+                            blurRadius: 15,
                           ),
                         ],
                       ),
-                    ),
-                  );
-                } else {
-                  return Container();
-                }
-              },
-            );
-          },
+                      child: Container(
+                        margin: EdgeInsets.only(left: 20, right: 20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.only(top: 16),
+                              child: Text(
+                                'Match ID ${matches.id}',
+                                style: TextStyle(
+                                  fontFamily: 'Lato',
+                                  fontSize: 18,
+                                  color: const Color(0xff000000),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 9,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  'Date',
+                                  style: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontSize: 12,
+                                    color: const Color(0xff858585),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                                Text(
+                                  '${matches.createdAtDisplay}',
+                                  style: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontSize: 12,
+                                    color: const Color(0xff000000),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  textAlign: TextAlign.right,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 9,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  'Course Name',
+                                  style: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontSize: 12,
+                                    color: const Color(0xff858585),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                                Text(
+                                  '${matches.golfName}',
+                                  style: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontSize: 12,
+                                    color: const Color(0xff000000),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  textAlign: TextAlign.right,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 9,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  'Total Score',
+                                  style: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontSize: 12,
+                                    color: const Color(0xff858585),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                                Text(
+                                  '${matches.totalScore}',
+                                  style: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontSize: 12,
+                                    color: const Color(0xff000000),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  textAlign: TextAlign.right,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 9,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  'Status',
+                                  style: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontSize: 12,
+                                    color: const Color(0xff858585),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                                Text(
+                                  '${matches.statusDisplay}',
+                                  style: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontSize: 14,
+                                    color: const Color(0xff3cd970),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  textAlign: TextAlign.right,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 25.0,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                InboxAPI()
+                                    .getInboxDetail(matches.id)
+                                    .then((value) {
+                                  print(value);
+                                  context.bloc<PairCubit>().getPair(value);
+                                });
+                                Future.delayed(
+                                    const Duration(milliseconds: 2000), () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PairSummary(),
+                                      ));
+                                });
+                              },
+                              child: Container(
+                                width: size.width * 0.90,
+                                height: 45,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  color: const Color(0xffb90b0c),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'VIEW DETAIL',
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontSize: 16,
+                                      color: const Color(0xffffffff),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+              );
+            },
+          ),
         ),
       ),
     );

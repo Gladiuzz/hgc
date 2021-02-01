@@ -46,8 +46,8 @@ List<SliderModel> getSlides() {
   sliderModel = new SliderModel();
 
   //2
-  sliderModel.setDesc(
-      "Anda dapat mengikuti tournament yang akan diadakan oleh HGC Golf Tracker");
+  sliderModel
+      .setDesc("Anda dapat mengikuti tournament yang akan diadakan oleh HGC");
 
   sliderModel.setImageAssetPath("assets/images/08_onboarding2.png");
   slides.add(sliderModel);

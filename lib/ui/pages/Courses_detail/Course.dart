@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,20 +30,20 @@ class Course extends StatefulWidget {
 
 class _CourseState extends State<Course> {
   final _debouncer = Debouncer(milliseconds: 500);
-  List<Courses> filtered_course = List();
+  List<Coursesz> filtered_course = List();
 
   bool _hasMore;
   int pageNumber;
   bool _error;
   bool _loading;
   final int _defaultPhotosPerPageCount = 20;
-  List<Courses> _course = List();
+  List<Coursesz> _course = List();
   final int _nextPageThreshold = 5;
 
-  Future<List<Courses>> search(String search) async {
+  Future<List<Coursesz>> search(String search) async {
     await Future.delayed(Duration(seconds: 2));
     return List.generate(search.length, (int index) {
-      return Courses(
+      return Coursesz(
         name: "${search}",
       );
     });
@@ -179,7 +180,7 @@ class _CourseState extends State<Course> {
         shrinkWrap: true,
         itemCount: filtered_course.length + (_hasMore ? 1 : 0),
         itemBuilder: (context, index) {
-          Courses arena = filtered_course[index];
+          Coursesz arena = filtered_course[index];
           if (index == filtered_course.length - _nextPageThreshold) {
             showCourse();
           }
@@ -251,7 +252,7 @@ class _CourseState extends State<Course> {
                             textAlign: TextAlign.left,
                           ),
                           Text(
-                            '${arena.city_name}',
+                            '${arena.location.cityName}',
                             style: TextStyle(
                               fontFamily: 'Lato',
                               fontSize: 12,
@@ -287,7 +288,10 @@ class _CourseState extends State<Course> {
     });
 
     try {
-      var data = courseFromJson(response.body);
+      var test = json.decode(response.body);
+
+      var data = List<Coursesz>.from(
+          test['data'].map((item) => Coursesz.fromJson(item)));
 
       setState(() {
         _hasMore = data.length == _defaultPhotosPerPageCount;
