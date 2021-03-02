@@ -10,6 +10,7 @@ import 'package:hgc/service/UserAPI.dart';
 import 'package:hgc/service/imageAPI.dart';
 import 'package:hgc/ui/pages/Home/Profile/Profile.dart';
 import 'package:hgc/ui/pages/Home/home.dart';
+import 'package:hgc/ui/widgets/Dialog/Dialogs.dart';
 import 'package:hgc/ui/widgets/txtformfield.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -48,6 +49,17 @@ class _EditProfileState extends State<EditProfile> {
     email = context.bloc<UserCubit>().user.email;
     company_name = context.bloc<UserCubit>().user.companyName;
     instagram = context.bloc<UserCubit>().user.socialInstagram;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controllerFullName.dispose();
+    _controllerPhoneNumber.dispose();
+    _controllerEmail.dispose();
+    _controllerAddress.dispose();
+    _controllerCompanyName.dispose();
+    _controllerInstagram.dispose();
   }
 
   setSelectedRadio(int val) {
@@ -517,7 +529,11 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           txtFormField(
                             height: 45.0,
-                            controller: _controllerInstagram..text = instagram,
+                            controller: _controllerInstagram
+                              ..text = context
+                                  .bloc<UserCubit>()
+                                  .user
+                                  .socialInstagram,
                             hint: "Your Instagram",
                             keyboard_type: TextInputType.text,
                           ),
@@ -594,6 +610,7 @@ class _EditProfileState extends State<EditProfile> {
         print("haha ${value.name}");
         context.bloc<UserCubit>().getUser(value);
       });
+      Dialogs().showLoadingDialog(context);
       if (value['message'] != null) {
         Fluttertoast.showToast(
             msg: "${value}",
@@ -605,6 +622,7 @@ class _EditProfileState extends State<EditProfile> {
             fontSize: 14.0);
       } else {
         Future.delayed(const Duration(milliseconds: 2000), () {
+          Navigator.pop(context);
           Navigator.push(
               context,
               MaterialPageRoute(

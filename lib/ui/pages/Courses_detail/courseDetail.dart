@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hgc/cubit/course_pair_cubit.dart';
+import 'package:hgc/cubit/score_cubit.dart';
+import 'package:hgc/cubit/scorecourse_cubit.dart';
 import 'package:hgc/model/golfCourse.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hgc/service/GolfCourseAPI.dart';
@@ -11,6 +14,7 @@ import 'package:hgc/ui/pages/Home/History/history.dart';
 import 'package:hgc/ui/pages/Home/homeFragment.dart';
 import 'package:hgc/ui/pages/onboarding.dart';
 import 'package:hgc/ui/pages/sign_in.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CourseDetail extends StatefulWidget {
   Coursesz courses;
@@ -49,10 +53,20 @@ class _CourseDetailState extends State<CourseDetail> {
     });
   }
 
+  void getDetailCoursesScore() async {
+    CoursesApi().showDetailCourse(widget.courses.id).then((value) {
+      context.bloc<ScoreCubit>().getCourseScore(value);
+    });
+    CoursesApi().showCoursePair(widget.courses.id).then((value) {
+      context.bloc<CoursePairCubit>().getCoursePair(value);
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getDetailCoursesScore();
   }
 
   @override

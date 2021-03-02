@@ -79,6 +79,11 @@ class Coursesz {
     }
     return data;
   }
+
+  @override
+  String toString() {
+    return "id $id, name $name ,description $description ,image $image ,location $location ,contact $contact";
+  }
 }
 
 class Location {

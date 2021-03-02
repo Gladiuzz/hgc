@@ -83,26 +83,27 @@ class _EditPasswordState extends State<EditPassword> {
                           child: TextFormField(
                             controller: _controllerPassword,
                             decoration: InputDecoration(
-                                contentPadding:
-                                    EdgeInsets.only(left: 14, top: 10),
-                                hintText: "Password",
-                                hintStyle: TextStyle(
-                                  fontFamily: 'Roboto',
-                                  fontSize: 14,
-                                  color: const Color(0xff9a9a9a),
+                              contentPadding:
+                                  EdgeInsets.only(left: 14, top: 10),
+                              hintText: "Password",
+                              hintStyle: TextStyle(
+                                fontFamily: 'Roboto',
+                                fontSize: 14,
+                                color: const Color(0xff9a9a9a),
+                              ),
+                              border: InputBorder.none,
+                              suffixIcon: GestureDetector(
+                                onTap: () {
+                                  _togglevisibility();
+                                },
+                                child: Icon(
+                                  _showPassword
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.red,
                                 ),
-                                border: InputBorder.none,
-                                suffixIcon: GestureDetector(
-                                  onTap: () {
-                                    _togglevisibility();
-                                  },
-                                  child: Icon(
-                                    _showPassword
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: Colors.red,
-                                  ),
-                                )),
+                              ),
+                            ),
                             validator: (val) =>
                                 val.length < 8 ? 'Password too short.' : null,
                             obscureText: !_showPassword,

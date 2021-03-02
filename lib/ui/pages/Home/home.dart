@@ -160,7 +160,7 @@ class _HomeState extends State<Home> {
             icon: SvgPicture.asset(
               _selectedIndex == 2
                   ? "assets/icons/golf_sticks_aktif.svg"
-                  : "assets/icons/golf_sticks.svg",
+                  : "assets/icons/non_selected_icn.svg",
               height: 22.0,
               width: 22.0,
             ),

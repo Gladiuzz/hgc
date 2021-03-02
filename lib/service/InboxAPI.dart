@@ -2,6 +2,10 @@ import 'dart:convert';
 
 import 'package:hgc/model/Inbox.dart';
 import 'package:hgc/model/Pair.dart';
+import 'package:hgc/model/match.dart';
+import 'package:hgc/model/member.dart';
+import 'package:hgc/model/tournament_model.dart';
+import 'package:hgc/model/user.dart';
 import 'package:http/http.dart' show Client;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -95,6 +99,173 @@ class InboxAPI {
       print(response.body);
       var data = json.decode(response.body);
       return data;
+    }
+  }
+
+  rejectMatch(id, data) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    final response =
+        await client.put("$request/api/matches/v2/pairs/${id}/reject",
+            headers: {
+              "Accept": "application/json",
+              "Authorization": "Bearer $token",
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: data);
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      var data = json.decode(response.body);
+      return data;
+    } else {
+      print(response.body);
+      var data = json.decode(response.body);
+      return data;
+    }
+  }
+
+  discardMatch(link) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    final response = await client.get("$link", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+
+      return data;
+    } else {
+      var data = json.decode(response.body);
+
+      return data;
+    }
+  }
+
+  matchApproved(link) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    final response = await client.get("$link", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      // print("idnya = ${id}");
+      var data = json.decode(response.body);
+
+      Pairs value = Pairs.fromJson(data);
+      print(value);
+
+      return value;
+    } else {
+      // print("idnya = ${id}");
+      var data = json.decode(response.body);
+
+      Pairs value = Pairs.fromJson(data);
+
+      return value;
+    }
+  }
+
+  matchNonApproved(link) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    final response = await client.get("$link", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      // print("idnya = ${id}");
+      var data = json.decode(response.body);
+
+      Pairs value = Pairs.fromJson(data);
+      print(value);
+
+      return value;
+    } else {
+      // print("idnya = ${id}");
+      var data = json.decode(response.body);
+
+      Pairs value = Pairs.fromJson(data);
+
+      return value;
+    }
+  }
+
+  matchReject(link) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    final response = await client.get("$link", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      // print("idnya = ${id}");
+      var data = json.decode(response.body);
+
+      Matches value = Matches.fromJson(data);
+      print(value);
+
+      return value;
+    } else {
+      // print("idnya = ${id}");
+      var data = json.decode(response.body);
+
+      Matches value = Matches.fromJson(data);
+
+      return value;
+    }
+  }
+
+  becameMemberHGC(link) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    final response = await client.get("$link", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+
+      User value = User.fromJson(data['data']);
+
+      print("hah ${value}");
+      return value;
+    } else {
+      print('gagal load user');
+      print(token);
+      return userFromJson(response.body);
+    }
+  }
+
+  invitedtoTournament(link) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+    final response = await client.get("$link", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+
+      Tournamentss value = Tournamentss.fromJson(data['data']);
+
+      return value;
+    } else {
+      return json.decode(response.body);
     }
   }
 }

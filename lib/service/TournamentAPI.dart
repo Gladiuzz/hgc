@@ -1,7 +1,11 @@
 import 'dart:convert';
 
+import 'package:hgc/model/TournamentLeaderboard.dart';
+import 'package:hgc/model/tournamentDetail.dart';
 import 'package:hgc/model/tournament_model.dart';
+import 'package:hgc/model/verificators.dart';
 import 'package:hgc/ui/pages/Tournament/Tournament.dart';
+import 'package:hgc/ui/pages/Tournament/TournamentLeaderboard.dart';
 import 'package:http/http.dart' show Client;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,6 +34,102 @@ class TournamentApi {
       // print(response.body);
       var data = tournamentFromJson(response.body);
       return data;
+    } else {
+      print('gagal load tournament');
+      print(token);
+      var data = tournamentFromJson(response.body);
+      return data;
+    }
+  }
+
+  showDetailTournament(id) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+    final response = await client.get("$request/api/tournaments/${id}",
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer $token"
+        });
+
+    if (response.statusCode == 200) {
+      // print(response.body);
+      var data = json.decode(response.body);
+
+      Tournament_detail value = Tournament_detail.fromJson(data);
+
+      return value;
+    } else {
+      print('gagal load tournament');
+      print(token);
+      var data = json.decode(response.body);
+      return data;
+    }
+  }
+
+  verificatorTournament(id) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    final response = await client
+        .get("$request/api/tournaments/${id}/verificators", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      // print(response.body);
+      var data = json.decode(response.body);
+
+      Verificators value = Verificators.fromJson(data);
+
+      return value;
+    } else {
+      print('gagal load tournament');
+      print(token);
+      var data = tournamentFromJson(response.body);
+      return data;
+    }
+  }
+
+  tournamentLeaderboard(id) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+    final response = await client
+        .get("$request/api/tournaments/${id}/leaderboards", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      // print(response.body);
+      var data = json.decode(response.body);
+
+      Tournament_Leaderboard value = Tournament_Leaderboard.fromJson(data);
+
+      return value;
+    } else {
+      print('gagal load tournament');
+      print(token);
+      var data = tournamentFromJson(response.body);
+      return data;
+    }
+  }
+
+  tournamentLeaderboardLink(link) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+    final response = await client.get("$link", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      // print(response.body);
+      var data = json.decode(response.body);
+
+      Tournament_Leaderboard value = Tournament_Leaderboard.fromJson(data);
+
+      return value;
     } else {
       print('gagal load tournament');
       print(token);

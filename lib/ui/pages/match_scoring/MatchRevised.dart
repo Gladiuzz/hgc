@@ -1,11 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hgc/cubit/match_cubit.dart';
+import 'package:hgc/model/Pair.dart';
+import 'package:hgc/service/MatchAPI.dart';
 import 'package:hgc/ui/pages/match_scoring/AddScore.dart';
 import 'package:hgc/ui/pages/match_scoring/MatchSummary.dart';
 import 'package:hgc/ui/widgets/Dialog/Discard.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MatchRevise extends StatefulWidget {
-  MatchRevise({Key key}) : super(key: key);
+  Pairs matches;
+  MatchRevise({this.matches});
 
   @override
   _MatchReviseState createState() => _MatchReviseState();
@@ -89,7 +95,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        '#14',
+                                        '#${widget.matches.data.id}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -118,7 +124,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        'Black',
+                                        '${widget.matches.data.teesName}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -147,7 +153,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        '75.70',
+                                        '${widget.matches.data.courseRating}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -176,7 +182,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        '143',
+                                        '${widget.matches.data.slopeRating}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -231,7 +237,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                     height: 20,
                                   ),
                                   Text(
-                                    'Revised reason text here',
+                                    '${widget.matches.data.note}',
                                     style: TextStyle(
                                       fontFamily: 'Lato',
                                       fontSize: 14,
@@ -268,7 +274,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    'North Course',
+                                    '${widget.matches.data.scores[0].courseName}',
                                     style: TextStyle(
                                       fontFamily: 'Lato',
                                       fontSize: 18,
@@ -295,7 +301,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        '0/9',
+                                        '${widget.matches.data.scores[0].clearedCount}/${widget.matches.data.scores[0].holesCount}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -314,7 +320,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       Text(
-                                        'Course Rating',
+                                        'Total Score',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -324,7 +330,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        '0',
+                                        '${widget.matches.data.scores[0].totalScore}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -355,7 +361,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          'ADD SCORE',
+                                          'EDIT SCORE',
                                           style: TextStyle(
                                             fontFamily: 'Lato',
                                             fontSize: 16,
@@ -396,7 +402,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    'South Course',
+                                    '${widget.matches.data.scores[1].courseName}',
                                     style: TextStyle(
                                       fontFamily: 'Lato',
                                       fontSize: 18,
@@ -423,7 +429,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        '0/9',
+                                        '${widget.matches.data.scores[1].clearedCount}/${widget.matches.data.scores[1].holesCount}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -442,7 +448,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       Text(
-                                        'Course Rating',
+                                        'Total Score',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -452,7 +458,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        '0',
+                                        '${widget.matches.data.scores[1].totalScore}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -483,7 +489,7 @@ class _MatchReviseState extends State<MatchRevise> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          'ADD SCORE',
+                                          'EDIT SCORE',
                                           style: TextStyle(
                                             fontFamily: 'Lato',
                                             fontSize: 16,
@@ -501,6 +507,21 @@ class _MatchReviseState extends State<MatchRevise> {
                           ),
                           InkWell(
                             onTap: () {
+                              context
+                                  .bloc<MatchCubit>()
+                                  .getMatch(widget.matches);
+                              MatchApi()
+                                  .submitMatch(widget.matches.data.id)
+                                  .then((value) {
+                                Fluttertoast.showToast(
+                                    msg: "${value}",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.grey,
+                                    textColor: Colors.white,
+                                    fontSize: 14.0);
+                              });
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(

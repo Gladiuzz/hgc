@@ -53,7 +53,7 @@ class Data {
   var totalScore;
   var status;
   String statusDisplay;
-  Null note;
+  var note;
   String userName;
   String pairName;
   String target;

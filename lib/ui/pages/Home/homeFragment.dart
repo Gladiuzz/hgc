@@ -1,13 +1,19 @@
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hgc/cubit/bookings_cubit.dart';
 import 'package:hgc/cubit/course_cubit.dart';
+import 'package:hgc/cubit/leaderboard_cubit.dart';
 import 'package:hgc/cubit/member_cubit.dart';
 import 'package:hgc/cubit/record_cubit.dart';
+import 'package:hgc/cubit/tournament_cubit.dart';
 import 'package:hgc/cubit/user_cubit.dart';
+import 'package:hgc/cubit/verificators_cubit.dart';
 import 'package:hgc/model/golfCourse.dart';
 import 'package:hgc/model/tournament_model.dart';
 import 'package:hgc/model/user.dart';
+import 'package:hgc/service/BookingAPI.dart';
 import 'package:hgc/service/GolfCourseAPI.dart';
 import 'package:hgc/service/HandicapAPI.dart';
 import 'package:hgc/service/TournamentAPI.dart';
@@ -17,7 +23,10 @@ import 'package:hgc/ui/pages/Courses_detail/courseDetail.dart';
 import 'package:hgc/ui/pages/Home/home.dart';
 import 'package:hgc/ui/pages/Tournament/Tournament.dart';
 import 'package:hgc/ui/pages/Tournament/TournamentDetail.dart';
+import 'package:hgc/ui/pages/Tournament/TournamentLeaderboard.dart';
+import 'package:hgc/ui/pages/Tournament/TournamentMatch.dart';
 import 'package:hgc/ui/pages/match_record.dart';
+import 'package:hgc/ui/widgets/Dialog/Dialogs.dart';
 
 class HomeFragment extends StatefulWidget {
   HomeFragment({Key key}) : super(key: key);
@@ -29,6 +38,7 @@ class HomeFragment extends StatefulWidget {
 class _HomeFragmentState extends State<HomeFragment> {
   var handicap;
   User users;
+  var now = new DateTime.now();
 
   @override
   void initState() {
@@ -45,6 +55,12 @@ class _HomeFragmentState extends State<HomeFragment> {
 
   @override
   Widget build(BuildContext context) {
+    var dn = DateTime(now.year, now.month, now.day);
+    var dn2 = DateTime(now.year, now.month, now.day, now.hour, now.minute);
+    DateTime tempDate = DateFormat("yyyy-MM-dd")
+        .parse(context.bloc<BookingsCubit>().book.data[0].dateTimezone);
+    DateTime tempDate2 = DateFormat("yyyy-MM-dd HH:mm")
+        .parse(context.bloc<BookingsCubit>().book.data[0].dateTimezone);
     Size size = MediaQuery.of(context).size;
     return Container(
       child: SafeArea(
@@ -65,7 +81,6 @@ class _HomeFragmentState extends State<HomeFragment> {
             child: SingleChildScrollView(
               child: Container(
                 child: Container(
-                  height: 800,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -181,7 +196,12 @@ class _HomeFragmentState extends State<HomeFragment> {
                               ),
                               Builder(
                                 builder: (context) {
-                                  if (context.bloc<RecordCubit>().records !=
+                                  if (context
+                                          .bloc<RecordCubit>()
+                                          .records
+                                          .data
+                                          .match
+                                          .golfName !=
                                       null) {
                                     return Container(
                                       margin: EdgeInsets.symmetric(
@@ -464,33 +484,21 @@ class _HomeFragmentState extends State<HomeFragment> {
                                               width: size.width,
                                               height: 45.0,
                                               decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(5.0),
-                                                gradient: LinearGradient(
-                                                  begin: Alignment(1.0, 0.0),
-                                                  end: Alignment(-1.0, 0.0),
-                                                  colors: [
-                                                    const Color(0xffa4d700),
-                                                    const Color(0xff346e0d)
-                                                  ],
-                                                  stops: [0.0, 1.0],
-                                                ),
+                                                image: DecorationImage(
+                                                    image: AssetImage(
+                                                        "assets/images/empty_btn.png")),
                                               ),
                                               child: Center(
-                                                child: SizedBox(
-                                                  width: 98.0,
-                                                  child: Text(
-                                                    'LET\'S PLAY',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Lato',
-                                                      fontSize: 16,
-                                                      color: const Color(
-                                                          0xffffffff),
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                    ),
-                                                    textAlign: TextAlign.center,
+                                                child: Text(
+                                                  'PLAY REGULAR MATCH',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Lato',
+                                                    fontSize: 16,
+                                                    color:
+                                                        const Color(0xffffffff),
+                                                    fontWeight: FontWeight.w700,
                                                   ),
+                                                  textAlign: TextAlign.center,
                                                 ),
                                               ),
                                             ),
@@ -504,6 +512,245 @@ class _HomeFragmentState extends State<HomeFragment> {
                             ],
                           ),
                         ),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Builder(
+                        builder: (context) {
+                          if (tempDate.compareTo(dn) == 0) {
+                            return Container(
+                              width: size.width * 0.90,
+                              height: 275.0,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: const Color(0xffffffff),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0x29000000),
+                                    offset: Offset(0, 0),
+                                    blurRadius: 15,
+                                  ),
+                                ],
+                              ),
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                    left: 25, right: 25, top: 20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      'Active Tournament',
+                                      style: TextStyle(
+                                        fontFamily: 'Lato',
+                                        fontSize: 14,
+                                        color: const Color(0xffb90b0c),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    SizedBox(
+                                      height: 5.0,
+                                    ),
+                                    Text(
+                                      '${context.bloc<BookingsCubit>().book.data[0].name}',
+                                      style: TextStyle(
+                                        fontFamily: 'Lato',
+                                        fontSize: 18,
+                                        color: const Color(0xff000000),
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    SizedBox(
+                                      height: 17,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                          'Course Name',
+                                          style: TextStyle(
+                                            fontFamily: 'Lato',
+                                            fontSize: 14,
+                                            color: const Color(0xffbababa),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                        SizedBox(
+                                          width: 180.0,
+                                          child: Text(
+                                            'Royale Jakarta Golf Club',
+                                            style: TextStyle(
+                                              fontFamily: 'Lato',
+                                              fontSize: 14,
+                                              color: const Color(0xff000000),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            textAlign: TextAlign.right,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                          'Verificator Name',
+                                          style: TextStyle(
+                                            fontFamily: 'Lato',
+                                            fontSize: 14,
+                                            color: const Color(0xffbababa),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                        SizedBox(
+                                          width: 180.0,
+                                          child: Text(
+                                            'Project CL',
+                                            style: TextStyle(
+                                              fontFamily: 'Lato',
+                                              fontSize: 14,
+                                              color: const Color(0xff000000),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            textAlign: TextAlign.right,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        Dialogs().showLoadingDialog(context);
+                                        TournamentApi()
+                                            .showDetailTournament(context
+                                                .bloc<BookingsCubit>()
+                                                .book
+                                                .data[0]
+                                                .id)
+                                            .then((value) {
+                                          context
+                                              .bloc<TournamentCubit>()
+                                              .getDetailTournament(value);
+                                          context
+                                              .bloc<VerificatorsCubit>()
+                                              .removeVerificator();
+                                        });
+                                        Future.delayed(
+                                            const Duration(milliseconds: 2000),
+                                            () {
+                                          Navigator.pop(context);
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    TournamentMatch(),
+                                              ));
+                                        });
+                                      },
+                                      child: Container(
+                                        width: size.width,
+                                        height: 45.0,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                          image: DecorationImage(
+                                              image: AssetImage(
+                                                  "assets/images/tournament_btn.png")),
+                                        ),
+                                        child: Center(
+                                          child: SizedBox(
+                                            width: 259.0,
+                                            child: Text(
+                                              'PLAY TOURNAMENT MATCH',
+                                              style: TextStyle(
+                                                fontFamily: 'Lato',
+                                                fontSize: 16,
+                                                color: const Color(0xffffffff),
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        Dialogs().showLoadingDialog(context);
+                                        TournamentApi()
+                                            .tournamentLeaderboard(context
+                                                .bloc<BookingsCubit>()
+                                                .book
+                                                .data[0]
+                                                .id)
+                                            .then((value) {
+                                          print(value);
+                                          context
+                                              .bloc<LeaderboardCubit>()
+                                              .getLeaderboard(value);
+                                          Future.delayed(
+                                              const Duration(
+                                                  milliseconds: 1000), () {
+                                            Navigator.pop(context);
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      TournamentLeaderBoard(),
+                                                ));
+                                          });
+                                        });
+                                      },
+                                      child: Container(
+                                        width: size.width,
+                                        height: 45.0,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                          image: DecorationImage(
+                                              image: AssetImage(
+                                                  "assets/images/leaderboard_btn.png")),
+                                        ),
+                                        child: Center(
+                                          child: SizedBox(
+                                            width: 194.0,
+                                            child: Text(
+                                              'VIEW LEADERBOARD',
+                                              style: TextStyle(
+                                                fontFamily: 'Lato',
+                                                fontSize: 16,
+                                                color: const Color(0xffffffff),
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        },
                       ),
                       SizedBox(
                         height: 25.0,
@@ -625,6 +872,9 @@ class _HomeFragmentState extends State<HomeFragment> {
                           }
                         },
                       ),
+                      SizedBox(
+                        height: 20,
+                      )
                     ],
                   ),
                 ),
@@ -648,13 +898,29 @@ class _HomeFragmentState extends State<HomeFragment> {
             Tournamentss turnament = tournament[index];
             return InkWell(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TournamentDetail(
-                        tournaments: turnament,
-                      ),
-                    ));
+                Dialogs().showLoadingDialog(context);
+                TournamentApi()
+                    .showDetailTournament(turnament.id)
+                    .then((value) {
+                  context.bloc<TournamentCubit>().getDetailTournament(value);
+                });
+                BookingApi()
+                    .bookedDetail(
+                        context.bloc<BookingsCubit>().book.data[0].booking.id)
+                    .then((value) {
+                  print("ejkl ${value}");
+                  context.bloc<BookingsCubit>().getDetailBooking(value);
+                });
+                Future.delayed(const Duration(milliseconds: 1500), () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TournamentDetail(
+                          tournaments: turnament,
+                        ),
+                      ));
+                });
               },
               child: Container(
                 width: size.width * 0.70,

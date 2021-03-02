@@ -39,6 +39,28 @@ class CoursesApi {
     }
   }
 
+  showDetailCourses(id) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+    final response = await client.get("$request/api/golf-courses", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      print(json.decode(response.body)['data']);
+      var data = json.decode(response.body);
+      var datas = json.decode(data);
+
+      Coursesz value = Coursesz.fromJson(data);
+
+      return value;
+    } else {
+      var data = json.decode(response.body);
+      return data;
+    }
+  }
+
   showDetailCourse(id) async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     token = localStorage.getString('token');

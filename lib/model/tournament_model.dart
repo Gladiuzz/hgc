@@ -41,8 +41,8 @@ class Tournamentss {
   String name;
   String description;
   String image;
-  String date;
-  String dateTimezone;
+  var date;
+  var dateTimezone;
   int organizerId;
   int golfId;
   int maleTeesId;
@@ -51,8 +51,8 @@ class Tournamentss {
   int handicapLimit;
   int fee;
   String feeStr;
-  String paymentDeadline;
-  String paymentDeadlineTimezone;
+  var paymentDeadline;
+  var paymentDeadlineTimezone;
   Attendance attendance;
   bool isBookingable;
   bool isPaymentOpen;
@@ -129,6 +129,11 @@ class Tournamentss {
     data['is_bookingable'] = this.isBookingable;
     data['is_payment_open'] = this.isPaymentOpen;
     return data;
+  }
+
+  @override
+  String toString() {
+    return 'date: $date';
   }
 }
 

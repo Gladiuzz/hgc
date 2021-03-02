@@ -1,12 +1,17 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hgc/cubit/bookings_cubit.dart';
 import 'package:hgc/cubit/record_cubit.dart';
 import 'package:hgc/cubit/user_cubit.dart';
 import 'package:hgc/model/user.dart';
+import 'package:hgc/service/BookingAPI.dart';
 import 'package:hgc/service/RecordAPI.dart';
 import 'package:hgc/service/UserAPI.dart';
 import 'package:hgc/ui/pages/Home/home.dart';
@@ -22,11 +27,41 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  String deviceName;
+  String deviceVersion;
+  String identifier;
+  final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+
   bool _showPassword = false;
   void _togglevisibility() {
     setState(() {
       _showPassword = !_showPassword;
     });
+  }
+
+  Future<List<String>> getDeviceDetails() async {
+    try {
+      if (Platform.isAndroid) {
+        var build = await deviceInfoPlugin.androidInfo;
+        deviceName = build.model;
+        deviceVersion = build.version.toString();
+        identifier = build.androidId; //UUID for Android
+      } else if (Platform.isIOS) {
+        var data = await deviceInfoPlugin.iosInfo;
+        deviceName = data.name;
+        deviceVersion = data.systemVersion;
+        identifier = data.identifierForVendor; //UUID for iOS
+      }
+    } on PlatformException {
+      print('Failed to get platform version');
+    }
+
+    return [deviceName, deviceVersion, identifier];
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   final TextEditingController email = new TextEditingController();
@@ -172,8 +207,18 @@ class _SignInPageState extends State<SignInPage> {
                         color: const Color(0xffb90b0c),
                       ),
                       child: RaisedButton(
-                        onPressed: () {
-                          // print('test');
+                        onPressed: () async {
+                          DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+                          if (Platform.isAndroid) {
+                            AndroidDeviceInfo androidInfo =
+                                await deviceInfo.androidInfo;
+                            // print('test');
+
+                            print(androidInfo.androidId);
+                          } else if (Platform.isIOS) {
+                            IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+                            print(iosInfo.identifierForVendor);
+                          }
                           _login();
                         },
                         color: Color(0xffb90b0c),
@@ -296,8 +341,34 @@ class _SignInPageState extends State<SignInPage> {
         // UserApi().getToken(value['token']);
         SharedPreferences localStorage = await SharedPreferences.getInstance();
         localStorage.setString('token', value['token']);
-        print(localStorage.getString('token'));
+        print("hah?${localStorage.getString('token')}");
+
+        DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+        var fcm;
+        if (Platform.isAndroid) {
+          AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+          // print('test');
+          fcm = {
+            'device_id': androidInfo.androidId,
+            'token': value['token'],
+          };
+
+          print(androidInfo.androidId);
+        } else if (Platform.isIOS) {
+          IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+
+          fcm = {
+            'device_id': iosInfo.identifierForVendor,
+            'token': value['token'],
+          };
+
+          print(iosInfo.identifierForVendor);
+        }
+
         setState(() {
+          UserApi().getfcm(fcm).then((value) {
+            print("The message ${value}");
+          });
           UserApi().showUser().then((value) {
             print("haha ${value.name}");
             context.bloc<UserCubit>().getUser(value);
@@ -305,6 +376,10 @@ class _SignInPageState extends State<SignInPage> {
           RecordApi().showRecord().then((value) {
             print("record ${value}");
             context.bloc<RecordCubit>().getRecord(value);
+          });
+          BookingApi().showBookedTournament().then((value) {
+            print("bookingan ${value}");
+            context.bloc<BookingsCubit>().getActiveTournament(value);
           });
 
           Future.delayed(const Duration(milliseconds: 3000), () {

@@ -6,8 +6,15 @@ class Tees {
   String name;
   var courseRating;
   var slopeRating;
+  var distance;
 
-  Tees({this.id, this.golfId, this.name, this.courseRating, this.slopeRating});
+  Tees(
+      {this.id,
+      this.golfId,
+      this.name,
+      this.courseRating,
+      this.slopeRating,
+      this.distance});
 
   Tees.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -15,6 +22,7 @@ class Tees {
     name = json['name'];
     courseRating = json['course_rating'];
     slopeRating = json['slope_rating'];
+    distance = json['distance'];
   }
 
   Map<String, dynamic> toJson() {
@@ -24,6 +32,7 @@ class Tees {
     data['name'] = this.name;
     data['course_rating'] = this.courseRating;
     data['slope_rating'] = this.slopeRating;
+    data['distance'] = this.distance;
     return data;
   }
 

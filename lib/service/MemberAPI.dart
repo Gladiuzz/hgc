@@ -38,4 +38,27 @@ class MemberApi {
       return data;
     }
   }
+
+  becomeMember(data) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    final response = await client.post(
+      "$request/api/members/register",
+      headers: {
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      body: data,
+    );
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      var datas = json.decode(response.body);
+      return datas;
+    } else {
+      print(response.body);
+      return json.decode(response.body);
+    }
+  }
 }

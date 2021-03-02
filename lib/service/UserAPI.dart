@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hgc/model/api_return_value.dart';
 import 'package:hgc/model/user.dart';
 import 'package:http/http.dart' show Client;
@@ -90,6 +92,20 @@ class UserApi {
         'Accept': 'application/json',
       },
       body: {'email': email, 'password': password},
+    ).timeout(
+      Duration(seconds: 5),
+      onTimeout: () {
+        Fluttertoast.showToast(
+            msg: "Something is wrong with your internet or server",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.grey,
+            textColor: Colors.white,
+            fontSize: 14.0);
+
+        return null;
+      },
     );
 
     if (response.statusCode == 200) {
@@ -142,6 +158,24 @@ class UserApi {
       print('gagal load user');
       print(token);
       return userFromJson(response.body);
+    }
+  }
+
+  getfcm(data) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+    final response = await client.post(
+      "$baseURL/api/account/fcm-token",
+      headers: {"Accept": "application/json", "Authorization": "Bearer $token"},
+      body: data,
+    );
+
+    if (response.statusCode == 201) {
+      print(response.body);
+      return json.decode(response.body);
+    } else {
+      print(response.body);
+      return json.decode(response.body);
     }
   }
 }

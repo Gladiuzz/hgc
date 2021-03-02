@@ -22,7 +22,7 @@ class Verificator extends StatefulWidget {
 class _VerificatorState extends State<Verificator> {
   ScrollController _scrollController;
   final _debouncer = Debouncer(milliseconds: 500);
-  List<Member> filtered_member = List();
+  List<Member> filtered_member;
 
   bool _hasMore;
   int pageNumber;
@@ -54,11 +54,10 @@ class _VerificatorState extends State<Verificator> {
     pageNumber = 1;
     _error = false;
     _loading = true;
+    _member.sort((a, b) => a.name.compareTo(b.name));
     filtered_member = _member;
-    filtered_member.sort((a, b) {
-      test = a.name.toLowerCase().compareTo(b.name.toLowerCase());
-      return test;
-    });
+    filtered_member.sort((a, b) => a.name.compareTo(b.name));
+    print("ws ${filtered_member}");
     showMember();
   }
 
@@ -174,7 +173,7 @@ class _VerificatorState extends State<Verificator> {
       onRefresh: refreshData,
       child: Container(
         width: size.width,
-        height: size.height * .75,
+        height: size.height * .79,
         child: ListView.builder(
           itemCount: filtered_member.length + (_hasMore ? 1 : 0),
           itemBuilder: (context, index) {

@@ -1,16 +1,29 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hgc/cubit/bookings_cubit.dart';
 import 'package:hgc/cubit/course_cubit.dart';
+import 'package:hgc/cubit/course_pair_cubit.dart';
+import 'package:hgc/cubit/leaderboard_cubit.dart';
 import 'package:hgc/cubit/match_cubit.dart';
 import 'package:hgc/cubit/member_cubit.dart';
 import 'package:hgc/cubit/pair_cubit.dart';
 import 'package:hgc/cubit/record_cubit.dart';
 import 'package:hgc/cubit/score_cubit.dart';
 import 'package:hgc/cubit/scorecourse_cubit.dart';
+import 'package:hgc/cubit/tournament_cubit.dart';
 import 'package:hgc/cubit/user_cubit.dart';
+import 'package:hgc/cubit/verificators_cubit.dart';
+import 'package:hgc/service/RecordAPI.dart';
+import 'package:hgc/service/UserAPI.dart';
+import 'package:hgc/ui/pages/Home/home.dart';
+import 'package:hgc/ui/pages/SplashScreen/SplashScreen.dart';
 import 'package:hgc/ui/pages/onboarding.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyHomePage());
 }
 
@@ -25,11 +38,57 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  bool isAuth = false;
+  var token;
 
   void _incrementCounter() {
     setState(() {
       _counter++;
     });
+  }
+
+  // _checkIfLoggedIn() async {
+  //   SharedPreferences localStorage = await SharedPreferences.getInstance();
+  //   token = localStorage.getString('token');
+  //   var duration = new Duration(seconds: 4);
+  //   print(token);
+  //   if (token != null) {
+  //     setState(() {
+  //       isAuth = true;
+  //       return new Timer(Duration(seconds: 3), navigationPage2);
+  //     });
+  //   } else {
+  //     print('no login');
+  //     setState(() {
+  //       return new Timer(duration, navigationPage1);
+  //     });
+  //   }
+  // }
+
+  // void navigationPage1() {
+  //   Navigator.of(context).pushReplacementNamed('/onBoarding');
+  // }
+
+  // void navigationPage2() {
+  //   UserApi().showUser().then((value) {
+  //     print("haha ${value.name}");
+  //     context.bloc<UserCubit>().getUser(value);
+  //   });
+  //   RecordApi().showRecord().then((value) {
+  //     print("record ${value}");
+  //     context.bloc<RecordCubit>().getRecord(value);
+  //   });
+
+  //   Future.delayed(const Duration(milliseconds: 3000), () {
+  //     Navigator.of(context).pushReplacementNamed('/home');
+  //   });
+  // }
+
+  @override
+  void initState() {
+    super.initState();
+    // checkAuth();
+    // _checkIfLoggedIn();
   }
 
   @override
@@ -46,11 +105,20 @@ class _MyHomePageState extends State<MyHomePage> {
         BlocProvider(create: (context) => PairCubit()),
         BlocProvider(create: (context) => RecordCubit()),
         BlocProvider(create: (context) => ScorecourseCubit()),
+        BlocProvider(create: (context) => CoursePairCubit()),
+        BlocProvider(create: (context) => LeaderboardCubit()),
+        BlocProvider(create: (context) => BookingsCubit()),
+        BlocProvider(create: (context) => TournamentCubit()),
+        BlocProvider(create: (context) => VerificatorsCubit()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Halo Golf Tracker',
-        home: Onboarding(),
+        home: SplashScreen(),
+        routes: {
+          '/onBoarding': (BuildContext context) => Onboarding(),
+          '/home': (BuildContext context) => Home(),
+        },
       ),
     );
   }

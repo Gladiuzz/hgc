@@ -10,6 +10,7 @@ import 'package:hgc/ui/pages/Home/home.dart';
 import 'package:hgc/ui/pages/Home/homeFragment.dart';
 import 'package:hgc/ui/pages/match_scoring/AddScore.dart';
 import 'package:hgc/ui/pages/match_scoring/MatchRevised.dart';
+import 'package:hgc/ui/widgets/Dialog/Dialogs_revise.dart';
 import 'package:hgc/ui/widgets/Dialog/Discard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -71,7 +72,7 @@ class _MatchSummaryState extends State<MatchSummary> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => History(),
+                                    builder: (context) => Home(),
                                   ));
                             }
                           },
@@ -437,12 +438,16 @@ class _MatchSummaryState extends State<MatchSummary> {
                                             children: <Widget>[
                                               InkWell(
                                                 onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            MatchRevise(),
-                                                      ));
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        DialogsRevise(
+                                                      match: context
+                                                          .bloc<MatchCubit>()
+                                                          .matches,
+                                                    ),
+                                                  );
                                                 },
                                                 child: Container(
                                                   width: size.width * 0.4,

@@ -58,52 +58,47 @@ class _HistoryMatchState extends State<HistoryMatch> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          height: size.height,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 15,
-              ),
-              Builder(
-                builder: (context) {
-                  if (_match.isEmpty) {
-                    if (_loading) {
-                      return Center(
-                          child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: CircularProgressIndicator(),
-                      ));
-                    } else if (_error) {
-                      return Center(
-                          child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            _loading = true;
-                            _error = false;
-                            showMatches();
-                          });
-                        },
+      body: Container(
+        height: size.height,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              height: 15,
+            ),
+            Builder(
+              builder: (context) {
+                if (_match.isEmpty) {
+                  if (_loading) {
+                    return Center(
                         child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Text(
-                              "Error while loading Matches, tap to try again"),
-                        ),
-                      ));
-                    }
-                  } else {
-                    return _buildListView();
+                      padding: const EdgeInsets.all(8),
+                      child: CircularProgressIndicator(),
+                    ));
+                  } else if (_error) {
+                    return Center(
+                        child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          _loading = true;
+                          _error = false;
+                          showMatches();
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(
+                            "Error while loading Matches, tap to try again"),
+                      ),
+                    ));
                   }
-                  return Container();
-                },
-              ),
-              SizedBox(
-                height: 180,
-              ),
-            ],
-          ),
+                } else {
+                  return _buildListView();
+                }
+                return Container();
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -327,6 +322,7 @@ class _HistoryMatchState extends State<HistoryMatch> {
                       ),
                       GestureDetector(
                         onTap: () {
+                          Dialogs().showLoadingDialog(context);
                           // _showDetailHistory();
                           MatchApi()
                               .showMatchDetail(matches.id)
@@ -340,12 +336,14 @@ class _HistoryMatchState extends State<HistoryMatch> {
                                       .matches
                                       .statusDisplay ==
                                   "Playing") {
+                                Navigator.pop(context);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => MatchScore(),
                                     ));
                               } else {
+                                Navigator.pop(context);
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(

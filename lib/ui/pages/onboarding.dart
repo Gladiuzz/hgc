@@ -1,10 +1,17 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hgc/cubit/record_cubit.dart';
+import 'package:hgc/cubit/user_cubit.dart';
 import 'package:hgc/data/data.dart';
+import 'package:hgc/service/RecordAPI.dart';
+import 'package:hgc/service/UserAPI.dart';
 import 'package:hgc/ui/pages/sign_in.dart';
 import 'package:hgc/ui/widgets/SlideTile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Onboarding extends StatefulWidget {
   final Widget child;
@@ -19,6 +26,44 @@ class _OnboardingState extends State<Onboarding> {
   List<SliderModel> mySLides = new List<SliderModel>();
   int slideIndex = 0;
   PageController controller;
+  bool isAuth = false;
+
+  void _checkIfLoggedIn() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var token = localStorage.getString('token');
+    var duration = new Duration(seconds: 4);
+    print(token);
+    if (token != null) {
+      setState(() {
+        isAuth = true;
+        return new Timer(Duration(seconds: 1), navigationPage2);
+      });
+    } else {
+      print('no login');
+      setState(() {
+        return new Timer(duration, navigationPage1);
+      });
+    }
+  }
+
+  void navigationPage1() {
+    Navigator.of(context).pushReplacementNamed('/onBoarding');
+  }
+
+  void navigationPage2() {
+    UserApi().showUser().then((value) {
+      print("haha ${value.name}");
+      context.bloc<UserCubit>().getUser(value);
+    });
+    RecordApi().showRecord().then((value) {
+      print("record ${value}");
+      context.bloc<RecordCubit>().getRecord(value);
+    });
+
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      Navigator.of(context).pushReplacementNamed('/home');
+    });
+  }
 
   Widget _buildPageIndicator(bool isCurrentPage) {
     return Container(
@@ -38,6 +83,7 @@ class _OnboardingState extends State<Onboarding> {
     super.initState();
     mySLides = getSlides();
     controller = new PageController();
+    // _checkIfLoggedIn();
   }
 
   @override

@@ -531,66 +531,14 @@ class _MatchRecordState extends State<MatchRecord> {
                                                                               ),
                                                                             ));
                                                                       });
-                                                                    } else if (value['errors']
-                                                                            [
-                                                                            'tees_id'] !=
-                                                                        null) {
-                                                                      setState(
-                                                                          () {
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      });
+                                                                    } else if (value[
+                                                                            'message'] ==
+                                                                        "Finish your previous match before playing other match.") {
+                                                                      Navigator.pop(
+                                                                          context);
                                                                       Fluttertoast.showToast(
                                                                           msg:
-                                                                              "${value['errors']['tees_id'][0]}",
-                                                                          toastLength: Toast
-                                                                              .LENGTH_SHORT,
-                                                                          gravity: ToastGravity
-                                                                              .BOTTOM,
-                                                                          timeInSecForIosWeb:
-                                                                              1,
-                                                                          backgroundColor: Colors
-                                                                              .grey,
-                                                                          textColor: Colors
-                                                                              .white,
-                                                                          fontSize:
-                                                                              14.0);
-                                                                    } else if (value['errors']
-                                                                            [
-                                                                            'golf_id'] !=
-                                                                        null) {
-                                                                      setState(
-                                                                          () {
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      });
-                                                                      Fluttertoast.showToast(
-                                                                          msg:
-                                                                              "${value['errors']['golf_id'][0]}",
-                                                                          toastLength: Toast
-                                                                              .LENGTH_SHORT,
-                                                                          gravity: ToastGravity
-                                                                              .BOTTOM,
-                                                                          timeInSecForIosWeb:
-                                                                              1,
-                                                                          backgroundColor: Colors
-                                                                              .grey,
-                                                                          textColor: Colors
-                                                                              .white,
-                                                                          fontSize:
-                                                                              14.0);
-                                                                    } else if (value['errors']
-                                                                            [
-                                                                            'course_pair_id'] !=
-                                                                        null) {
-                                                                      setState(
-                                                                          () {
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      });
-                                                                      Fluttertoast.showToast(
-                                                                          msg:
-                                                                              "${value['errors']['course_pair_id'][0]}",
+                                                                              "${value['message']}",
                                                                           toastLength: Toast
                                                                               .LENGTH_SHORT,
                                                                           gravity: ToastGravity

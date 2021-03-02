@@ -44,6 +44,29 @@ class MatchApi {
     }
   }
 
+  createMatchTournament(data, id) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    final response = await client.post(
+      "$request/api/tournaments/${id}/match",
+      headers: {
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      body: data,
+    );
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      var datas = json.decode(response.body);
+      return datas;
+    } else {
+      print(response.body);
+      return json.decode(response.body);
+    }
+  }
+
   showMatchApproved() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     token = localStorage.getString('token');

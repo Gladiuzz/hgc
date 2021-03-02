@@ -13,6 +13,7 @@ import 'package:hgc/ui/pages/forgot_password.dart';
 import 'package:hgc/ui/pages/match_scoring/MatchSummary.dart';
 import 'package:hgc/ui/pages/register.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hgc/ui/widgets/Dialog/Dialogs.dart';
 
 class HistoryApproval extends StatefulWidget {
   @override
@@ -35,37 +36,32 @@ class _HistoryApprovalState extends State<HistoryApproval> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          height: size.height,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 15,
-              ),
-              FutureBuilder(
-                future: MatchApi().showMatchApproved(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text("${snapshot.error}"),
-                    );
-                  } else if (snapshot.hasData) {
-                    List<Pair> match = snapshot.data;
-                    return _buildListView(match);
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-              SizedBox(
-                height: 180,
-              ),
-            ],
-          ),
+      body: Container(
+        height: size.height,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              height: 15,
+            ),
+            FutureBuilder(
+              future: MatchApi().showMatchApproved(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text("${snapshot.error}"),
+                  );
+                } else if (snapshot.hasData) {
+                  List<Pair> match = snapshot.data;
+                  return _buildListView(match);
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -234,8 +230,9 @@ class _HistoryApprovalState extends State<HistoryApproval> {
                             SizedBox(
                               height: 25.0,
                             ),
-                            InkWell(
+                            GestureDetector(
                               onTap: () {
+                                Dialogs().showLoadingDialog(context);
                                 InboxAPI()
                                     .getInboxDetail(matches.id)
                                     .then((value) {
@@ -244,6 +241,7 @@ class _HistoryApprovalState extends State<HistoryApproval> {
                                 });
                                 Future.delayed(
                                     const Duration(milliseconds: 2000), () {
+                                  Navigator.pop(context);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(

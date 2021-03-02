@@ -1,11 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hgc/cubit/leaderboard_cubit.dart';
 import 'package:hgc/cubit/match_cubit.dart';
 import 'package:hgc/cubit/score_cubit.dart';
 import 'package:hgc/cubit/scorecourse_cubit.dart';
 import 'package:hgc/service/GolfCourseAPI.dart';
 import 'package:hgc/service/MatchAPI.dart';
+import 'package:hgc/service/TournamentAPI.dart';
+import 'package:hgc/ui/pages/Tournament/TournamentLeaderboard.dart';
 import 'package:hgc/ui/pages/match_scoring/AddScore.dart';
 import 'package:hgc/ui/pages/match_scoring/MatchSummary.dart';
 import 'package:hgc/ui/widgets/Dialog/Dialogs.dart';
@@ -40,27 +44,80 @@ class _MatchScoreState extends State<MatchScore> {
             child: Container(
               child: Stack(
                 children: <Widget>[
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Builder(
+                      builder: (context) {
+                        if (context
+                                .bloc<MatchCubit>()
+                                .matches
+                                .links
+                                .leaderboards !=
+                            null) {
+                          return GestureDetector(
+                            onTap: () {
+                              Dialogs().showLoadingDialog(context);
+                              TournamentApi()
+                                  .tournamentLeaderboardLink(context
+                                      .bloc<MatchCubit>()
+                                      .matches
+                                      .links
+                                      .leaderboards)
+                                  .then((value) {
+                                print(value);
+                                context
+                                    .bloc<LeaderboardCubit>()
+                                    .getLeaderboard(value);
+                                Future.delayed(
+                                    const Duration(milliseconds: 1000), () {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            TournamentLeaderBoard(),
+                                      ));
+                                });
+                              });
+                            },
+                            child: Container(
+                                margin: EdgeInsets.only(
+                                    left: 21, top: 25, right: 20),
+                                child: SvgPicture.asset(
+                                  "assets/icons/trophy-leaderboard.svg",
+                                )),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
+                    ),
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: EdgeInsets.only(left: 16, top: 10),
-                        child: IconButton(
-                          icon: Icon(Icons.arrow_back_ios,
-                              color: const Color(0xffb90b0c)),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) => Discard(
-                                title: "Warning",
-                                description: "Discard this match?",
-                                buttonText: "Okay",
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                      Column(
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.only(left: 16, top: 10),
+                            child: IconButton(
+                              icon: Icon(Icons.arrow_back_ios,
+                                  color: const Color(0xffb90b0c)),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) => Discard(
+                                    title: "Warning",
+                                    description: "Discard this match?",
+                                    buttonText: "Okay",
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                   Container(
@@ -273,7 +330,7 @@ class _MatchScoreState extends State<MatchScore> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        '0/9',
+                                        '${context.bloc<MatchCubit>().matches.scores[0].clearedCount}/${context.bloc<MatchCubit>().matches.scores[0].holesCount}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -319,6 +376,10 @@ class _MatchScoreState extends State<MatchScore> {
                                   InkWell(
                                     onTap: () {
                                       Dialogs().showLoadingDialog(context);
+                                      context
+                                          .bloc<ScorecourseCubit>()
+                                          .listscorecourse
+                                          .clear();
                                       MatchApi()
                                           .showCourseScore(
                                               context
@@ -458,7 +519,7 @@ class _MatchScoreState extends State<MatchScore> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        '0/9',
+                                        '${context.bloc<MatchCubit>().matches.scores[1].clearedCount}/${context.bloc<MatchCubit>().matches.scores[1].holesCount}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -504,15 +565,29 @@ class _MatchScoreState extends State<MatchScore> {
                                   Builder(
                                     builder: (context) {
                                       if (context
-                                              .bloc<MatchCubit>()
-                                              .matches
-                                              .scores[0]
-                                              .totalScore !=
-                                          0) {
+                                                  .bloc<MatchCubit>()
+                                                  .matches
+                                                  .scores[0]
+                                                  .isSkipped ==
+                                              true ||
+                                          context
+                                                  .bloc<MatchCubit>()
+                                                  .matches
+                                                  .scores[0]
+                                                  .clearedCount ==
+                                              context
+                                                  .bloc<MatchCubit>()
+                                                  .matches
+                                                  .scores[0]
+                                                  .holesCount) {
                                         return InkWell(
                                           onTap: () {
                                             Dialogs()
                                                 .showLoadingDialog(context);
+                                            context
+                                                .bloc<ScorecourseCubit>()
+                                                .listscorecourse
+                                                .clear();
                                             MatchApi()
                                                 .showCourseScore(
                                                     context
@@ -569,24 +644,60 @@ class _MatchScoreState extends State<MatchScore> {
                                               color: const Color(0xffb90b0c),
                                             ),
                                             child: Center(
-                                              child: Text(
-                                                'ADD SCORE',
-                                                style: TextStyle(
-                                                  fontFamily: 'Lato',
-                                                  fontSize: 16,
-                                                  color:
-                                                      const Color(0xffffffff),
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ),
+                                                child: context
+                                                                .bloc<
+                                                                    MatchCubit>()
+                                                                .matches
+                                                                .scores[1]
+                                                                .isSkipped ==
+                                                            true ||
+                                                        context
+                                                                .bloc<
+                                                                    MatchCubit>()
+                                                                .matches
+                                                                .scores[1]
+                                                                .clearedCount ==
+                                                            context
+                                                                .bloc<
+                                                                    MatchCubit>()
+                                                                .matches
+                                                                .scores[1]
+                                                                .holesCount
+                                                    ? Text(
+                                                        'EDIT SCORE',
+                                                        style: TextStyle(
+                                                          fontFamily: 'Lato',
+                                                          fontSize: 16,
+                                                          color: const Color(
+                                                              0xffffffff),
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      )
+                                                    : Text(
+                                                        'ADD SCORE',
+                                                        style: TextStyle(
+                                                          fontFamily: 'Lato',
+                                                          fontSize: 16,
+                                                          color: const Color(
+                                                              0xffffffff),
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      )),
                                           ),
                                         );
                                       } else {
                                         return Container();
                                       }
                                     },
+                                  ),
+                                  SizedBox(
+                                    height: 25,
                                   )
                                 ],
                               ),
@@ -595,11 +706,21 @@ class _MatchScoreState extends State<MatchScore> {
                           Builder(
                             builder: (context) {
                               if (context
-                                      .bloc<MatchCubit>()
-                                      .matches
-                                      .scores[1]
-                                      .totalScore !=
-                                  0) {
+                                          .bloc<MatchCubit>()
+                                          .matches
+                                          .scores[1]
+                                          .isSkipped ==
+                                      true ||
+                                  context
+                                          .bloc<MatchCubit>()
+                                          .matches
+                                          .scores[1]
+                                          .clearedCount ==
+                                      context
+                                          .bloc<MatchCubit>()
+                                          .matches
+                                          .scores[1]
+                                          .holesCount) {
                                 return InkWell(
                                   onTap: () {
                                     MatchApi()

@@ -86,6 +86,7 @@ class Data {
 }
 
 class Holes {
+  int hole_id;
   int id;
   int index;
   int par;
@@ -94,30 +95,38 @@ class Holes {
   int score;
 
   Holes(
-      {this.id,
+      {this.hole_id,
       this.index,
       this.par,
       this.handicap,
       this.distance,
-      this.score});
+      this.score,
+      this.id});
 
   Holes.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    hole_id = json['id'];
     index = json['index'];
     par = json['par'];
     handicap = json['handicap'];
     distance = json['distance'];
     score = json['score'];
+    id = json['id'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
+    data['id'] = this.hole_id;
     data['index'] = this.index;
     data['par'] = this.par;
     data['handicap'] = this.handicap;
     data['distance'] = this.distance;
     data['score'] = this.score;
+    data['hole_id'] = this.id;
     return data;
+  }
+
+  @override
+  String toString() {
+    return "index: $index,hole_id: $id,score: $score";
   }
 }

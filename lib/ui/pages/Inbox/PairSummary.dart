@@ -13,6 +13,7 @@ import 'package:hgc/ui/pages/Home/homeFragment.dart';
 import 'package:hgc/ui/pages/match_scoring/AddScore.dart';
 import 'package:hgc/ui/pages/match_scoring/MatchRevised.dart';
 import 'package:hgc/ui/pages/match_scoring/MatchSummary.dart';
+import 'package:hgc/ui/widgets/Dialog/Dialogs_revise.dart';
 import 'package:hgc/ui/widgets/Dialog/Discard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hgc/model/Pair.dart';
@@ -409,12 +410,12 @@ class _PairSummaryState extends State<PairSummary> {
                                             children: <Widget>[
                                               InkWell(
                                                 onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            MatchRevise(),
-                                                      ));
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        DialogsRevise(),
+                                                  );
                                                 },
                                                 child: Container(
                                                   width: size.width * 0.4,

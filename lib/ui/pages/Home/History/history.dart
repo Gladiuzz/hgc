@@ -4,6 +4,7 @@ import 'package:hgc/ui/pages/Courses_detail/CourseInfo.dart';
 import 'package:hgc/ui/pages/Courses_detail/Courses.dart';
 import 'package:hgc/ui/pages/Home/History/historyApproval.dart';
 import 'package:hgc/ui/pages/Home/History/historyMatch.dart';
+import 'package:hgc/ui/pages/Home/History/historyTournament.dart';
 import 'package:hgc/ui/pages/Home/course_list.dart';
 
 class History extends StatefulWidget {
@@ -102,7 +103,7 @@ class _HistoryState extends State<History> {
           children: [
             HistoryMatch(),
             HistoryApproval(),
-            Container(),
+            HistoryTournament(),
           ],
         ),
       ),
