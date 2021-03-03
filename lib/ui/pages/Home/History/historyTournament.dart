@@ -97,9 +97,6 @@ class _HistoryTournamentState extends State<HistoryTournament> {
                 return Container();
               },
             ),
-            SizedBox(
-              height: 180,
-            ),
           ],
         ),
       ),

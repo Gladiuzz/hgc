@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TournamentPay extends StatefulWidget {
-  TournamentPay({Key key}) : super(key: key);
+  String harga_tournament;
+
+  TournamentPay({
+    this.harga_tournament,
+  });
 
   @override
   _TournamentPayState createState() => _TournamentPayState();
@@ -15,6 +20,16 @@ class _TournamentPayState extends State<TournamentPay> {
     setState(() {
       selectedRadio = val;
     });
+  }
+
+  _launchURL() async {
+    const url =
+        'https://dev.faspay.co.id/pws/100003/0830000010100000/cd2b21f9ea54f82582868c96798b23c3cbda06d3?trx_id=3375170200000042&merchant_id=33751&bill_no=987651234567892';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -825,7 +840,7 @@ class _TournamentPayState extends State<TournamentPay> {
                                 textAlign: TextAlign.left,
                               ),
                               Text(
-                                'Rp. 1.019.000',
+                                widget.harga_tournament.toString(),
                                 style: TextStyle(
                                   fontFamily: 'Lato',
                                   fontSize: 18,
@@ -837,28 +852,34 @@ class _TournamentPayState extends State<TournamentPay> {
                             ],
                           ),
                           // Adobe XD layer: 'Rectangle 1 copy 20' (shape)
-                          Container(
-                            height: 45,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(3.0),
-                              color: const Color(0xffb90b0c),
-                            ),
-                            child: Center(
-                              child: Container(
-                                margin: EdgeInsets.only(left: 40, right: 40),
-                                child: Text(
-                                  'PAY NOW',
-                                  style: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontSize: 16,
-                                    color: const Color(0xffffffff),
-                                    letterSpacing: 0.16,
-                                    fontWeight: FontWeight.w700,
-                                    height: 1,
+                          GestureDetector(
+                            onTap: () {
+                              _launchURL();
+                              print('bayar');
+                            },
+                            child: Container(
+                              height: 45,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(3.0),
+                                color: const Color(0xffb90b0c),
+                              ),
+                              child: Center(
+                                child: Container(
+                                  margin: EdgeInsets.only(left: 40, right: 40),
+                                  child: Text(
+                                    'PAY NOW',
+                                    style: TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontSize: 16,
+                                      color: const Color(0xffffffff),
+                                      letterSpacing: 0.16,
+                                      fontWeight: FontWeight.w700,
+                                      height: 1,
+                                    ),
+                                    textHeightBehavior: TextHeightBehavior(
+                                        applyHeightToFirstAscent: false),
+                                    textAlign: TextAlign.center,
                                   ),
-                                  textHeightBehavior: TextHeightBehavior(
-                                      applyHeightToFirstAscent: false),
-                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ),

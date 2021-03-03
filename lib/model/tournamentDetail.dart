@@ -123,6 +123,11 @@ class Data {
     }
     return data;
   }
+
+  @override
+  String toString() {
+    return "booking: $booking";
+  }
 }
 
 class Tees {

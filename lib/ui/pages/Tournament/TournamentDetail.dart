@@ -455,7 +455,10 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                                   context,
                                                   MaterialPageRoute(
                                                     builder: (context) =>
-                                                        TournamentPay(),
+                                                        TournamentPay(
+                                                      harga_tournament: widget
+                                                          .tournaments.feeStr,
+                                                    ),
                                                   ));
                                             });
                                           },
@@ -471,7 +474,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                               child: SizedBox(
                                                 width: 89.0,
                                                 child: Text(
-                                                  'PAY NOW',
+                                                  '${context.bloc<BookingsCubit>().detailbooking.data.id}',
                                                   style: TextStyle(
                                                     fontFamily: 'Lato',
                                                     fontSize: 16,

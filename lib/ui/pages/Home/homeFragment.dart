@@ -887,6 +887,7 @@ class _HomeFragmentState extends State<HomeFragment> {
   }
 
   Widget _buildListView(List<Tournamentss> tournament) {
+    tournament.sort((b, a) => a.date.compareTo(b.date));
     Size size = MediaQuery.of(context).size;
     return Container(
       height: 110,
@@ -898,29 +899,35 @@ class _HomeFragmentState extends State<HomeFragment> {
             Tournamentss turnament = tournament[index];
             return InkWell(
               onTap: () {
-                Dialogs().showLoadingDialog(context);
                 TournamentApi()
                     .showDetailTournament(turnament.id)
                     .then((value) {
                   context.bloc<TournamentCubit>().getDetailTournament(value);
+                  print(context.bloc<TournamentCubit>().detail_tournament);
                 });
-                BookingApi()
-                    .bookedDetail(
-                        context.bloc<BookingsCubit>().book.data[0].booking.id)
-                    .then((value) {
-                  print("ejkl ${value}");
-                  context.bloc<BookingsCubit>().getDetailBooking(value);
-                });
-                Future.delayed(const Duration(milliseconds: 1500), () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TournamentDetail(
-                          tournaments: turnament,
-                        ),
-                      ));
-                });
+                // Dialogs().showLoadingDialog(context);
+                // TournamentApi()
+                //     .showDetailTournament(turnament.id)
+                //     .then((value) {
+                //   context.bloc<TournamentCubit>().getDetailTournament(value);
+                // });
+                // BookingApi()
+                //     .bookedDetail(
+                //         context.bloc<BookingsCubit>().book.data[0].booking.id)
+                //     .then((value) {
+                //   print("ejkl ${value}");
+                //   context.bloc<BookingsCubit>().getDetailBooking(value);
+                // });
+                // Future.delayed(const Duration(milliseconds: 1500), () {
+                //   Navigator.pop(context);
+                //   Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //         builder: (context) => TournamentDetail(
+                //           tournaments: turnament,
+                //         ),
+                //       ));
+                // });
               },
               child: Container(
                 width: size.width * 0.70,
