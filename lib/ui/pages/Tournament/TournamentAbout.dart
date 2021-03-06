@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:hgc/model/tournamentDetail.dart';
 import 'package:hgc/model/tournament_model.dart';
 
 class TournamentAbout extends StatefulWidget {
-  Tournamentss tournamentss;
+  Tournament_detail tournamentss;
   TournamentAbout({this.tournamentss});
 
   @override
@@ -38,7 +39,7 @@ class _TournamentAboutState extends State<TournamentAbout> {
             width: 350.0,
             child: SingleChildScrollView(
               child: Html(
-                data: """${widget.tournamentss.description}""",
+                data: """${widget.tournamentss.data.description}""",
               ),
             ),
           ),

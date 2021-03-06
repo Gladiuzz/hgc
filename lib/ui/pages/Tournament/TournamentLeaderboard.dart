@@ -56,6 +56,7 @@ class _TournamentLeaderBoardState extends State<TournamentLeaderBoard> {
 
   Widget _buildListView(Tournament_Leaderboard leaderboard) {
     Size size = MediaQuery.of(context).size;
+    leaderboard.data.sort((b, a) => a.totalScore.compareTo(b.totalScore));
     return DataTable(
       showBottomBorder: false,
       columnSpacing: 30,
@@ -101,58 +102,58 @@ class _TournamentLeaderBoardState extends State<TournamentLeaderBoard> {
           ),
         ),
       ],
-      rows: leaderboard.data
-          .map(
-            (index) => DataRow(
-              color: MaterialStateProperty.resolveWith<Color>(
-                  (Set<MaterialState> states) {
-                // All rows will have the same selected color.
-                if (states.contains(MaterialState.selected))
-                  return Theme.of(context).colorScheme.primary.withOpacity(0.5);
-                // Even rows will have a grey color.
-                if (numItems % 2 == 0) {
-                  return Colors.white;
-                }
-                return const Color(
-                    0xfff8f8f8); // Use default value for other states and odd rows.
-              }),
-              cells: <DataCell>[
-                DataCell(Text('${1}')),
-                DataCell(Text('${index.userName}')),
-                DataCell(
-                  SizedBox(
-                    width: 23.0,
-                    child: Text(
-                      '${index.clearedScoreHolesCount}',
-                      style: TextStyle(
-                        fontFamily: 'Lato',
-                        fontSize: 13,
-                        color: const Color(0xff000000),
-                        fontWeight: FontWeight.w500,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+      rows: leaderboard.data.map((index) {
+        var value = 0;
+        value++;
+        return DataRow(
+          color: MaterialStateProperty.resolveWith<Color>(
+              (Set<MaterialState> states) {
+            // All rows will have the same selected color.
+            if (states.contains(MaterialState.selected))
+              return Theme.of(context).colorScheme.primary.withOpacity(0.5);
+            // Even rows will have a grey color.
+            if (numItems % 2 == 0) {
+              return Colors.white;
+            }
+            return const Color(
+                0xfff8f8f8); // Use default value for other states and odd rows.
+          }),
+          cells: <DataCell>[
+            DataCell(Text('${index.id}')),
+            DataCell(Text('${index.userName}')),
+            DataCell(
+              SizedBox(
+                width: 23.0,
+                child: Text(
+                  '${index.clearedScoreHolesCount}',
+                  style: TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 13,
+                    color: const Color(0xff000000),
+                    fontWeight: FontWeight.w500,
                   ),
+                  textAlign: TextAlign.center,
                 ),
-                DataCell(
-                  SizedBox(
-                    width: 33.0,
-                    child: Text(
-                      '${index.totalScore}',
-                      style: TextStyle(
-                        fontFamily: 'Lato',
-                        fontSize: 13,
-                        color: const Color(0xff000000),
-                        fontWeight: FontWeight.w500,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          )
-          .toList(),
+            DataCell(
+              SizedBox(
+                width: 33.0,
+                child: Text(
+                  '${index.totalScore}',
+                  style: TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 13,
+                    color: const Color(0xff000000),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
+        );
+      }).toList(),
     );
   }
 }

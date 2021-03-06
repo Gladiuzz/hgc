@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hgc/cubit/bookings_cubit.dart';
 import 'package:hgc/cubit/leaderboard_cubit.dart';
 import 'package:hgc/cubit/tournament_cubit.dart';
+import 'package:hgc/model/tournamentDetail.dart';
 import 'package:hgc/model/tournament_model.dart';
 import 'package:hgc/service/BookingAPI.dart';
 import 'package:hgc/service/TournamentAPI.dart';
@@ -21,7 +22,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TournamentDetail extends StatefulWidget {
-  Tournamentss tournaments;
+  Tournament_detail tournaments;
   TournamentDetail({this.tournaments});
 
   @override
@@ -41,10 +42,10 @@ class _TournamentDetailState extends State<TournamentDetail> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     var dn = DateTime(temp.year, temp.month, temp.day, temp.hour, temp.minute);
-    DateTime tempDate =
-        DateFormat("yyyy-MM-dd HH:mm").parse(widget.tournaments.dateTimezone);
+    DateTime tempDate = DateFormat("yyyy-MM-dd HH:mm")
+        .parse(widget.tournaments.data.dateTimezone);
     DateTime tempDate2 = DateFormat("yyyy-MM-dd HH:mm")
-        .parse(widget.tournaments.paymentDeadlineTimezone);
+        .parse(widget.tournaments.data.paymentDeadlineTimezone);
     String payment_date =
         DateFormat("dd MMMM yyyy HH:mm").format(tempDate2).toString();
 
@@ -81,7 +82,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                   height: 218.0,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: NetworkImage('${widget.tournaments.image}'),
+                      image: NetworkImage('${widget.tournaments.data.image}'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -90,7 +91,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                   height: 19,
                 ),
                 Text(
-                  '${widget.tournaments.name}',
+                  '${widget.tournaments.data.name}',
                   style: TextStyle(
                     fontFamily: 'Lato',
                     fontSize: 18,
@@ -137,7 +138,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                             height: 8,
                           ),
                           Text(
-                            '${widget.tournaments.attendance.waitingListCount}/${widget.tournaments.attendance.waitingLimit}',
+                            '${widget.tournaments.data.attendance.waitingListCount}/${widget.tournaments.data.attendance.waitingLimit}',
                             style: TextStyle(
                               fontFamily: 'Lato',
                               fontSize: 16,
@@ -167,7 +168,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                             height: 8,
                           ),
                           Text(
-                            '${widget.tournaments.attendance.reservesCount}/${widget.tournaments.attendance.reserveLimit}',
+                            '${widget.tournaments.data.attendance.reservesCount}/${widget.tournaments.data.attendance.reserveLimit}',
                             style: TextStyle(
                               fontFamily: 'Lato',
                               fontSize: 16,
@@ -197,7 +198,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                             height: 8,
                           ),
                           Text(
-                            '${widget.tournaments.handicapLimit}',
+                            '${widget.tournaments.data.handicapLimit}',
                             style: TextStyle(
                               fontFamily: 'Lato',
                               fontSize: 16,
@@ -222,7 +223,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                         onTap: () {
                           Dialogs().showLoadingDialog(context);
                           TournamentApi()
-                              .tournamentLeaderboard(widget.tournaments.id)
+                              .tournamentLeaderboard(widget.tournaments.data.id)
                               .then((value) {
                             print(value);
                             context
@@ -319,7 +320,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                               SizedBox(
                                 width: 180.0,
                                 child: Text(
-                                  '${widget.tournaments.feeStr}',
+                                  '${widget.tournaments.data.feeStr}',
                                   style: TextStyle(
                                     fontFamily: 'Lato',
                                     fontSize: 24,
@@ -367,15 +368,9 @@ class _TournamentDetailState extends State<TournamentDetail> {
                               Builder(
                                 builder: (context) {
                                   if (context
-                                              .bloc<BookingsCubit>()
-                                              .detailbooking !=
-                                          null &&
-                                      context
-                                              .bloc<BookingsCubit>()
-                                              .detailbooking
-                                              .data
-                                              .statusDisplay ==
-                                          "Waiting List") {
+                                          .bloc<BookingsCubit>()
+                                          .detailbooking !=
+                                      null) {
                                     return SizedBox(
                                       width: 204.0,
                                       child: Text(
@@ -389,12 +384,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                         textAlign: TextAlign.center,
                                       ),
                                     );
-                                  } else if (context
-                                          .bloc<BookingsCubit>()
-                                          .detailbooking
-                                          .data
-                                          .statusDisplay ==
-                                      "Reserved") {
+                                  } else {
                                     return Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -404,7 +394,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                             print("book slot tournament");
                                             BookingApi()
                                                 .bookingTournament(
-                                                    widget.tournaments.id)
+                                                    widget.tournaments.data.id)
                                                 .then((value) {
                                               Fluttertoast.showToast(
                                                   msg: "${value}",
@@ -457,7 +447,11 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                                     builder: (context) =>
                                                         TournamentPay(
                                                       harga_tournament: widget
-                                                          .tournaments.feeStr,
+                                                          .tournaments
+                                                          .data
+                                                          .feeStr,
+                                                      tournament_detail:
+                                                          widget.tournaments,
                                                     ),
                                                   ));
                                             });
@@ -474,7 +468,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                               child: SizedBox(
                                                 width: 89.0,
                                                 child: Text(
-                                                  '${context.bloc<BookingsCubit>().detailbooking.data.id}',
+                                                  'PAY NOW',
                                                   style: TextStyle(
                                                     fontFamily: 'Lato',
                                                     fontSize: 16,
@@ -484,82 +478,6 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                                   ),
                                                   textAlign: TextAlign.center,
                                                 ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  } else {
-                                    return Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        GestureDetector(
-                                          onTap: () {
-                                            print("book slot tournament");
-                                            BookingApi()
-                                                .bookingTournament(
-                                                    widget.tournaments.id)
-                                                .then((value) {
-                                              Fluttertoast.showToast(
-                                                  msg: "${value}",
-                                                  toastLength:
-                                                      Toast.LENGTH_SHORT,
-                                                  gravity: ToastGravity.BOTTOM,
-                                                  timeInSecForIosWeb: 1,
-                                                  backgroundColor: Colors.grey,
-                                                  textColor: Colors.white,
-                                                  fontSize: 14.0);
-                                            });
-                                          },
-                                          child: Container(
-                                            width: 160.0,
-                                            height: 45.0,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              color: const Color(0xffffaf00),
-                                            ),
-                                            child: SizedBox(
-                                              width: 108.0,
-                                              child: Center(
-                                                child: Text(
-                                                  'BOOK SLOT',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Lato',
-                                                    fontSize: 16,
-                                                    color:
-                                                        const Color(0xff000000),
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 160.0,
-                                          height: 45.0,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(5.0),
-                                            color: const Color(0xff3cd970),
-                                          ),
-                                          child: Center(
-                                            child: SizedBox(
-                                              width: 89.0,
-                                              child: Text(
-                                                'PAY NOW',
-                                                style: TextStyle(
-                                                  fontFamily: 'Lato',
-                                                  fontSize: 16,
-                                                  color:
-                                                      const Color(0xff000000),
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                                textAlign: TextAlign.center,
                                               ),
                                             ),
                                           ),
@@ -614,7 +532,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                           height: 17,
                         ),
                         Text(
-                          'Contact our PIC (${widget.tournaments.contact.pic}) by clicking on the button below.',
+                          'Contact our PIC (${widget.tournaments.data.contact.pic}) by clicking on the button below.',
                           style: TextStyle(
                             fontFamily: 'Lato',
                             fontSize: 14,
@@ -628,9 +546,9 @@ class _TournamentDetailState extends State<TournamentDetail> {
                         ),
                         InkWell(
                           onTap: () {
-                            print(widget.tournaments.contact.phoneNumber);
+                            print(widget.tournaments.data.contact.phoneNumber);
                             launch(
-                                ('tel://${widget.tournaments.contact.phoneNumber}'));
+                                ('tel://${widget.tournaments.data.contact.phoneNumber}'));
                           },
                           child: Container(
                             width: size.width,

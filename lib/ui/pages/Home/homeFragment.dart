@@ -904,8 +904,17 @@ class _HomeFragmentState extends State<HomeFragment> {
                     .then((value) {
                   context.bloc<TournamentCubit>().getDetailTournament(value);
                   print(context.bloc<TournamentCubit>().detail_tournament);
+                  context.bloc<BookingsCubit>().book.data.forEach((element) {
+                    context
+                        .bloc<TournamentCubit>()
+                        .detail_tournament
+                        .data
+                        .booking
+                        .id
+                        .compareTo(element.booking.id);
+                  });
                 });
-                // Dialogs().showLoadingDialog(context);
+                Dialogs().showLoadingDialog(context);
                 // TournamentApi()
                 //     .showDetailTournament(turnament.id)
                 //     .then((value) {
@@ -918,16 +927,17 @@ class _HomeFragmentState extends State<HomeFragment> {
                 //   print("ejkl ${value}");
                 //   context.bloc<BookingsCubit>().getDetailBooking(value);
                 // });
-                // Future.delayed(const Duration(milliseconds: 1500), () {
-                //   Navigator.pop(context);
-                //   Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (context) => TournamentDetail(
-                //           tournaments: turnament,
-                //         ),
-                //       ));
-                // });
+                Future.delayed(const Duration(milliseconds: 1500), () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TournamentDetail(
+                          tournaments:
+                              context.bloc<TournamentCubit>().detail_tournament,
+                        ),
+                      ));
+                });
               },
               child: Container(
                 width: size.width * 0.70,

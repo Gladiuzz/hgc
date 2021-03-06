@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hgc/model/tournamentDetail.dart';
+import 'package:hgc/service/TournamentAPI.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TournamentPay extends StatefulWidget {
   String harga_tournament;
+  Tournament_detail tournament_detail;
 
   TournamentPay({
     this.harga_tournament,
+    this.tournament_detail,
   });
 
   @override
@@ -22,9 +26,8 @@ class _TournamentPayState extends State<TournamentPay> {
     });
   }
 
-  _launchURL() async {
-    const url =
-        'https://dev.faspay.co.id/pws/100003/0830000010100000/cd2b21f9ea54f82582868c96798b23c3cbda06d3?trx_id=3375170200000042&merchant_id=33751&bill_no=987651234567892';
+  _launchURL(link_pembayaran) async {
+    var url = '${link_pembayaran}';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -854,7 +857,12 @@ class _TournamentPayState extends State<TournamentPay> {
                           // Adobe XD layer: 'Rectangle 1 copy 20' (shape)
                           GestureDetector(
                             onTap: () {
-                              _launchURL();
+                              TournamentApi()
+                                  .payTournament(
+                                      widget.tournament_detail.data.id)
+                                  .then((value) {
+                                _launchURL(value['redirect_url']);
+                              });
                               print('bayar');
                             },
                             child: Container(

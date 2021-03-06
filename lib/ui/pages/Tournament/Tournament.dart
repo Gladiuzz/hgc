@@ -165,7 +165,8 @@ class _TournamentState extends State<Tournament> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => TournamentDetail(
-                          tournaments: turnament,
+                          tournaments:
+                              context.bloc<TournamentCubit>().detail_tournament,
                         ),
                       ));
                 });
@@ -240,13 +241,28 @@ class _TournamentState extends State<Tournament> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => TournamentDetail(
-                                          tournaments: turnament,
-                                        ),
-                                      ));
+                                  Dialogs().showLoadingDialog(context);
+                                  TournamentApi()
+                                      .showDetailTournament(turnament.id)
+                                      .then((value) {
+                                    context
+                                        .bloc<TournamentCubit>()
+                                        .getDetailTournament(value);
+                                  });
+                                  Future.delayed(
+                                      const Duration(milliseconds: 1500), () {
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              TournamentDetail(
+                                            tournaments: context
+                                                .bloc<TournamentCubit>()
+                                                .detail_tournament,
+                                          ),
+                                        ));
+                                  });
                                 },
                                 child: Container(
                                   width: size.width * .30,

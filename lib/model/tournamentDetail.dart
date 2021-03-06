@@ -14,6 +14,12 @@ class Tournament_detail {
     }
     return data;
   }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return "Data : $data";
+  }
 }
 
 class Data {
@@ -258,5 +264,11 @@ class Booking {
     data['status_display'] = this.statusDisplay;
     data['created_at'] = this.createdAt;
     return data;
+  }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return "Booking: $id";
   }
 }

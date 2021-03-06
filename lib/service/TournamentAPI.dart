@@ -137,4 +137,25 @@ class TournamentApi {
       return data;
     }
   }
+
+  payTournament(id) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    final response = await client.post("$request/api/tournaments/${id}/pay",
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer $token"
+        });
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      var data = json.decode(response.body);
+      return data;
+    } else {
+      print(response.body);
+      var data = json.decode(response.body);
+      return data;
+    }
+  }
 }
