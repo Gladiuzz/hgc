@@ -227,6 +227,12 @@ class Booking {
     data['created_at'] = this.createdAt;
     return data;
   }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return "Datas : $id";
+  }
 }
 
 class Links {

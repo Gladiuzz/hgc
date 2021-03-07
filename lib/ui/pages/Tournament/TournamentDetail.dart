@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hgc/cubit/bookings_cubit.dart';
 import 'package:hgc/cubit/leaderboard_cubit.dart';
 import 'package:hgc/cubit/tournament_cubit.dart';
+import 'package:hgc/model/bookings.dart';
 import 'package:hgc/model/tournamentDetail.dart';
 import 'package:hgc/model/tournament_model.dart';
 import 'package:hgc/service/BookingAPI.dart';
@@ -34,6 +35,38 @@ class _TournamentDetailState extends State<TournamentDetail> {
 
   @override
   void initState() {
+    BookingApi().showBookedTournament().then((value) {
+      print("bookingan ${value}");
+      context.bloc<BookingsCubit>().getActiveTournament(value);
+    });
+
+    TournamentApi()
+        .showDetailTournament(widget.tournaments.data.id)
+        .then((value) {
+      context.bloc<TournamentCubit>().getDetailTournament(value);
+      print(context.bloc<TournamentCubit>().detail_tournament.data.booking.id);
+
+      var list = context.bloc<BookingsCubit>().book;
+
+      List<Book> contains_tournament = list
+          .where((element) => element.id
+              .toString()
+              .contains(widget.tournaments.data.id.toString()))
+          .toList();
+
+      // print(contains_tournament[0]);
+
+      BookingApi()
+          .bookedDetail(contains_tournament[0].booking.id)
+          .then((value) {
+        print("ejkl ${value}");
+        context.bloc<BookingsCubit>().getDetailBooking(value);
+      });
+
+      // context.bloc<BookingsCubit>().book.data.where((element) => false)
+      // context.bloc<BookingsCubit>().book.data.forEach((element) {});
+    });
+
     // TODO: implement initState
     super.initState();
   }
@@ -368,23 +401,143 @@ class _TournamentDetailState extends State<TournamentDetail> {
                               Builder(
                                 builder: (context) {
                                   if (context
-                                          .bloc<BookingsCubit>()
-                                          .detailbooking !=
-                                      null) {
-                                    return SizedBox(
-                                      width: 204.0,
-                                      child: Text(
-                                        'Your payment is in progress',
-                                        style: TextStyle(
-                                          fontFamily: 'Lato',
-                                          fontSize: 14,
-                                          color: const Color(0xff2698dd),
-                                          fontWeight: FontWeight.w600,
+                                              .bloc<BookingsCubit>()
+                                              .detailbooking !=
+                                          null &&
+                                      context
+                                              .bloc<BookingsCubit>()
+                                              .detailbooking
+                                              .data
+                                              .statusDisplay ==
+                                          "Waiting List") {
+                                    return Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Builder(
+                                          builder: (context) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                Dialogs()
+                                                    .showLoadingDialog(context);
+                                                print("book slot tournament");
+                                                TournamentApi()
+                                                    .cancelBooking(context
+                                                        .bloc<BookingsCubit>()
+                                                        .detailbooking
+                                                        .data
+                                                        .id)
+                                                    .then((value) {
+                                                  print(value);
+                                                  Future.delayed(
+                                                      const Duration(
+                                                          milliseconds: 1500),
+                                                      () {
+                                                    Navigator.pop(context);
+                                                    Navigator.pushReplacement(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              TournamentDetail(
+                                                            tournaments: widget
+                                                                .tournaments,
+                                                          ),
+                                                        ));
+                                                  });
+                                                });
+                                              },
+                                              child: Container(
+                                                width: size.width * .40,
+                                                height: 45.0,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          5.0),
+                                                  color:
+                                                      const Color(0xffb90b0c),
+                                                ),
+                                                child: SizedBox(
+                                                  width: 108.0,
+                                                  child: Center(
+                                                    child: Text(
+                                                      'Cancel Book',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Lato',
+                                                        fontSize: 16,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         ),
-                                        textAlign: TextAlign.center,
-                                      ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Dialogs()
+                                                .showLoadingDialog(context);
+                                            Future.delayed(
+                                                const Duration(
+                                                    milliseconds: 500), () {
+                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        TournamentPay(
+                                                      harga_tournament: widget
+                                                          .tournaments
+                                                          .data
+                                                          .feeStr,
+                                                      tournament_detail:
+                                                          widget.tournaments,
+                                                    ),
+                                                  ));
+                                            });
+                                          },
+                                          child: Container(
+                                            width: size.width * .40,
+                                            height: 45.0,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0),
+                                              color: const Color(0xff3cd970),
+                                            ),
+                                            child: Center(
+                                              child: SizedBox(
+                                                width: 89.0,
+                                                child: Text(
+                                                  'PAY NOW',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Lato',
+                                                    fontSize: 16,
+                                                    color:
+                                                        const Color(0xff000000),
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     );
-                                  } else {
+                                  } else if (context
+                                              .bloc<BookingsCubit>()
+                                              .detailbooking !=
+                                          null &&
+                                      context
+                                              .bloc<BookingsCubit>()
+                                              .detailbooking
+                                              .data
+                                              .statusDisplay ==
+                                          "Reserved") {
                                     return Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -450,6 +603,139 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                                           .tournaments
                                                           .data
                                                           .feeStr,
+                                                    ),
+                                                  ));
+                                            });
+                                          },
+                                          child: Container(
+                                            width: 160.0,
+                                            height: 45.0,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0),
+                                              color: const Color(0xff3cd970),
+                                            ),
+                                            child: Center(
+                                              child: SizedBox(
+                                                width: 89.0,
+                                                child: Text(
+                                                  '${context.bloc<BookingsCubit>().detailbooking.data.id}',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Lato',
+                                                    fontSize: 16,
+                                                    color:
+                                                        const Color(0xff000000),
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Builder(
+                                          builder: (context) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                Dialogs()
+                                                    .showLoadingDialog(context);
+                                                print("book slot tournament");
+                                                BookingApi()
+                                                    .bookingTournament(widget
+                                                        .tournaments.data.id)
+                                                    .then((value) {
+                                                  if (value["message"] ==
+                                                      "Your booking already exists.") {
+                                                    Navigator.pop(context);
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "Your booking already exists.",
+                                                        toastLength:
+                                                            Toast.LENGTH_SHORT,
+                                                        gravity:
+                                                            ToastGravity.BOTTOM,
+                                                        timeInSecForIosWeb: 1,
+                                                        backgroundColor:
+                                                            Colors.grey,
+                                                        textColor: Colors.white,
+                                                        fontSize: 14.0);
+                                                  } else {
+                                                    Future.delayed(
+                                                        const Duration(
+                                                            milliseconds: 1500),
+                                                        () {
+                                                      Navigator.pop(context);
+                                                      Navigator.pushReplacement(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                TournamentDetail(
+                                                              tournaments: context
+                                                                  .bloc<
+                                                                      TournamentCubit>()
+                                                                  .detail_tournament,
+                                                            ),
+                                                          ));
+                                                    });
+                                                  }
+                                                });
+                                              },
+                                              child: Container(
+                                                width: size.width * .40,
+                                                height: 45.0,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          5.0),
+                                                  color:
+                                                      const Color(0xffffaf00),
+                                                ),
+                                                child: SizedBox(
+                                                  width: 108.0,
+                                                  child: Center(
+                                                    child: Text(
+                                                      'BOOK SLOT',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Lato',
+                                                        fontSize: 16,
+                                                        color: const Color(
+                                                            0xff000000),
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Dialogs()
+                                                .showLoadingDialog(context);
+                                            Future.delayed(
+                                                const Duration(
+                                                    milliseconds: 500), () {
+                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        TournamentPay(
+                                                      harga_tournament: widget
+                                                          .tournaments
+                                                          .data
+                                                          .feeStr,
                                                       tournament_detail:
                                                           widget.tournaments,
                                                     ),
@@ -457,7 +743,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                             });
                                           },
                                           child: Container(
-                                            width: 160.0,
+                                            width: size.width * .40,
                                             height: 45.0,
                                             decoration: BoxDecoration(
                                               borderRadius:

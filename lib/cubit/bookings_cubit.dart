@@ -6,7 +6,7 @@ import 'package:hgc/model/bookings.dart';
 part 'bookings_state.dart';
 
 class BookingsCubit extends Cubit<BookingsState> {
-  Bookings book;
+  List<Book> book;
   DetailBooking detailbooking;
 
   BookingsCubit() : super(BookingsInitial());
@@ -18,5 +18,9 @@ class BookingsCubit extends Cubit<BookingsState> {
 
   getDetailBooking(data) async {
     detailbooking = data;
+  }
+
+  removeDetailBooking() async {
+    detailbooking = null;
   }
 }

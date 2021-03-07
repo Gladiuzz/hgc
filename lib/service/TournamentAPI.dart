@@ -158,4 +158,48 @@ class TournamentApi {
       return data;
     }
   }
+
+  payTournamentAfterBook(id_participant) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    final response = await client.put(
+        "$request/api/tournaments/bookings/${id_participant}/pay",
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer $token"
+        });
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      var data = json.decode(response.body);
+      return data;
+    } else {
+      print(response.body);
+      var data = json.decode(response.body);
+      return data;
+    }
+  }
+
+  cancelBooking(id_participant) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    final response = await client.put(
+        "$request/api/tournaments/bookings/${id_participant}/cancel",
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer $token"
+        });
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      var data = json.decode(response.body);
+      return data;
+    } else {
+      print(response.body);
+      var data = json.decode(response.body);
+      return data;
+    }
+  }
 }

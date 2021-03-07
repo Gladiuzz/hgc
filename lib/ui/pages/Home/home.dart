@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hgc/cubit/bookings_cubit.dart';
 import 'package:hgc/cubit/user_cubit.dart';
+import 'package:hgc/service/BookingAPI.dart';
 import 'package:hgc/service/HandicapAPI.dart';
 import 'package:hgc/service/UserAPI.dart';
 import 'package:hgc/ui/pages/Home/History/history.dart';
@@ -54,6 +56,10 @@ class _HomeState extends State<Home> {
     // });
     HandicapAPI().showHandicap().then((value) {
       // handicap = value;
+    });
+    BookingApi().showBookedTournament().then((value) {
+      print("bookingan ${value}");
+      context.bloc<BookingsCubit>().getActiveTournament(value);
     });
   }
 

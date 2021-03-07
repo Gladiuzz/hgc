@@ -22,11 +22,13 @@ class BookingApi {
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
 
+      print(data);
+
       Bookings value = Bookings.fromJson(data);
 
       // CoursePair value = CoursePair.fromJson(data['data']);
 
-      return value;
+      return List<Book>.from(data['data'].map((item) => Book.fromJson(item)));
     } else {
       print(response.body);
       var data = json.decode(response.body);

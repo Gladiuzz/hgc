@@ -10,6 +10,7 @@ import 'package:hgc/cubit/record_cubit.dart';
 import 'package:hgc/cubit/tournament_cubit.dart';
 import 'package:hgc/cubit/user_cubit.dart';
 import 'package:hgc/cubit/verificators_cubit.dart';
+import 'package:hgc/model/bookings.dart';
 import 'package:hgc/model/golfCourse.dart';
 import 'package:hgc/model/tournament_model.dart';
 import 'package:hgc/model/user.dart';
@@ -57,10 +58,10 @@ class _HomeFragmentState extends State<HomeFragment> {
   Widget build(BuildContext context) {
     var dn = DateTime(now.year, now.month, now.day);
     var dn2 = DateTime(now.year, now.month, now.day, now.hour, now.minute);
-    DateTime tempDate = DateFormat("yyyy-MM-dd")
-        .parse(context.bloc<BookingsCubit>().book.data[0].dateTimezone);
-    DateTime tempDate2 = DateFormat("yyyy-MM-dd HH:mm")
-        .parse(context.bloc<BookingsCubit>().book.data[0].dateTimezone);
+    // DateTime tempDate = DateFormat("yyyy-MM-dd")
+    //     .parse(context.bloc<BookingsCubit>().book.data[0].dateTimezone);
+    // DateTime tempDate2 = DateFormat("yyyy-MM-dd HH:mm")
+    //     .parse(context.bloc<BookingsCubit>().book.data[0].dateTimezone);
     Size size = MediaQuery.of(context).size;
     return Container(
       child: SafeArea(
@@ -516,242 +517,242 @@ class _HomeFragmentState extends State<HomeFragment> {
                       SizedBox(
                         height: 30,
                       ),
-                      Builder(
-                        builder: (context) {
-                          if (tempDate.compareTo(dn) == 0) {
-                            return Container(
-                              width: size.width * 0.90,
-                              height: 275.0,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: const Color(0xffffffff),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0x29000000),
-                                    offset: Offset(0, 0),
-                                    blurRadius: 15,
-                                  ),
-                                ],
-                              ),
-                              child: Container(
-                                margin: EdgeInsets.only(
-                                    left: 25, right: 25, top: 20),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      'Active Tournament',
-                                      style: TextStyle(
-                                        fontFamily: 'Lato',
-                                        fontSize: 14,
-                                        color: const Color(0xffb90b0c),
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    Text(
-                                      '${context.bloc<BookingsCubit>().book.data[0].name}',
-                                      style: TextStyle(
-                                        fontFamily: 'Lato',
-                                        fontSize: 18,
-                                        color: const Color(0xff000000),
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                    SizedBox(
-                                      height: 17,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Text(
-                                          'Course Name',
-                                          style: TextStyle(
-                                            fontFamily: 'Lato',
-                                            fontSize: 14,
-                                            color: const Color(0xffbababa),
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                        SizedBox(
-                                          width: 180.0,
-                                          child: Text(
-                                            'Royale Jakarta Golf Club',
-                                            style: TextStyle(
-                                              fontFamily: 'Lato',
-                                              fontSize: 14,
-                                              color: const Color(0xff000000),
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            textAlign: TextAlign.right,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 8,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Text(
-                                          'Verificator Name',
-                                          style: TextStyle(
-                                            fontFamily: 'Lato',
-                                            fontSize: 14,
-                                            color: const Color(0xffbababa),
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                        SizedBox(
-                                          width: 180.0,
-                                          child: Text(
-                                            'Project CL',
-                                            style: TextStyle(
-                                              fontFamily: 'Lato',
-                                              fontSize: 14,
-                                              color: const Color(0xff000000),
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            textAlign: TextAlign.right,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        Dialogs().showLoadingDialog(context);
-                                        TournamentApi()
-                                            .showDetailTournament(context
-                                                .bloc<BookingsCubit>()
-                                                .book
-                                                .data[0]
-                                                .id)
-                                            .then((value) {
-                                          context
-                                              .bloc<TournamentCubit>()
-                                              .getDetailTournament(value);
-                                          context
-                                              .bloc<VerificatorsCubit>()
-                                              .removeVerificator();
-                                        });
-                                        Future.delayed(
-                                            const Duration(milliseconds: 2000),
-                                            () {
-                                          Navigator.pop(context);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    TournamentMatch(),
-                                              ));
-                                        });
-                                      },
-                                      child: Container(
-                                        width: size.width,
-                                        height: 45.0,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          image: DecorationImage(
-                                              image: AssetImage(
-                                                  "assets/images/tournament_btn.png")),
-                                        ),
-                                        child: Center(
-                                          child: SizedBox(
-                                            width: 259.0,
-                                            child: Text(
-                                              'PLAY TOURNAMENT MATCH',
-                                              style: TextStyle(
-                                                fontFamily: 'Lato',
-                                                fontSize: 16,
-                                                color: const Color(0xffffffff),
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        Dialogs().showLoadingDialog(context);
-                                        TournamentApi()
-                                            .tournamentLeaderboard(context
-                                                .bloc<BookingsCubit>()
-                                                .book
-                                                .data[0]
-                                                .id)
-                                            .then((value) {
-                                          print(value);
-                                          context
-                                              .bloc<LeaderboardCubit>()
-                                              .getLeaderboard(value);
-                                          Future.delayed(
-                                              const Duration(
-                                                  milliseconds: 1000), () {
-                                            Navigator.pop(context);
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      TournamentLeaderBoard(),
-                                                ));
-                                          });
-                                        });
-                                      },
-                                      child: Container(
-                                        width: size.width,
-                                        height: 45.0,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          image: DecorationImage(
-                                              image: AssetImage(
-                                                  "assets/images/leaderboard_btn.png")),
-                                        ),
-                                        child: Center(
-                                          child: SizedBox(
-                                            width: 194.0,
-                                            child: Text(
-                                              'VIEW LEADERBOARD',
-                                              style: TextStyle(
-                                                fontFamily: 'Lato',
-                                                fontSize: 16,
-                                                color: const Color(0xffffffff),
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          } else {
-                            return Container();
-                          }
-                        },
-                      ),
+                      // Builder(
+                      //   builder: (context) {
+                      //     if (tempDate.compareTo(dn) == 0) {
+                      //       return Container(
+                      //         width: size.width * 0.90,
+                      //         height: 275.0,
+                      //         decoration: BoxDecoration(
+                      //           borderRadius: BorderRadius.circular(10.0),
+                      //           color: const Color(0xffffffff),
+                      //           boxShadow: [
+                      //             BoxShadow(
+                      //               color: const Color(0x29000000),
+                      //               offset: Offset(0, 0),
+                      //               blurRadius: 15,
+                      //             ),
+                      //           ],
+                      //         ),
+                      //         child: Container(
+                      //           margin: EdgeInsets.only(
+                      //               left: 25, right: 25, top: 20),
+                      //           child: Column(
+                      //             mainAxisAlignment: MainAxisAlignment.start,
+                      //             crossAxisAlignment: CrossAxisAlignment.start,
+                      //             children: <Widget>[
+                      //               Text(
+                      //                 'Active Tournament',
+                      //                 style: TextStyle(
+                      //                   fontFamily: 'Lato',
+                      //                   fontSize: 14,
+                      //                   color: const Color(0xffb90b0c),
+                      //                   fontWeight: FontWeight.w600,
+                      //                 ),
+                      //                 textAlign: TextAlign.left,
+                      //               ),
+                      //               SizedBox(
+                      //                 height: 5.0,
+                      //               ),
+                      //               Text(
+                      //                 '${context.bloc<BookingsCubit>().book.data[0].name}',
+                      //                 style: TextStyle(
+                      //                   fontFamily: 'Lato',
+                      //                   fontSize: 18,
+                      //                   color: const Color(0xff000000),
+                      //                   fontWeight: FontWeight.w700,
+                      //                 ),
+                      //                 textAlign: TextAlign.left,
+                      //               ),
+                      //               SizedBox(
+                      //                 height: 17,
+                      //               ),
+                      //               Row(
+                      //                 mainAxisAlignment:
+                      //                     MainAxisAlignment.spaceBetween,
+                      //                 children: <Widget>[
+                      //                   Text(
+                      //                     'Course Name',
+                      //                     style: TextStyle(
+                      //                       fontFamily: 'Lato',
+                      //                       fontSize: 14,
+                      //                       color: const Color(0xffbababa),
+                      //                       fontWeight: FontWeight.w500,
+                      //                     ),
+                      //                     textAlign: TextAlign.left,
+                      //                   ),
+                      //                   SizedBox(
+                      //                     width: 180.0,
+                      //                     child: Text(
+                      //                       'Royale Jakarta Golf Club',
+                      //                       style: TextStyle(
+                      //                         fontFamily: 'Lato',
+                      //                         fontSize: 14,
+                      //                         color: const Color(0xff000000),
+                      //                         fontWeight: FontWeight.w500,
+                      //                       ),
+                      //                       textAlign: TextAlign.right,
+                      //                     ),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //               SizedBox(
+                      //                 height: 8,
+                      //               ),
+                      //               Row(
+                      //                 mainAxisAlignment:
+                      //                     MainAxisAlignment.spaceBetween,
+                      //                 children: <Widget>[
+                      //                   Text(
+                      //                     'Verificator Name',
+                      //                     style: TextStyle(
+                      //                       fontFamily: 'Lato',
+                      //                       fontSize: 14,
+                      //                       color: const Color(0xffbababa),
+                      //                       fontWeight: FontWeight.w500,
+                      //                     ),
+                      //                     textAlign: TextAlign.left,
+                      //                   ),
+                      //                   SizedBox(
+                      //                     width: 180.0,
+                      //                     child: Text(
+                      //                       'Project CL',
+                      //                       style: TextStyle(
+                      //                         fontFamily: 'Lato',
+                      //                         fontSize: 14,
+                      //                         color: const Color(0xff000000),
+                      //                         fontWeight: FontWeight.w500,
+                      //                       ),
+                      //                       textAlign: TextAlign.right,
+                      //                     ),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //               SizedBox(
+                      //                 height: 20,
+                      //               ),
+                      //               InkWell(
+                      //                 onTap: () {
+                      //                   Dialogs().showLoadingDialog(context);
+                      //                   TournamentApi()
+                      //                       .showDetailTournament(context
+                      //                           .bloc<BookingsCubit>()
+                      //                           .book
+                      //                           .data[0]
+                      //                           .id)
+                      //                       .then((value) {
+                      //                     context
+                      //                         .bloc<TournamentCubit>()
+                      //                         .getDetailTournament(value);
+                      //                     context
+                      //                         .bloc<VerificatorsCubit>()
+                      //                         .removeVerificator();
+                      //                   });
+                      //                   Future.delayed(
+                      //                       const Duration(milliseconds: 2000),
+                      //                       () {
+                      //                     Navigator.pop(context);
+                      //                     Navigator.push(
+                      //                         context,
+                      //                         MaterialPageRoute(
+                      //                           builder: (context) =>
+                      //                               TournamentMatch(),
+                      //                         ));
+                      //                   });
+                      //                 },
+                      //                 child: Container(
+                      //                   width: size.width,
+                      //                   height: 45.0,
+                      //                   decoration: BoxDecoration(
+                      //                     borderRadius:
+                      //                         BorderRadius.circular(5.0),
+                      //                     image: DecorationImage(
+                      //                         image: AssetImage(
+                      //                             "assets/images/tournament_btn.png")),
+                      //                   ),
+                      //                   child: Center(
+                      //                     child: SizedBox(
+                      //                       width: 259.0,
+                      //                       child: Text(
+                      //                         'PLAY TOURNAMENT MATCH',
+                      //                         style: TextStyle(
+                      //                           fontFamily: 'Lato',
+                      //                           fontSize: 16,
+                      //                           color: const Color(0xffffffff),
+                      //                           fontWeight: FontWeight.w700,
+                      //                         ),
+                      //                         textAlign: TextAlign.center,
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //               SizedBox(
+                      //                 height: 10,
+                      //               ),
+                      //               InkWell(
+                      //                 onTap: () {
+                      //                   Dialogs().showLoadingDialog(context);
+                      //                   TournamentApi()
+                      //                       .tournamentLeaderboard(context
+                      //                           .bloc<BookingsCubit>()
+                      //                           .book
+                      //                           .data[0]
+                      //                           .id)
+                      //                       .then((value) {
+                      //                     print(value);
+                      //                     context
+                      //                         .bloc<LeaderboardCubit>()
+                      //                         .getLeaderboard(value);
+                      //                     Future.delayed(
+                      //                         const Duration(
+                      //                             milliseconds: 1000), () {
+                      //                       Navigator.pop(context);
+                      //                       Navigator.push(
+                      //                           context,
+                      //                           MaterialPageRoute(
+                      //                             builder: (context) =>
+                      //                                 TournamentLeaderBoard(),
+                      //                           ));
+                      //                     });
+                      //                   });
+                      //                 },
+                      //                 child: Container(
+                      //                   width: size.width,
+                      //                   height: 45.0,
+                      //                   decoration: BoxDecoration(
+                      //                     borderRadius:
+                      //                         BorderRadius.circular(5.0),
+                      //                     image: DecorationImage(
+                      //                         image: AssetImage(
+                      //                             "assets/images/leaderboard_btn.png")),
+                      //                   ),
+                      //                   child: Center(
+                      //                     child: SizedBox(
+                      //                       width: 194.0,
+                      //                       child: Text(
+                      //                         'VIEW LEADERBOARD',
+                      //                         style: TextStyle(
+                      //                           fontFamily: 'Lato',
+                      //                           fontSize: 16,
+                      //                           color: const Color(0xffffffff),
+                      //                           fontWeight: FontWeight.w700,
+                      //                         ),
+                      //                         textAlign: TextAlign.center,
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ),
+                      //       );
+                      //     } else {
+                      //       return Container();
+                      //     }
+                      //   },
+                      // ),
                       SizedBox(
                         height: 25.0,
                       ),
@@ -899,34 +900,48 @@ class _HomeFragmentState extends State<HomeFragment> {
             Tournamentss turnament = tournament[index];
             return InkWell(
               onTap: () {
+                BookingApi().showBookedTournament().then((value) {
+                  print("bookingan ${value}");
+                  context.bloc<BookingsCubit>().getActiveTournament(value);
+                });
                 TournamentApi()
                     .showDetailTournament(turnament.id)
                     .then((value) {
                   context.bloc<TournamentCubit>().getDetailTournament(value);
-                  print(context.bloc<TournamentCubit>().detail_tournament);
-                  context.bloc<BookingsCubit>().book.data.forEach((element) {
-                    context
-                        .bloc<TournamentCubit>()
-                        .detail_tournament
-                        .data
-                        .booking
-                        .id
-                        .compareTo(element.booking.id);
+                  print(context
+                      .bloc<TournamentCubit>()
+                      .detail_tournament
+                      .data
+                      .booking
+                      .id);
+
+                  var list = context.bloc<BookingsCubit>().book;
+
+                  List<Book> contains_tournament = list
+                      .where((element) => element.id
+                          .toString()
+                          .contains(turnament.id.toString()))
+                      .toList();
+
+                  // print(contains_tournament[0]);
+
+                  BookingApi()
+                      .bookedDetail(contains_tournament[0].booking.id)
+                      .then((value) {
+                    print("ejkl ${value}");
+                    context.bloc<BookingsCubit>().getDetailBooking(value);
                   });
+
+                  // context.bloc<BookingsCubit>().book.data.where((element) => false)
+                  // context.bloc<BookingsCubit>().book.data.forEach((element) {});
                 });
                 Dialogs().showLoadingDialog(context);
-                // TournamentApi()
-                //     .showDetailTournament(turnament.id)
-                //     .then((value) {
-                //   context.bloc<TournamentCubit>().getDetailTournament(value);
-                // });
-                // BookingApi()
-                //     .bookedDetail(
-                //         context.bloc<BookingsCubit>().book.data[0].booking.id)
-                //     .then((value) {
-                //   print("ejkl ${value}");
-                //   context.bloc<BookingsCubit>().getDetailBooking(value);
-                // });
+                // // TournamentApi()
+                // //     .showDetailTournament(turnament.id)
+                // //     .then((value) {
+                // //   context.bloc<TournamentCubit>().getDetailTournament(value);
+                // // });
+
                 Future.delayed(const Duration(milliseconds: 1500), () {
                   Navigator.pop(context);
                   Navigator.push(

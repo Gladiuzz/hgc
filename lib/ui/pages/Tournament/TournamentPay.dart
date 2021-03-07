@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hgc/model/tournamentDetail.dart';
 import 'package:hgc/service/TournamentAPI.dart';
+import 'package:hgc/ui/widgets/Dialog/Dialogs.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TournamentPay extends StatefulWidget {
@@ -857,11 +859,26 @@ class _TournamentPayState extends State<TournamentPay> {
                           // Adobe XD layer: 'Rectangle 1 copy 20' (shape)
                           GestureDetector(
                             onTap: () {
+                              Dialogs().showLoadingDialog(context);
                               TournamentApi()
                                   .payTournament(
                                       widget.tournament_detail.data.id)
                                   .then((value) {
-                                _launchURL(value['redirect_url']);
+                                print(value['message']);
+                                if (value["message"] == null) {
+                                  Navigator.pop(context);
+                                  _launchURL(value['redirect_url']);
+                                } else {
+                                  Navigator.pop(context);
+                                  Fluttertoast.showToast(
+                                      msg: "Your booking already exists.",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.grey,
+                                      textColor: Colors.white,
+                                      fontSize: 14.0);
+                                }
                               });
                               print('bayar');
                             },

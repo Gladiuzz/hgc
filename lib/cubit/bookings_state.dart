@@ -10,7 +10,7 @@ abstract class BookingsState extends Equatable {
 class BookingsInitial extends BookingsState {}
 
 class BookingsLoaded extends BookingsState {
-  final Bookings bookings;
+  final List<Book> bookings;
 
   BookingsLoaded(this.bookings);
 
