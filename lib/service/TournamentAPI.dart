@@ -138,15 +138,17 @@ class TournamentApi {
     }
   }
 
-  payTournament(id) async {
+  payTournament(id, channel) async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     token = localStorage.getString('token');
 
-    final response = await client.post("$request/api/tournaments/${id}/pay",
-        headers: {
-          "Accept": "application/json",
-          "Authorization": "Bearer $token"
-        });
+    final response = await client
+        .put("$request/api/tournaments/bookings/${id}/pay", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    }, body: {
+      'payment_channel': channel
+    });
 
     if (response.statusCode == 200) {
       print(response.body);

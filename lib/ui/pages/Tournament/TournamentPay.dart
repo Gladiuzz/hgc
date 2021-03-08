@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hgc/cubit/bookings_cubit.dart';
 import 'package:hgc/model/tournamentDetail.dart';
 import 'package:hgc/service/TournamentAPI.dart';
 import 'package:hgc/ui/widgets/Dialog/Dialogs.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TournamentPay extends StatefulWidget {
   String harga_tournament;
@@ -116,6 +118,17 @@ class _TournamentPayState extends State<TournamentPay> {
                               Container(
                                 child: Row(
                                   children: <Widget>[
+                                    Radio(
+                                      value: 10,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
                                     Container(
                                       width: 60,
                                       height: 31,
@@ -166,6 +179,17 @@ class _TournamentPayState extends State<TournamentPay> {
                               Container(
                                 child: Row(
                                   children: <Widget>[
+                                    Radio(
+                                      value: 12,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
                                     Container(
                                       width: 60,
                                       height: 31,
@@ -215,6 +239,17 @@ class _TournamentPayState extends State<TournamentPay> {
                               Container(
                                 child: Row(
                                   children: <Widget>[
+                                    Radio(
+                                      value: 13,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
                                     Container(
                                       width: 60,
                                       height: 31,
@@ -265,6 +300,17 @@ class _TournamentPayState extends State<TournamentPay> {
                               Container(
                                 child: Row(
                                   children: <Widget>[
+                                    Radio(
+                                      value: 14,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
                                     Container(
                                       width: 60,
                                       height: 31,
@@ -314,6 +360,17 @@ class _TournamentPayState extends State<TournamentPay> {
                               Container(
                                 child: Row(
                                   children: <Widget>[
+                                    Radio(
+                                      value: 15,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
                                     Container(
                                       width: 60,
                                       height: 31,
@@ -363,6 +420,17 @@ class _TournamentPayState extends State<TournamentPay> {
                               Container(
                                 child: Row(
                                   children: <Widget>[
+                                    Radio(
+                                      value: 15,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
                                     Container(
                                       width: 60,
                                       height: 31,
@@ -413,6 +481,17 @@ class _TournamentPayState extends State<TournamentPay> {
                               Container(
                                 child: Row(
                                   children: <Widget>[
+                                    Radio(
+                                      value: 16,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
                                     Container(
                                       width: 60,
                                       height: 31,
@@ -463,6 +542,17 @@ class _TournamentPayState extends State<TournamentPay> {
                               Container(
                                 child: Row(
                                   children: <Widget>[
+                                    Radio(
+                                      value: 17,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
                                     Container(
                                       width: 60,
                                       height: 31,
@@ -513,6 +603,17 @@ class _TournamentPayState extends State<TournamentPay> {
                               Container(
                                 child: Row(
                                   children: <Widget>[
+                                    Radio(
+                                      value: 18,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
                                     Container(
                                       width: 60,
                                       height: 31,
@@ -563,6 +664,17 @@ class _TournamentPayState extends State<TournamentPay> {
                               Container(
                                 child: Row(
                                   children: <Widget>[
+                                    Radio(
+                                      value: 19,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
                                     Container(
                                       width: 60,
                                       height: 31,
@@ -613,6 +725,17 @@ class _TournamentPayState extends State<TournamentPay> {
                               Container(
                                 child: Row(
                                   children: <Widget>[
+                                    Radio(
+                                      value: 20,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
                                     Container(
                                       width: 60,
                                       height: 31,
@@ -663,6 +786,17 @@ class _TournamentPayState extends State<TournamentPay> {
                               Container(
                                 child: Row(
                                   children: <Widget>[
+                                    Radio(
+                                      value: 21,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
                                     Container(
                                       width: 60,
                                       height: 31,
@@ -712,6 +846,17 @@ class _TournamentPayState extends State<TournamentPay> {
                               Container(
                                 child: Row(
                                   children: <Widget>[
+                                    Radio(
+                                      value: 22,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
                                     Container(
                                       width: 60,
                                       height: 31,
@@ -762,6 +907,17 @@ class _TournamentPayState extends State<TournamentPay> {
                               Container(
                                 child: Row(
                                   children: <Widget>[
+                                    Radio(
+                                      value: 23,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
                                     Container(
                                       width: 60,
                                       height: 31,
@@ -862,9 +1018,18 @@ class _TournamentPayState extends State<TournamentPay> {
                               Dialogs().showLoadingDialog(context);
                               TournamentApi()
                                   .payTournament(
-                                      widget.tournament_detail.data.id)
+                                      context
+                                          .bloc<BookingsCubit>()
+                                          .detailbooking
+                                          .data
+                                          .id,
+                                      selectedRadio.toString())
                                   .then((value) {
-                                print(value['message']);
+                                print(context
+                                    .bloc<BookingsCubit>()
+                                    .detailbooking
+                                    .data
+                                    .id);
                                 if (value["message"] == null) {
                                   Navigator.pop(context);
                                   _launchURL(value['redirect_url']);

@@ -145,39 +145,56 @@ class _HistoryTournamentState extends State<HistoryTournament> {
               }
               return GestureDetector(
                 onTap: () {
-                  Dialogs().showLoadingDialog(context);
+                  BookingApi().showBookedTournament().then((value) {
+                    print("bookingan ${value}");
+                    context.bloc<BookingsCubit>().getActiveTournament(value);
+                  });
                   TournamentApi().showDetailTournament(book.id).then((value) {
                     context.bloc<TournamentCubit>().getDetailTournament(value);
-                  });
-                  BookingApi().bookedDetail(book.booking.id).then((value) {
-                    print("ejkl ${value}");
-                    context.bloc<BookingsCubit>().getDetailBooking(value);
-                  });
+                    print(context
+                        .bloc<TournamentCubit>()
+                        .detail_tournament
+                        .data
+                        .booking
+                        .id);
 
-                  InboxAPI()
-                      .invitedtoTournament(
-                          "https://halogolfclub.com/api/tournaments/${book.id}")
-                      .then((value) {
-                    print(value);
-                    Future.delayed(const Duration(milliseconds: 2000), () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => TournamentDetail(
-                              tournaments: value,
-                            ),
-                          ));
-                      // Fluttertoast.showToast(
-                      //     msg:
-                      //         "Congratulations. Now you are registered as HGC member.",
-                      //     toastLength: Toast.LENGTH_SHORT,
-                      //     gravity: ToastGravity.BOTTOM,
-                      //     timeInSecForIosWeb: 1,
-                      //     backgroundColor: Colors.grey,
-                      //     textColor: Colors.white,
-                      //     fontSize: 14.0);
+                    var list = context.bloc<BookingsCubit>().book;
+
+                    List<Book> contains_tournament = list
+                        .where((element) =>
+                            element.id.toString().contains(book.id.toString()))
+                        .toList();
+
+                    // print(contains_tournament[0]);
+
+                    BookingApi()
+                        .bookedDetail(contains_tournament[0].booking.id)
+                        .then((value) {
+                      print("ejkl ${value}");
+                      context.bloc<BookingsCubit>().getDetailBooking(value);
                     });
+
+                    // context.bloc<BookingsCubit>().book.data.where((element) => false)
+                    // context.bloc<BookingsCubit>().book.data.forEach((element) {});
+                  });
+                  Dialogs().showLoadingDialog(context);
+                  // // TournamentApi()
+                  // //     .showDetailTournament(turnament.id)
+                  // //     .then((value) {
+                  // //   context.bloc<TournamentCubit>().getDetailTournament(value);
+                  // // });
+
+                  Future.delayed(const Duration(milliseconds: 1500), () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TournamentDetail(
+                            tournaments: context
+                                .bloc<TournamentCubit>()
+                                .detail_tournament,
+                          ),
+                        ));
                   });
                 },
                 child: Container(
@@ -263,48 +280,71 @@ class _HistoryTournamentState extends State<HistoryTournament> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  Dialogs().showLoadingDialog(context);
+                                  BookingApi()
+                                      .showBookedTournament()
+                                      .then((value) {
+                                    print("bookingan ${value}");
+                                    context
+                                        .bloc<BookingsCubit>()
+                                        .getActiveTournament(value);
+                                  });
                                   TournamentApi()
                                       .showDetailTournament(book.id)
                                       .then((value) {
                                     context
                                         .bloc<TournamentCubit>()
                                         .getDetailTournament(value);
-                                  });
-                                  BookingApi()
-                                      .bookedDetail(book.booking.id)
-                                      .then((value) {
-                                    print("ejkl ${value}");
-                                    context
-                                        .bloc<BookingsCubit>()
-                                        .getDetailBooking(value);
-                                  });
-                                  InboxAPI()
-                                      .invitedtoTournament(
-                                          "https://halogolfclub.com/api/tournaments/${book.id}")
-                                      .then((value) {
-                                    print(value);
-                                    Future.delayed(
-                                        const Duration(milliseconds: 2000), () {
-                                      Navigator.pop(context);
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                TournamentDetail(
-                                              tournaments: value,
-                                            ),
-                                          ));
-                                      // Fluttertoast.showToast(
-                                      //     msg:
-                                      //         "Congratulations. Now you are registered as HGC member.",
-                                      //     toastLength: Toast.LENGTH_SHORT,
-                                      //     gravity: ToastGravity.BOTTOM,
-                                      //     timeInSecForIosWeb: 1,
-                                      //     backgroundColor: Colors.grey,
-                                      //     textColor: Colors.white,
-                                      //     fontSize: 14.0);
+                                    print(context
+                                        .bloc<TournamentCubit>()
+                                        .detail_tournament
+                                        .data
+                                        .booking
+                                        .id);
+
+                                    var list =
+                                        context.bloc<BookingsCubit>().book;
+
+                                    List<Book> contains_tournament = list
+                                        .where((element) => element.id
+                                            .toString()
+                                            .contains(book.id.toString()))
+                                        .toList();
+
+                                    // print(contains_tournament[0]);
+
+                                    BookingApi()
+                                        .bookedDetail(
+                                            contains_tournament[0].booking.id)
+                                        .then((value) {
+                                      print("ejkl ${value}");
+                                      context
+                                          .bloc<BookingsCubit>()
+                                          .getDetailBooking(value);
                                     });
+
+                                    // context.bloc<BookingsCubit>().book.data.where((element) => false)
+                                    // context.bloc<BookingsCubit>().book.data.forEach((element) {});
+                                  });
+                                  Dialogs().showLoadingDialog(context);
+                                  // // TournamentApi()
+                                  // //     .showDetailTournament(turnament.id)
+                                  // //     .then((value) {
+                                  // //   context.bloc<TournamentCubit>().getDetailTournament(value);
+                                  // // });
+
+                                  Future.delayed(
+                                      const Duration(milliseconds: 1500), () {
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              TournamentDetail(
+                                            tournaments: context
+                                                .bloc<TournamentCubit>()
+                                                .detail_tournament,
+                                          ),
+                                        ));
                                   });
                                 },
                                 child: Container(

@@ -429,6 +429,58 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                                         .id)
                                                     .then((value) {
                                                   print(value);
+                                                  TournamentApi()
+                                                      .showDetailTournament(
+                                                          widget.tournaments
+                                                              .data.id)
+                                                      .then((value) {
+                                                    context
+                                                        .bloc<TournamentCubit>()
+                                                        .getDetailTournament(
+                                                            value);
+                                                    print(context
+                                                        .bloc<TournamentCubit>()
+                                                        .detail_tournament
+                                                        .data
+                                                        .booking
+                                                        .id);
+
+                                                    var list = context
+                                                        .bloc<BookingsCubit>()
+                                                        .book;
+
+                                                    List<Book>
+                                                        contains_tournament =
+                                                        list
+                                                            .where((element) => element
+                                                                .id
+                                                                .toString()
+                                                                .contains(widget
+                                                                    .tournaments
+                                                                    .data
+                                                                    .id
+                                                                    .toString()))
+                                                            .toList();
+
+                                                    // print(contains_tournament[0]);
+
+                                                    BookingApi()
+                                                        .bookedDetail(
+                                                            contains_tournament[
+                                                                    0]
+                                                                .booking
+                                                                .id)
+                                                        .then((value) {
+                                                      print("ejkl ${value}");
+                                                      context
+                                                          .bloc<BookingsCubit>()
+                                                          .getDetailBooking(
+                                                              value);
+                                                    });
+
+                                                    // context.bloc<BookingsCubit>().book.data.where((element) => false)
+                                                    // context.bloc<BookingsCubit>().book.data.forEach((element) {});
+                                                  });
                                                   Future.delayed(
                                                       const Duration(
                                                           milliseconds: 1500),
@@ -538,102 +590,22 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                               .data
                                               .statusDisplay ==
                                           "Reserved") {
-                                    return Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        GestureDetector(
-                                          onTap: () {
-                                            print("book slot tournament");
-                                            BookingApi()
-                                                .bookingTournament(
-                                                    widget.tournaments.data.id)
-                                                .then((value) {
-                                              Fluttertoast.showToast(
-                                                  msg: "${value}",
-                                                  toastLength:
-                                                      Toast.LENGTH_SHORT,
-                                                  gravity: ToastGravity.BOTTOM,
-                                                  timeInSecForIosWeb: 1,
-                                                  backgroundColor: Colors.grey,
-                                                  textColor: Colors.white,
-                                                  fontSize: 14.0);
-                                            });
-                                          },
-                                          child: Container(
-                                            width: 160.0,
-                                            height: 45.0,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              color: const Color(0xffffaf00),
+                                    return Center(
+                                      child: Container(
+                                        child: SizedBox(
+                                          width: 310.0,
+                                          child: Text(
+                                            'Your Already Reserved in this tournament',
+                                            style: TextStyle(
+                                              fontFamily: 'Lato',
+                                              fontSize: 14,
+                                              color: const Color(0xff2698dd),
+                                              fontWeight: FontWeight.w500,
                                             ),
-                                            child: SizedBox(
-                                              width: 108.0,
-                                              child: Center(
-                                                child: Text(
-                                                  'BOOK SLOT',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Lato',
-                                                    fontSize: 16,
-                                                    color:
-                                                        const Color(0xff000000),
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                            ),
+                                            textAlign: TextAlign.center,
                                           ),
                                         ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Dialogs()
-                                                .showLoadingDialog(context);
-                                            Future.delayed(
-                                                const Duration(
-                                                    milliseconds: 500), () {
-                                              Navigator.pop(context);
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        TournamentPay(
-                                                      harga_tournament: widget
-                                                          .tournaments
-                                                          .data
-                                                          .feeStr,
-                                                    ),
-                                                  ));
-                                            });
-                                          },
-                                          child: Container(
-                                            width: 160.0,
-                                            height: 45.0,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              color: const Color(0xff3cd970),
-                                            ),
-                                            child: Center(
-                                              child: SizedBox(
-                                                width: 89.0,
-                                                child: Text(
-                                                  '${context.bloc<BookingsCubit>().detailbooking.data.id}',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Lato',
-                                                    fontSize: 16,
-                                                    color:
-                                                        const Color(0xff000000),
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     );
                                   } else {
                                     return Row(
@@ -721,6 +693,27 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                         ),
                                         GestureDetector(
                                           onTap: () {
+                                            if (context
+                                                    .bloc<BookingsCubit>()
+                                                    .detailbooking ==
+                                                null) {
+                                              BookingApi()
+                                                  .bookingTournament(widget
+                                                      .tournaments.data.id)
+                                                  .then((value) {
+                                                Fluttertoast.showToast(
+                                                    msg: "${value}",
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity:
+                                                        ToastGravity.BOTTOM,
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor:
+                                                        Colors.grey,
+                                                    textColor: Colors.white,
+                                                    fontSize: 14.0);
+                                              });
+                                            }
                                             Dialogs()
                                                 .showLoadingDialog(context);
                                             Future.delayed(
