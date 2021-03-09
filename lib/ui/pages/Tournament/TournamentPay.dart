@@ -180,7 +180,7 @@ class _TournamentPayState extends State<TournamentPay> {
                                 child: Row(
                                   children: <Widget>[
                                     Radio(
-                                      value: 12,
+                                      value: 11,
                                       groupValue: selectedRadio,
                                       activeColor: Color(0xffed2025),
                                       onChanged: (val) {
@@ -240,7 +240,7 @@ class _TournamentPayState extends State<TournamentPay> {
                                 child: Row(
                                   children: <Widget>[
                                     Radio(
-                                      value: 13,
+                                      value: 12,
                                       groupValue: selectedRadio,
                                       activeColor: Color(0xffed2025),
                                       onChanged: (val) {
@@ -301,7 +301,7 @@ class _TournamentPayState extends State<TournamentPay> {
                                 child: Row(
                                   children: <Widget>[
                                     Radio(
-                                      value: 14,
+                                      value: 13,
                                       groupValue: selectedRadio,
                                       activeColor: Color(0xffed2025),
                                       onChanged: (val) {
@@ -361,7 +361,7 @@ class _TournamentPayState extends State<TournamentPay> {
                                 child: Row(
                                   children: <Widget>[
                                     Radio(
-                                      value: 15,
+                                      value: 14,
                                       groupValue: selectedRadio,
                                       activeColor: Color(0xffed2025),
                                       onChanged: (val) {
@@ -935,6 +935,59 @@ class _TournamentPayState extends State<TournamentPay> {
                                     ),
                                     Text(
                                       'Sinarmas Virtual Account',
+                                      style: TextStyle(
+                                        fontFamily: 'Roboto',
+                                        fontSize: 14,
+                                        color: const Color(0xff292929),
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Icon(
+                                Icons.keyboard_arrow_right_sharp,
+                                size: 24,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 14.5,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Container(
+                                child: Row(
+                                  children: <Widget>[
+                                    Radio(
+                                      value: 24,
+                                      groupValue: selectedRadio,
+                                      activeColor: Color(0xffed2025),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          print("Radio$val");
+                                          setSelectedRadio(val);
+                                        });
+                                      },
+                                    ),
+                                    Container(
+                                      width: 60,
+                                      height: 31,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(1.0),
+                                        image: DecorationImage(
+                                          image: const AssetImage(
+                                              'assets/images/alfa_group.jpg'),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      'Alfa Group',
                                       style: TextStyle(
                                         fontFamily: 'Roboto',
                                         fontSize: 14,
