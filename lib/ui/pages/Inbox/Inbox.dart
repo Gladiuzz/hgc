@@ -147,7 +147,7 @@ class _InboxState extends State<Inbox> {
                         fontSize: 14.0);
                   });
                 });
-              } else if (inboxs.data.target == "tournament") {
+              } else if (inboxs.data.target == "tournament-invoice") {
                 InboxAPI()
                     .invitedtoTournament(inboxs.linkContext)
                     .then((value) {
@@ -157,8 +157,8 @@ class _InboxState extends State<Inbox> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => TournamentDetail(
-                            tournaments: value,
+                          builder: (context) => Invoice(
+                            invoice: value,
                           ),
                         ));
                     // Fluttertoast.showToast(

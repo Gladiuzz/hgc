@@ -74,7 +74,7 @@ class _PlayState extends State<Play> {
                             image: context.bloc<UserCubit>().user.image != null
                                 ? DecorationImage(
                                     image: NetworkImage(
-                                        '${(context.bloc<UserCubit>().state as UserLoaded).user.image}'),
+                                        '${context.bloc<UserCubit>().user.image}'),
                                     fit: BoxFit.cover,
                                   )
                                 : DecorationImage(
@@ -152,7 +152,12 @@ class _PlayState extends State<Play> {
                         ),
                         Builder(
                           builder: (context) {
-                            if (context.bloc<RecordCubit>().records != null) {
+                            if (context
+                                    .bloc<RecordCubit>()
+                                    .records
+                                    .data
+                                    .match !=
+                                null) {
                               return Container(
                                 margin: EdgeInsets.symmetric(horizontal: 20.0),
                                 child: Column(
@@ -272,20 +277,25 @@ class _PlayState extends State<Play> {
                                         width: size.width,
                                         height: 45.0,
                                         decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
                                           image: DecorationImage(
                                               image: AssetImage(
                                                   "assets/images/empty_btn.png")),
                                         ),
                                         child: Center(
-                                          child: Text(
-                                            'PLAY REGULAR MATCH',
-                                            style: TextStyle(
-                                              fontFamily: 'Lato',
-                                              fontSize: 16,
-                                              color: const Color(0xffffffff),
-                                              fontWeight: FontWeight.w700,
+                                          child: SizedBox(
+                                            width: 98.0,
+                                            child: Text(
+                                              'LET\'S PLAY',
+                                              style: TextStyle(
+                                                fontFamily: 'Lato',
+                                                fontSize: 16,
+                                                color: const Color(0xffffffff),
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                              textAlign: TextAlign.center,
                                             ),
-                                            textAlign: TextAlign.center,
                                           ),
                                         ),
                                       ),

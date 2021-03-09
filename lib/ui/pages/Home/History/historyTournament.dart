@@ -114,7 +114,8 @@ class _HistoryTournamentState extends State<HistoryTournament> {
             itemCount: _match.length + (_hasMore ? 1 : 0),
             itemBuilder: (context, index) {
               Book book = _match[index];
-              DateTime tempDate = DateFormat("yyyy-MM-dd").parse(book.date);
+              DateTime tempDate =
+                  DateFormat("yyyy-MM-dd").parse(book.date.toString());
               if (index == _match.length - _nextPageThreshold) {
                 showMatches();
               }

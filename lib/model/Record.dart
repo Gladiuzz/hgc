@@ -18,7 +18,7 @@ class Record {
 
 class Data {
   Match match;
-  Null tournament;
+  var tournament;
 
   Data({this.match, this.tournament});
 

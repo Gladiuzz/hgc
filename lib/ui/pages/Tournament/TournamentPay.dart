@@ -1030,6 +1030,8 @@ class _TournamentPayState extends State<TournamentPay> {
                                     .detailbooking
                                     .data
                                     .id);
+                                // print(value);
+                                print(selectedRadio.toString());
                                 if (value["message"] == null) {
                                   Navigator.pop(context);
                                   _launchURL(value['redirect_url']);

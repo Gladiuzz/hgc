@@ -1,8 +1,13 @@
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hgc/model/invoice.dart';
+import 'package:hgc/model/tournament_model.dart';
 
 class Invoice extends StatefulWidget {
-  Invoice({Key key}) : super(key: key);
+  Invoice_model invoice;
+
+  Invoice({this.invoice});
 
   @override
   _InvoiceState createState() => _InvoiceState();
@@ -11,6 +16,16 @@ class Invoice extends StatefulWidget {
 class _InvoiceState extends State<Invoice> {
   @override
   Widget build(BuildContext context) {
+    var channel_payment = widget.invoice.data.payment.type;
+    var status = widget.invoice.data.payment.status;
+// ----------------------------------------------------
+    var parts = channel_payment.split('.');
+    var parts2 = status.split('.');
+    var channel = parts[3].trim();
+    var payment_status = parts2[3].trim();
+// ----------------------------------------------------
+    String date = widget.invoice.data.payment.paidAt;
+    DateTime dateTime = DateTime.parse(date);
     Size size = MediaQuery.of(context).size;
     return Container(
       child: SafeArea(
@@ -65,8 +80,8 @@ class _InvoiceState extends State<Invoice> {
                                   margin: EdgeInsets.only(left: 25, top: 25),
                                   decoration: BoxDecoration(
                                     image: DecorationImage(
-                                      image: const AssetImage(
-                                          'assets/images/tournament.jpg'),
+                                      image: NetworkImage(
+                                          '${widget.invoice.data.tournament.image}'),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -79,7 +94,7 @@ class _InvoiceState extends State<Invoice> {
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                        'Pride of The Nation',
+                                        '${widget.invoice.data.tournament.name}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 18,
@@ -92,7 +107,7 @@ class _InvoiceState extends State<Invoice> {
                                         height: 7.0,
                                       ),
                                       Text(
-                                        '15 November 2020',
+                                        '${widget.invoice.data.tournament.date}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -133,7 +148,7 @@ class _InvoiceState extends State<Invoice> {
                                       ),
                                       SizedBox(
                                         child: Text(
-                                          '7',
+                                          '${widget.invoice.data.orderId}',
                                           style: TextStyle(
                                             fontFamily: 'Lato',
                                             fontSize: 14,
@@ -165,7 +180,7 @@ class _InvoiceState extends State<Invoice> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        'Aditya Hermawan',
+                                        '${widget.invoice.data.userName}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -196,7 +211,7 @@ class _InvoiceState extends State<Invoice> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        'Bank Transfer BCA Virtual..',
+                                        '${channel}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -227,7 +242,7 @@ class _InvoiceState extends State<Invoice> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        '1',
+                                        '${widget.invoice.data.qty}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -258,7 +273,7 @@ class _InvoiceState extends State<Invoice> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        'Rp. 10.000',
+                                        '${widget.invoice.data.payment.amountStr}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -289,7 +304,9 @@ class _InvoiceState extends State<Invoice> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        'Saturday, 14-11-2020',
+                                        DateFormat("EEEE, d MMMM y")
+                                            .format(dateTime)
+                                            .toString(),
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,
@@ -320,7 +337,7 @@ class _InvoiceState extends State<Invoice> {
                                         textAlign: TextAlign.left,
                                       ),
                                       Text(
-                                        'Paid',
+                                        '${payment_status}',
                                         style: TextStyle(
                                           fontFamily: 'Lato',
                                           fontSize: 14,

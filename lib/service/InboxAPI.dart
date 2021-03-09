@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:hgc/model/Inbox.dart';
 import 'package:hgc/model/Pair.dart';
+import 'package:hgc/model/invoice.dart';
 import 'package:hgc/model/match.dart';
 import 'package:hgc/model/member.dart';
 import 'package:hgc/model/tournament_model.dart';
@@ -260,8 +261,9 @@ class InboxAPI {
 
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
+      print(data);
 
-      Tournamentss value = Tournamentss.fromJson(data['data']);
+      Invoice_model value = Invoice_model.fromJson(data);
 
       return value;
     } else {
