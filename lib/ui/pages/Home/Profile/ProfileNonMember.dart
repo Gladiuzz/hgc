@@ -245,13 +245,10 @@ class _ProfileNonMemberState extends State<ProfileNonMember> {
                         type: DateTimePickerType.date,
                         dateMask: 'd MMM, yyyy',
                         initialValue: first_play_date.toString(),
-                        firstDate: DateTime(2000),
+                        firstDate: DateTime(1970),
                         lastDate: DateTime(2100),
                         selectableDayPredicate: (date) {
                           // Disable weekend days to select from the calendar
-                          if (date.weekday == 6 || date.weekday == 7) {
-                            return false;
-                          }
 
                           return true;
                         },

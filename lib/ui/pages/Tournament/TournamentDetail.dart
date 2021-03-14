@@ -429,6 +429,19 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                                         .id)
                                                     .then((value) {
                                                   print(value);
+                                                  context
+                                                      .bloc<BookingsCubit>()
+                                                      .removeDetailBooking();
+
+                                                  BookingApi()
+                                                      .showBookedTournament()
+                                                      .then((value) {
+                                                    print("bookingan ${value}");
+                                                    context
+                                                        .bloc<BookingsCubit>()
+                                                        .getActiveTournament(
+                                                            value);
+                                                  });
                                                   TournamentApi()
                                                       .showDetailTournament(
                                                           widget.tournaments
@@ -481,6 +494,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                                     // context.bloc<BookingsCubit>().book.data.where((element) => false)
                                                     // context.bloc<BookingsCubit>().book.data.forEach((element) {});
                                                   });
+
                                                   Future.delayed(
                                                       const Duration(
                                                           milliseconds: 1500),
@@ -491,8 +505,10 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                                         MaterialPageRoute(
                                                           builder: (context) =>
                                                               TournamentDetail(
-                                                            tournaments: widget
-                                                                .tournaments,
+                                                            tournaments: context
+                                                                .bloc<
+                                                                    TournamentCubit>()
+                                                                .detail_tournament,
                                                           ),
                                                         ));
                                                   });
@@ -619,6 +635,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                                 Dialogs()
                                                     .showLoadingDialog(context);
                                                 print("book slot tournament");
+
                                                 BookingApi()
                                                     .bookingTournament(widget
                                                         .tournaments.data.id)
@@ -639,6 +656,73 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                                         textColor: Colors.white,
                                                         fontSize: 14.0);
                                                   } else {
+                                                    context
+                                                        .bloc<BookingsCubit>()
+                                                        .removeDetailBooking();
+                                                    BookingApi()
+                                                        .showBookedTournament()
+                                                        .then((value) {
+                                                      print(
+                                                          "bookingan ${value}");
+                                                      context
+                                                          .bloc<BookingsCubit>()
+                                                          .getActiveTournament(
+                                                              value);
+                                                    });
+
+                                                    TournamentApi()
+                                                        .showDetailTournament(
+                                                            widget.tournaments
+                                                                .data.id)
+                                                        .then((value) {
+                                                      context
+                                                          .bloc<
+                                                              TournamentCubit>()
+                                                          .getDetailTournament(
+                                                              value);
+                                                      print(context
+                                                          .bloc<
+                                                              TournamentCubit>()
+                                                          .detail_tournament
+                                                          .data
+                                                          .booking
+                                                          .id);
+
+                                                      var list = context
+                                                          .bloc<BookingsCubit>()
+                                                          .book;
+
+                                                      List<Book> contains_tournament = list
+                                                          .where((element) => element
+                                                              .id
+                                                              .toString()
+                                                              .contains(widget
+                                                                  .tournaments
+                                                                  .data
+                                                                  .id
+                                                                  .toString()))
+                                                          .toList();
+
+                                                      // print(contains_tournament[0]);
+
+                                                      BookingApi()
+                                                          .bookedDetail(
+                                                              contains_tournament[
+                                                                      0]
+                                                                  .booking
+                                                                  .id)
+                                                          .then((value) {
+                                                        print("ejkl ${value}");
+                                                        context
+                                                            .bloc<
+                                                                BookingsCubit>()
+                                                            .getDetailBooking(
+                                                                value);
+                                                      });
+
+                                                      // context.bloc<BookingsCubit>().book.data.where((element) => false)
+                                                      // context.bloc<BookingsCubit>().book.data.forEach((element) {});
+                                                    });
                                                     Future.delayed(
                                                         const Duration(
                                                             milliseconds: 1500),
@@ -702,7 +786,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                                       .tournaments.data.id)
                                                   .then((value) {
                                                 Fluttertoast.showToast(
-                                                    msg: "${value}",
+                                                    msg: "You are in booking",
                                                     toastLength:
                                                         Toast.LENGTH_SHORT,
                                                     gravity:
@@ -716,6 +800,7 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                             }
                                             Dialogs()
                                                 .showLoadingDialog(context);
+
                                             Future.delayed(
                                                 const Duration(
                                                     milliseconds: 500), () {
@@ -729,8 +814,10 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                                           .tournaments
                                                           .data
                                                           .feeStr,
-                                                      tournament_detail:
-                                                          widget.tournaments,
+                                                      tournament_detail: context
+                                                          .bloc<
+                                                              TournamentCubit>()
+                                                          .detail_tournament,
                                                     ),
                                                   ));
                                             });

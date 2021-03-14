@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hgc/cubit/bookings_cubit.dart';
+import 'package:hgc/cubit/tournament_cubit.dart';
+import 'package:hgc/model/bookings.dart';
 import 'package:hgc/model/tournamentDetail.dart';
+import 'package:hgc/service/BookingAPI.dart';
 import 'package:hgc/service/TournamentAPI.dart';
 import 'package:hgc/ui/widgets/Dialog/Dialogs.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -37,6 +40,42 @@ class _TournamentPayState extends State<TournamentPay> {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    BookingApi().showBookedTournament().then((value) {
+      print("bookingan ${value}");
+      context.bloc<BookingsCubit>().getActiveTournament(value);
+    });
+
+    TournamentApi()
+        .showDetailTournament(widget.tournament_detail.data.id)
+        .then((value) {
+      context.bloc<TournamentCubit>().getDetailTournament(value);
+      print(context.bloc<TournamentCubit>().detail_tournament.data.booking.id);
+
+      var list = context.bloc<BookingsCubit>().book;
+
+      List<Book> contains_tournament = list
+          .where((element) => element.id
+              .toString()
+              .contains(widget.tournament_detail.data.id.toString()))
+          .toList();
+
+      // print(contains_tournament[0]);
+
+      BookingApi()
+          .bookedDetail(contains_tournament[0].booking.id)
+          .then((value) {
+        print("ejkl ${value}");
+        context.bloc<BookingsCubit>().getDetailBooking(value);
+      });
+
+      // context.bloc<BookingsCubit>().book.data.where((element) => false)
+      // context.bloc<BookingsCubit>().book.data.forEach((element) {});
+    });
   }
 
   @override
@@ -112,127 +151,127 @@ class _TournamentPayState extends State<TournamentPay> {
                           SizedBox(
                             height: 30,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Container(
-                                child: Row(
-                                  children: <Widget>[
-                                    Radio(
-                                      value: 10,
-                                      groupValue: selectedRadio,
-                                      activeColor: Color(0xffed2025),
-                                      onChanged: (val) {
-                                        setState(() {
-                                          print("Radio$val");
-                                          setSelectedRadio(val);
-                                        });
-                                      },
-                                    ),
-                                    Container(
-                                      width: 60,
-                                      height: 31,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(1.0),
-                                        image: DecorationImage(
-                                          image: const AssetImage(
-                                              'assets/images/bca.png'),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      'BCA Virtual Account',
-                                      style: TextStyle(
-                                        fontFamily: 'Roboto',
-                                        fontSize: 14,
-                                        color: const Color(0xff292929),
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.keyboard_arrow_right_sharp,
-                                size: 24,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15.5,
-                          ),
-                          SvgPicture.string(
-                            '<svg viewBox="6.0 230.5 414.5 1.0" ><path transform="translate(6.0, 230.5)" d="M 0 0 L 414.5 0" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-                            allowDrawingOutsideViewBox: true,
-                          ),
-                          SizedBox(
-                            height: 14.5,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Container(
-                                child: Row(
-                                  children: <Widget>[
-                                    Radio(
-                                      value: 11,
-                                      groupValue: selectedRadio,
-                                      activeColor: Color(0xffed2025),
-                                      onChanged: (val) {
-                                        setState(() {
-                                          print("Radio$val");
-                                          setSelectedRadio(val);
-                                        });
-                                      },
-                                    ),
-                                    Container(
-                                      width: 60,
-                                      height: 31,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(1.0),
-                                        image: DecorationImage(
-                                          image: const AssetImage(
-                                              'assets/images/bca_klikpay.jpg'),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      'BCA KlikPay',
-                                      style: TextStyle(
-                                        fontFamily: 'Roboto',
-                                        fontSize: 14,
-                                        color: const Color(0xff292929),
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.keyboard_arrow_right_sharp,
-                                size: 24,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15.5,
-                          ),
-                          SvgPicture.string(
-                            '<svg viewBox="6.0 230.5 414.5 1.0" ><path transform="translate(6.0, 230.5)" d="M 0 0 L 414.5 0" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-                            allowDrawingOutsideViewBox: true,
-                          ),
-                          SizedBox(
-                            height: 14.5,
-                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: <Widget>[
+                          //     Container(
+                          //       child: Row(
+                          //         children: <Widget>[
+                          //           Radio(
+                          //             value: 10,
+                          //             groupValue: selectedRadio,
+                          //             activeColor: Color(0xffed2025),
+                          //             onChanged: (val) {
+                          //               setState(() {
+                          //                 print("Radio$val");
+                          //                 setSelectedRadio(val);
+                          //               });
+                          //             },
+                          //           ),
+                          //           Container(
+                          //             width: 60,
+                          //             height: 31,
+                          //             decoration: BoxDecoration(
+                          //               borderRadius:
+                          //                   BorderRadius.circular(1.0),
+                          //               image: DecorationImage(
+                          //                 image: const AssetImage(
+                          //                     'assets/images/bca.png'),
+                          //                 fit: BoxFit.cover,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           SizedBox(
+                          //             width: 10,
+                          //           ),
+                          //           Text(
+                          //             'BCA Virtual Account',
+                          //             style: TextStyle(
+                          //               fontFamily: 'Roboto',
+                          //               fontSize: 14,
+                          //               color: const Color(0xff292929),
+                          //             ),
+                          //             textAlign: TextAlign.left,
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //     Icon(
+                          //       Icons.keyboard_arrow_right_sharp,
+                          //       size: 24,
+                          //     ),
+                          //   ],
+                          // ),
+                          // SizedBox(
+                          //   height: 15.5,
+                          // ),
+                          // SvgPicture.string(
+                          //   '<svg viewBox="6.0 230.5 414.5 1.0" ><path transform="translate(6.0, 230.5)" d="M 0 0 L 414.5 0" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
+                          //   allowDrawingOutsideViewBox: true,
+                          // ),
+                          // SizedBox(
+                          //   height: 14.5,
+                          // ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: <Widget>[
+                          //     Container(
+                          //       child: Row(
+                          //         children: <Widget>[
+                          //           Radio(
+                          //             value: 11,
+                          //             groupValue: selectedRadio,
+                          //             activeColor: Color(0xffed2025),
+                          //             onChanged: (val) {
+                          //               setState(() {
+                          //                 print("Radio$val");
+                          //                 setSelectedRadio(val);
+                          //               });
+                          //             },
+                          //           ),
+                          //           Container(
+                          //             width: 60,
+                          //             height: 31,
+                          //             decoration: BoxDecoration(
+                          //               borderRadius:
+                          //                   BorderRadius.circular(1.0),
+                          //               image: DecorationImage(
+                          //                 image: const AssetImage(
+                          //                     'assets/images/bca_klikpay.jpg'),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           SizedBox(
+                          //             width: 10,
+                          //           ),
+                          //           Text(
+                          //             'BCA KlikPay',
+                          //             style: TextStyle(
+                          //               fontFamily: 'Roboto',
+                          //               fontSize: 14,
+                          //               color: const Color(0xff292929),
+                          //             ),
+                          //             textAlign: TextAlign.left,
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //     Icon(
+                          //       Icons.keyboard_arrow_right_sharp,
+                          //       size: 24,
+                          //     ),
+                          //   ],
+                          // ),
+                          // SizedBox(
+                          //   height: 15.5,
+                          // ),
+                          // SvgPicture.string(
+                          //   '<svg viewBox="6.0 230.5 414.5 1.0" ><path transform="translate(6.0, 230.5)" d="M 0 0 L 414.5 0" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
+                          //   allowDrawingOutsideViewBox: true,
+                          // ),
+                          // SizedBox(
+                          //   height: 14.5,
+                          // ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -294,66 +333,66 @@ class _TournamentPayState extends State<TournamentPay> {
                           SizedBox(
                             height: 14.5,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Container(
-                                child: Row(
-                                  children: <Widget>[
-                                    Radio(
-                                      value: 13,
-                                      groupValue: selectedRadio,
-                                      activeColor: Color(0xffed2025),
-                                      onChanged: (val) {
-                                        setState(() {
-                                          print("Radio$val");
-                                          setSelectedRadio(val);
-                                        });
-                                      },
-                                    ),
-                                    Container(
-                                      width: 60,
-                                      height: 31,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(1.0),
-                                        image: DecorationImage(
-                                          image: const AssetImage(
-                                              'assets/images/bri.png'),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      'BRI E-PAY',
-                                      style: TextStyle(
-                                        fontFamily: 'Roboto',
-                                        fontSize: 14,
-                                        color: const Color(0xff292929),
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.keyboard_arrow_right_sharp,
-                                size: 24,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15.5,
-                          ),
-                          SvgPicture.string(
-                            '<svg viewBox="6.0 230.5 414.5 1.0" ><path transform="translate(6.0, 230.5)" d="M 0 0 L 414.5 0" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-                            allowDrawingOutsideViewBox: true,
-                          ),
-                          SizedBox(
-                            height: 14.5,
-                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: <Widget>[
+                          //     Container(
+                          //       child: Row(
+                          //         children: <Widget>[
+                          //           Radio(
+                          //             value: 13,
+                          //             groupValue: selectedRadio,
+                          //             activeColor: Color(0xffed2025),
+                          //             onChanged: (val) {
+                          //               setState(() {
+                          //                 print("Radio$val");
+                          //                 setSelectedRadio(val);
+                          //               });
+                          //             },
+                          //           ),
+                          //           Container(
+                          //             width: 60,
+                          //             height: 31,
+                          //             decoration: BoxDecoration(
+                          //               borderRadius:
+                          //                   BorderRadius.circular(1.0),
+                          //               image: DecorationImage(
+                          //                 image: const AssetImage(
+                          //                     'assets/images/bri.png'),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           SizedBox(
+                          //             width: 10,
+                          //           ),
+                          //           Text(
+                          //             'BRI E-PAY',
+                          //             style: TextStyle(
+                          //               fontFamily: 'Roboto',
+                          //               fontSize: 14,
+                          //               color: const Color(0xff292929),
+                          //             ),
+                          //             textAlign: TextAlign.left,
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //     Icon(
+                          //       Icons.keyboard_arrow_right_sharp,
+                          //       size: 24,
+                          //     ),
+                          //   ],
+                          // ),
+                          // SizedBox(
+                          //   height: 15.5,
+                          // ),
+                          // SvgPicture.string(
+                          //   '<svg viewBox="6.0 230.5 414.5 1.0" ><path transform="translate(6.0, 230.5)" d="M 0 0 L 414.5 0" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
+                          //   allowDrawingOutsideViewBox: true,
+                          // ),
+                          // SizedBox(
+                          //   height: 14.5,
+                          // ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -536,67 +575,67 @@ class _TournamentPayState extends State<TournamentPay> {
                           SizedBox(
                             height: 14.5,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Container(
-                                child: Row(
-                                  children: <Widget>[
-                                    Radio(
-                                      value: 17,
-                                      groupValue: selectedRadio,
-                                      activeColor: Color(0xffed2025),
-                                      onChanged: (val) {
-                                        setState(() {
-                                          print("Radio$val");
-                                          setSelectedRadio(val);
-                                        });
-                                      },
-                                    ),
-                                    Container(
-                                      width: 60,
-                                      height: 31,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(1.0),
-                                        image: DecorationImage(
-                                          image: const AssetImage(
-                                              'assets/images/linkaja.png'),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      'LinkAja',
-                                      style: TextStyle(
-                                        fontFamily: 'Roboto',
-                                        fontSize: 14,
-                                        color: const Color(0xff292929),
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.keyboard_arrow_right_sharp,
-                                size: 24,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15.5,
-                          ),
-                          SvgPicture.string(
-                            '<svg viewBox="6.0 230.5 414.5 1.0" ><path transform="translate(6.0, 230.5)" d="M 0 0 L 414.5 0" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-                            allowDrawingOutsideViewBox: true,
-                          ),
-                          SizedBox(
-                            height: 14.5,
-                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: <Widget>[
+                          //     Container(
+                          //       child: Row(
+                          //         children: <Widget>[
+                          //           Radio(
+                          //             value: 17,
+                          //             groupValue: selectedRadio,
+                          //             activeColor: Color(0xffed2025),
+                          //             onChanged: (val) {
+                          //               setState(() {
+                          //                 print("Radio$val");
+                          //                 setSelectedRadio(val);
+                          //               });
+                          //             },
+                          //           ),
+                          //           Container(
+                          //             width: 60,
+                          //             height: 31,
+                          //             decoration: BoxDecoration(
+                          //               borderRadius:
+                          //                   BorderRadius.circular(1.0),
+                          //               image: DecorationImage(
+                          //                 image: const AssetImage(
+                          //                     'assets/images/linkaja.png'),
+                          //                 fit: BoxFit.cover,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           SizedBox(
+                          //             width: 10,
+                          //           ),
+                          //           Text(
+                          //             'LinkAja',
+                          //             style: TextStyle(
+                          //               fontFamily: 'Roboto',
+                          //               fontSize: 14,
+                          //               color: const Color(0xff292929),
+                          //             ),
+                          //             textAlign: TextAlign.left,
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //     Icon(
+                          //       Icons.keyboard_arrow_right_sharp,
+                          //       size: 24,
+                          //     ),
+                          //   ],
+                          // ),
+                          // SizedBox(
+                          //   height: 15.5,
+                          // ),
+                          // SvgPicture.string(
+                          //   '<svg viewBox="6.0 230.5 414.5 1.0" ><path transform="translate(6.0, 230.5)" d="M 0 0 L 414.5 0" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
+                          //   allowDrawingOutsideViewBox: true,
+                          // ),
+                          // SizedBox(
+                          //   height: 14.5,
+                          // ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -719,67 +758,67 @@ class _TournamentPayState extends State<TournamentPay> {
                           SizedBox(
                             height: 14.5,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Container(
-                                child: Row(
-                                  children: <Widget>[
-                                    Radio(
-                                      value: 20,
-                                      groupValue: selectedRadio,
-                                      activeColor: Color(0xffed2025),
-                                      onChanged: (val) {
-                                        setState(() {
-                                          print("Radio$val");
-                                          setSelectedRadio(val);
-                                        });
-                                      },
-                                    ),
-                                    Container(
-                                      width: 60,
-                                      height: 31,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(1.0),
-                                        image: DecorationImage(
-                                          image: const AssetImage(
-                                              'assets/images/ovo.png'),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      'Ovo',
-                                      style: TextStyle(
-                                        fontFamily: 'Roboto',
-                                        fontSize: 14,
-                                        color: const Color(0xff292929),
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.keyboard_arrow_right_sharp,
-                                size: 24,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15.5,
-                          ),
-                          SvgPicture.string(
-                            '<svg viewBox="6.0 230.5 414.5 1.0" ><path transform="translate(6.0, 230.5)" d="M 0 0 L 414.5 0" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-                            allowDrawingOutsideViewBox: true,
-                          ),
-                          SizedBox(
-                            height: 14.5,
-                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: <Widget>[
+                          //     Container(
+                          //       child: Row(
+                          //         children: <Widget>[
+                          //           Radio(
+                          //             value: 20,
+                          //             groupValue: selectedRadio,
+                          //             activeColor: Color(0xffed2025),
+                          //             onChanged: (val) {
+                          //               setState(() {
+                          //                 print("Radio$val");
+                          //                 setSelectedRadio(val);
+                          //               });
+                          //             },
+                          //           ),
+                          //           Container(
+                          //             width: 60,
+                          //             height: 31,
+                          //             decoration: BoxDecoration(
+                          //               borderRadius:
+                          //                   BorderRadius.circular(1.0),
+                          //               image: DecorationImage(
+                          //                 image: const AssetImage(
+                          //                     'assets/images/ovo.png'),
+                          //                 fit: BoxFit.cover,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           SizedBox(
+                          //             width: 10,
+                          //           ),
+                          //           Text(
+                          //             'Ovo',
+                          //             style: TextStyle(
+                          //               fontFamily: 'Roboto',
+                          //               fontSize: 14,
+                          //               color: const Color(0xff292929),
+                          //             ),
+                          //             textAlign: TextAlign.left,
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //     Icon(
+                          //       Icons.keyboard_arrow_right_sharp,
+                          //       size: 24,
+                          //     ),
+                          //   ],
+                          // ),
+                          // SizedBox(
+                          //   height: 15.5,
+                          // ),
+                          // SvgPicture.string(
+                          //   '<svg viewBox="6.0 230.5 414.5 1.0" ><path transform="translate(6.0, 230.5)" d="M 0 0 L 414.5 0" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
+                          //   allowDrawingOutsideViewBox: true,
+                          // ),
+                          // SizedBox(
+                          //   height: 14.5,
+                          // ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -840,67 +879,67 @@ class _TournamentPayState extends State<TournamentPay> {
                           SizedBox(
                             height: 14.5,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Container(
-                                child: Row(
-                                  children: <Widget>[
-                                    Radio(
-                                      value: 22,
-                                      groupValue: selectedRadio,
-                                      activeColor: Color(0xffed2025),
-                                      onChanged: (val) {
-                                        setState(() {
-                                          print("Radio$val");
-                                          setSelectedRadio(val);
-                                        });
-                                      },
-                                    ),
-                                    Container(
-                                      width: 60,
-                                      height: 31,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(1.0),
-                                        image: DecorationImage(
-                                          image: const AssetImage(
-                                              'assets/images/sakuku.png'),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      'Sakuku',
-                                      style: TextStyle(
-                                        fontFamily: 'Roboto',
-                                        fontSize: 14,
-                                        color: const Color(0xff292929),
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.keyboard_arrow_right_sharp,
-                                size: 24,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15.5,
-                          ),
-                          SvgPicture.string(
-                            '<svg viewBox="6.0 230.5 414.5 1.0" ><path transform="translate(6.0, 230.5)" d="M 0 0 L 414.5 0" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-                            allowDrawingOutsideViewBox: true,
-                          ),
-                          SizedBox(
-                            height: 14.5,
-                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: <Widget>[
+                          //     Container(
+                          //       child: Row(
+                          //         children: <Widget>[
+                          //           Radio(
+                          //             value: 22,
+                          //             groupValue: selectedRadio,
+                          //             activeColor: Color(0xffed2025),
+                          //             onChanged: (val) {
+                          //               setState(() {
+                          //                 print("Radio$val");
+                          //                 setSelectedRadio(val);
+                          //               });
+                          //             },
+                          //           ),
+                          //           Container(
+                          //             width: 60,
+                          //             height: 31,
+                          //             decoration: BoxDecoration(
+                          //               borderRadius:
+                          //                   BorderRadius.circular(1.0),
+                          //               image: DecorationImage(
+                          //                 image: const AssetImage(
+                          //                     'assets/images/sakuku.png'),
+                          //                 fit: BoxFit.cover,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           SizedBox(
+                          //             width: 10,
+                          //           ),
+                          //           Text(
+                          //             'Sakuku',
+                          //             style: TextStyle(
+                          //               fontFamily: 'Roboto',
+                          //               fontSize: 14,
+                          //               color: const Color(0xff292929),
+                          //             ),
+                          //             textAlign: TextAlign.left,
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //     Icon(
+                          //       Icons.keyboard_arrow_right_sharp,
+                          //       size: 24,
+                          //     ),
+                          //   ],
+                          // ),
+                          // SizedBox(
+                          //   height: 15.5,
+                          // ),
+                          // SvgPicture.string(
+                          //   '<svg viewBox="6.0 230.5 414.5 1.0" ><path transform="translate(6.0, 230.5)" d="M 0 0 L 414.5 0" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
+                          //   allowDrawingOutsideViewBox: true,
+                          // ),
+                          // SizedBox(
+                          //   height: 14.5,
+                          // ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -1069,6 +1108,10 @@ class _TournamentPayState extends State<TournamentPay> {
                           GestureDetector(
                             onTap: () {
                               Dialogs().showLoadingDialog(context);
+                              print(context
+                                  .bloc<BookingsCubit>()
+                                  .detailbooking
+                                  .data);
                               TournamentApi()
                                   .payTournament(
                                       context

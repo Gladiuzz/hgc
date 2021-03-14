@@ -396,16 +396,13 @@ class _EditProfileState extends State<EditProfile> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                               ),
-                              type: DateTimePickerType.dateTime,
+                              type: DateTimePickerType.date,
                               dateMask: 'd MMM, yyyy',
                               initialValue: birth_date.toString(),
-                              firstDate: DateTime(2000),
+                              firstDate: DateTime(1970),
                               lastDate: DateTime(2100),
                               selectableDayPredicate: (date) {
                                 // Disable weekend days to select from the calendar
-                                if (date.weekday == 6 || date.weekday == 7) {
-                                  return false;
-                                }
 
                                 return true;
                               },

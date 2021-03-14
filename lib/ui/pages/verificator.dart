@@ -56,7 +56,6 @@ class _VerificatorState extends State<Verificator> {
     _loading = true;
     _member.sort((a, b) => a.name.compareTo(b.name));
     filtered_member = _member;
-    filtered_member.sort((a, b) => a.name.compareTo(b.name));
     print("ws ${filtered_member}");
     showMember();
   }
@@ -168,12 +167,13 @@ class _VerificatorState extends State<Verificator> {
   }
 
   Widget _buildListView() {
+    // filtered_member.sort((a, b) => a.name.compareTo(b.name));
     Size size = MediaQuery.of(context).size;
     return RefreshIndicator(
       onRefresh: refreshData,
       child: Container(
         width: size.width,
-        height: size.height * .79,
+        height: size.height * .77,
         child: ListView.builder(
           itemCount: filtered_member.length + (_hasMore ? 1 : 0),
           itemBuilder: (context, index) {

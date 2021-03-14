@@ -552,23 +552,43 @@ class _HomeFragmentState extends State<HomeFragment> {
                           // print(list[1].dateTimezone.toString());
                           // print(formattedDate);
 
+                          print("wtf ${list}");
+
                           String test;
 
                           List<Book> contains_tournament =
                               list.where((element) {
                             dateTime = DateTime.parse(element.dateTimezone);
                             String td =
-                                DateFormat('yyyy-MM-dd').format(dateTime);
+                                DateFormat("yyyy-MM-dd").format(dateTime);
                             bool tests = td.contains(formattedDate);
 
                             return tests;
                           }).toList();
 
+                          print("wtf2 ${contains_tournament}");
+                          // print(
+                          //     "wtf2 ${DateFormat("yyyy-MM-dd").format(dateTime).toString()}");
+
                           if (DateFormat("yyyy-MM-dd")
+                                      .format(dateTime)
+                                      .toString() !=
+                                  null &&
+                              DateFormat("yyyy-MM-dd")
+                                      .format(dateTime)
+                                      .toString()
+                                      .compareTo(formattedDate) ==
+                                  0 &&
+                              contains_tournament[0].booking.statusDisplay ==
+                                  "Reserved" &&
+                              contains_tournament.isNotEmpty &&
+                              DateFormat("yyyy-MM-dd")
                                   .format(dateTime)
                                   .toString()
-                                  .compareTo(formattedDate) ==
-                              0) {
+                                  .isNotEmpty &&
+                              contains_tournament[0] != null &&
+                              list.isNotEmpty &&
+                              dateTime != null) {
                             return Container(
                               width: size.width * 0.90,
                               height: 275.0,
@@ -791,9 +811,21 @@ class _HomeFragmentState extends State<HomeFragment> {
                                 ),
                               ),
                             );
-                          } else if (list == null &&
+                          } else if (list.isEmpty &&
                               dateTime == null &&
-                              context.bloc<BookingsCubit>().book == null) {
+                              context.bloc<BookingsCubit>().book.isEmpty &&
+                              contains_tournament.isEmpty &&
+                              DateFormat("yyyy-MM-dd")
+                                  .format(dateTime)
+                                  .toString()
+                                  .isEmpty &&
+                              formattedDate.isEmpty &&
+                              contains_tournament[0] == null &&
+                              DateFormat("yyyy-MM-dd")
+                                      .format(dateTime)
+                                      .toString()
+                                      .compareTo(formattedDate) !=
+                                  0) {
                             return Container();
                           } else {
                             return Container();
@@ -947,6 +979,8 @@ class _HomeFragmentState extends State<HomeFragment> {
             Tournamentss turnament = tournament[index];
             return InkWell(
               onTap: () {
+                context.bloc<BookingsCubit>().removeDetailBooking();
+
                 BookingApi().showBookedTournament().then((value) {
                   print("bookingan ${value}");
                   context.bloc<BookingsCubit>().getActiveTournament(value);

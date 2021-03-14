@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info/device_info.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -59,9 +60,39 @@ class _SignInPageState extends State<SignInPage> {
     return [deviceName, deviceVersion, identifier];
   }
 
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  String _message = '';
+  var tokenz;
+
+  _registerOnFirebase() {
+    _firebaseMessaging.subscribeToTopic('all');
+    _firebaseMessaging.getToken().then((token) {
+      print("yahhh ${token}");
+      tokenz = token;
+      return tokenz;
+    });
+  }
+
+  void getMessage() {
+    _firebaseMessaging.configure(
+        onMessage: (Map<String, dynamic> message) async {
+      print('received message');
+      setState(() => _message = message["notification"]["body"]);
+    }, onResume: (Map<String, dynamic> message) async {
+      print('on resume $message');
+      setState(() => _message = message["notification"]["body"]);
+    }, onLaunch: (Map<String, dynamic> message) async {
+      print('on launch $message');
+      setState(() => _message = message["notification"]["body"]);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    getDeviceDetails();
+    _registerOnFirebase();
+    getMessage();
   }
 
   final TextEditingController email = new TextEditingController();
@@ -346,24 +377,32 @@ class _SignInPageState extends State<SignInPage> {
         DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
         var fcm;
         if (Platform.isAndroid) {
+          SharedPreferences localStorage =
+              await SharedPreferences.getInstance();
+          var token = localStorage.getString('token');
           AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
           // print('test');
           fcm = {
             'device_id': androidInfo.androidId,
-            'token': value['token'],
+            'token': tokenz,
           };
 
           print(androidInfo.androidId);
         } else if (Platform.isIOS) {
+          SharedPreferences localStorage =
+              await SharedPreferences.getInstance();
+          var token = localStorage.getString('token');
           IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
 
           fcm = {
             'device_id': iosInfo.identifierForVendor,
-            'token': value['token'],
+            'token': tokenz,
           };
 
           print(iosInfo.identifierForVendor);
         }
+
+        print("yezz ${fcm}");
 
         setState(() {
           UserApi().getfcm(fcm).then((value) {

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "589799295793",
+    "project_id": "hgc-notification",
+    "storage_bucket": "hgc-notification.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:589799295793:android:efc61db7eabb2b6f0a7e10",
+        "android_client_info": {
+          "package_name": "id.halogolfclub.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "589799295793-8a64updgepk60m03qvgh79mdqvjlclt8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxHwNZx9nQhf3xedHsWUEN_mX7G9aho1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "589799295793-8a64updgepk60m03qvgh79mdqvjlclt8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

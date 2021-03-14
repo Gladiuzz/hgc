@@ -3,8 +3,11 @@ import 'dart:async';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hgc/cubit/bookings_cubit.dart';
 import 'package:hgc/cubit/tournament_cubit.dart';
+import 'package:hgc/model/bookings.dart';
 import 'package:hgc/model/tournament_model.dart';
+import 'package:hgc/service/BookingAPI.dart';
 import 'package:hgc/service/TournamentAPI.dart';
 import 'package:hgc/ui/pages/Tournament/TournamentDetail.dart';
 import 'package:hgc/ui/widgets/Dialog/Dialogs.dart';
@@ -153,12 +156,50 @@ class _TournamentState extends State<Tournament> {
             DateTime tempDate = DateFormat("yyyy-MM-dd").parse(turnament.date);
             return GestureDetector(
               onTap: () {
-                Dialogs().showLoadingDialog(context);
+                context.bloc<BookingsCubit>().removeDetailBooking();
+
+                BookingApi().showBookedTournament().then((value) {
+                  print("bookingan ${value}");
+                  context.bloc<BookingsCubit>().getActiveTournament(value);
+                });
                 TournamentApi()
                     .showDetailTournament(turnament.id)
                     .then((value) {
                   context.bloc<TournamentCubit>().getDetailTournament(value);
+                  print(context
+                      .bloc<TournamentCubit>()
+                      .detail_tournament
+                      .data
+                      .booking
+                      .id);
+
+                  var list = context.bloc<BookingsCubit>().book;
+
+                  List<Book> contains_tournament = list
+                      .where((element) => element.id
+                          .toString()
+                          .contains(turnament.id.toString()))
+                      .toList();
+
+                  // print(contains_tournament[0]);
+
+                  BookingApi()
+                      .bookedDetail(contains_tournament[0].booking.id)
+                      .then((value) {
+                    print("ejkl ${value}");
+                    context.bloc<BookingsCubit>().getDetailBooking(value);
+                  });
+
+                  // context.bloc<BookingsCubit>().book.data.where((element) => false)
+                  // context.bloc<BookingsCubit>().book.data.forEach((element) {});
                 });
+                Dialogs().showLoadingDialog(context);
+                // // TournamentApi()
+                // //     .showDetailTournament(turnament.id)
+                // //     .then((value) {
+                // //   context.bloc<TournamentCubit>().getDetailTournament(value);
+                // // });
+
                 Future.delayed(const Duration(milliseconds: 1500), () {
                   Navigator.pop(context);
                   Navigator.push(

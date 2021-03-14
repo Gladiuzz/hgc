@@ -1,4 +1,4 @@
-package com.example.hgc
+package id.halogolfclub.dev
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -349,7 +349,24 @@ class _MatchReviseState extends State<MatchRevise> {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => AddScore(),
+                                            builder: (context) => AddScore(
+                                              split1: "test",
+                                              split2: "test",
+                                              id_match_player: context
+                                                  .bloc<MatchCubit>()
+                                                  .matches
+                                                  .id,
+                                              id_score: context
+                                                  .bloc<MatchCubit>()
+                                                  .matches
+                                                  .scores[0]
+                                                  .id,
+                                              course_name: context
+                                                  .bloc<MatchCubit>()
+                                                  .matches
+                                                  .scores[0]
+                                                  .courseName,
+                                            ),
                                           ));
                                     },
                                     child: Container(
@@ -477,7 +494,24 @@ class _MatchReviseState extends State<MatchRevise> {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => AddScore(),
+                                            builder: (context) => AddScore(
+                                              split1: "test",
+                                              split2: "test",
+                                              id_match_player: context
+                                                  .bloc<MatchCubit>()
+                                                  .matches
+                                                  .id,
+                                              id_score: context
+                                                  .bloc<MatchCubit>()
+                                                  .matches
+                                                  .scores[1]
+                                                  .id,
+                                              course_name: context
+                                                  .bloc<MatchCubit>()
+                                                  .matches
+                                                  .scores[1]
+                                                  .courseName,
+                                            ),
                                           ));
                                     },
                                     child: Container(
