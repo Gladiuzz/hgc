@@ -427,6 +427,24 @@ class _TournamentMatchState extends State<TournamentMatch> {
             backgroundColor: Colors.grey,
             textColor: Colors.white,
             fontSize: 14.0);
+
+        MatchApi().showMatchDetail(value['data']['id']).then((value) {
+          print(value);
+          context.bloc<MatchCubit>().getMatch(value);
+        });
+
+        Future.delayed(const Duration(milliseconds: 2000), () {
+          setState(() {
+            Navigator.pop(context);
+          });
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MatchScore(
+                  match_id: value['data']['id'],
+                ),
+              ));
+        });
       });
     }
   }

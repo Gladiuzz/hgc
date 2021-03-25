@@ -556,8 +556,9 @@ class _HomeFragmentState extends State<HomeFragment> {
 
                           String test;
 
-                          List<Book> contains_tournament =
-                              list.where((element) {
+                          List<Book> contains_tournament;
+
+                          contains_tournament = list.where((element) {
                             dateTime = DateTime.parse(element.dateTimezone);
                             String td =
                                 DateFormat("yyyy-MM-dd").format(dateTime);
@@ -570,10 +571,7 @@ class _HomeFragmentState extends State<HomeFragment> {
                           // print(
                           //     "wtf2 ${DateFormat("yyyy-MM-dd").format(dateTime).toString()}");
 
-                          if (DateFormat("yyyy-MM-dd")
-                                      .format(dateTime)
-                                      .toString() !=
-                                  null &&
+                          if (list.isNotEmpty &&
                               DateFormat("yyyy-MM-dd")
                                       .format(dateTime)
                                       .toString()
@@ -811,22 +809,6 @@ class _HomeFragmentState extends State<HomeFragment> {
                                 ),
                               ),
                             );
-                          } else if (list.isEmpty &&
-                              dateTime == null &&
-                              context.bloc<BookingsCubit>().book.isEmpty &&
-                              contains_tournament.isEmpty &&
-                              DateFormat("yyyy-MM-dd")
-                                  .format(dateTime)
-                                  .toString()
-                                  .isEmpty &&
-                              formattedDate.isEmpty &&
-                              contains_tournament[0] == null &&
-                              DateFormat("yyyy-MM-dd")
-                                      .format(dateTime)
-                                      .toString()
-                                      .compareTo(formattedDate) !=
-                                  0) {
-                            return Container();
                           } else {
                             return Container();
                           }

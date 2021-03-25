@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hgc/cubit/bookings_cubit.dart';
 import 'package:hgc/cubit/leaderboard_cubit.dart';
 import 'package:hgc/cubit/tournament_cubit.dart';
+import 'package:hgc/cubit/user_cubit.dart';
 import 'package:hgc/model/bookings.dart';
 import 'package:hgc/model/tournamentDetail.dart';
 import 'package:hgc/model/tournament_model.dart';
@@ -66,6 +67,10 @@ class _TournamentDetailState extends State<TournamentDetail> {
       // context.bloc<BookingsCubit>().book.data.where((element) => false)
       // context.bloc<BookingsCubit>().book.data.forEach((element) {});
     });
+
+    if (context.bloc<UserCubit>().user.handicap == null) {
+      context.bloc<UserCubit>().user.handicap = 0;
+    }
 
     // TODO: implement initState
     super.initState();
@@ -623,6 +628,56 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                         ),
                                       ),
                                     );
+                                  } else if (widget.tournaments.data.attendance
+                                              .waitingListCount ==
+                                          widget.tournaments.data.attendance
+                                              .waitingLimit &&
+                                      widget.tournaments.data.attendance
+                                              .reservesCount ==
+                                          widget.tournaments.data.attendance
+                                              .reserveLimit) {
+                                    return Center(
+                                      child: Container(
+                                        child: SizedBox(
+                                          width: 310.0,
+                                          child: Text(
+                                            'Book and paid slot already full',
+                                            style: TextStyle(
+                                              fontFamily: 'Lato',
+                                              fontSize: 14,
+                                              color: const Color(0xff2698dd),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  } else if (context
+                                              .bloc<UserCubit>()
+                                              .user
+                                              .handicap ==
+                                          0 &&
+                                      context.bloc<UserCubit>().user.handicap <
+                                          widget
+                                              .tournaments.data.handicapLimit) {
+                                    return Center(
+                                      child: Container(
+                                        child: SizedBox(
+                                          width: 310.0,
+                                          child: Text(
+                                            'your handicap is not enough',
+                                            style: TextStyle(
+                                              fontFamily: 'Lato',
+                                              fontSize: 14,
+                                              color: const Color(0xff2698dd),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                    );
                                   } else {
                                     return Row(
                                       mainAxisAlignment:
@@ -655,6 +710,37 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                                             Colors.grey,
                                                         textColor: Colors.white,
                                                         fontSize: 14.0);
+                                                  } else if (value["message"] ==
+                                                      "The registration for this tournament is closed.") {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "Your booking already exists.",
+                                                        toastLength:
+                                                            Toast.LENGTH_SHORT,
+                                                        gravity:
+                                                            ToastGravity.BOTTOM,
+                                                        timeInSecForIosWeb: 1,
+                                                        backgroundColor:
+                                                            Colors.grey,
+                                                        textColor: Colors.white,
+                                                        fontSize: 14.0);
+                                                    Future.delayed(
+                                                        const Duration(
+                                                            milliseconds: 1500),
+                                                        () {
+                                                      Navigator.pop(context);
+                                                      Navigator.pushReplacement(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                TournamentDetail(
+                                                              tournaments: context
+                                                                  .bloc<
+                                                                      TournamentCubit>()
+                                                                  .detail_tournament,
+                                                            ),
+                                                          ));
+                                                    });
                                                   } else {
                                                     context
                                                         .bloc<BookingsCubit>()
