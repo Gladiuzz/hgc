@@ -651,7 +651,7 @@ class _HomeFragmentState extends State<HomeFragment> {
                                         SizedBox(
                                           width: 180.0,
                                           child: Text(
-                                            'Royale Jakarta Golf Club',
+                                            '${context.bloc<RecordCubit>().records.data.match.golfName}',
                                             style: TextStyle(
                                               fontFamily: 'Lato',
                                               fontSize: 14,
@@ -683,7 +683,7 @@ class _HomeFragmentState extends State<HomeFragment> {
                                         SizedBox(
                                           width: 180.0,
                                           child: Text(
-                                            'Project CL',
+                                            '${context.bloc<RecordCubit>().records.data.match.pairName}',
                                             style: TextStyle(
                                               fontFamily: 'Lato',
                                               fontSize: 14,
@@ -971,12 +971,12 @@ class _HomeFragmentState extends State<HomeFragment> {
                     .showDetailTournament(turnament.id)
                     .then((value) {
                   context.bloc<TournamentCubit>().getDetailTournament(value);
-                  print(context
-                      .bloc<TournamentCubit>()
-                      .detail_tournament
-                      .data
-                      .booking
-                      .id);
+                  // print(context
+                  //     .bloc<TournamentCubit>()
+                  //     .detail_tournament
+                  //     .data
+                  //     .booking
+                  //     .id);
 
                   var list = context.bloc<BookingsCubit>().book;
 

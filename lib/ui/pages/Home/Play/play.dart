@@ -315,18 +315,18 @@ class _PlayState extends State<Play> {
                                           print(context
                                               .bloc<BookingsCubit>()
                                               .book);
-                                          // context
-                                          //     .bloc<MemberCubit>()
-                                          //     .removeVerificator();
-                                          // context
-                                          //     .bloc<CourseCubit>()
-                                          //     .removeCourse();
-                                          // Navigator.push(
-                                          //     context,
-                                          //     MaterialPageRoute(
-                                          //       builder: (context) =>
-                                          //           MatchRecord(),
-                                          //     ));
+                                          context
+                                              .bloc<MemberCubit>()
+                                              .removeVerificator();
+                                          context
+                                              .bloc<CourseCubit>()
+                                              .removeCourse();
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    MatchRecord(),
+                                              ));
                                         },
                                         child: Container(
                                           width: size.width,
