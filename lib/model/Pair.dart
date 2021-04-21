@@ -36,7 +36,7 @@ class Pair {
   int teesId;
   String teesName;
   var courseRating;
-  int slopeRating;
+  var slopeRating;
   bool isTournament;
   int pairId;
   String pairName;
