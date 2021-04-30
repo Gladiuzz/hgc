@@ -91,6 +91,56 @@ class TournamentApi {
     }
   }
 
+  waitingTournament(id) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    final response = await client
+        .get("$request/api/tournaments/${id}/waiting-list", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      // print(response.body);
+      var data = json.decode(response.body);
+
+      Verificators value = Verificators.fromJson(data);
+
+      return value;
+    } else {
+      print('gagal load tournament');
+      print(token);
+      var data = tournamentFromJson(response.body);
+      return data;
+    }
+  }
+
+  reservedTournament(id) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token');
+
+    final response = await client.get("$request/api/tournaments/${id}/reserves",
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer $token"
+        });
+
+    if (response.statusCode == 200) {
+      // print(response.body);
+      var data = json.decode(response.body);
+
+      Verificators value = Verificators.fromJson(data);
+
+      return value;
+    } else {
+      print('gagal load tournament');
+      print(token);
+      var data = tournamentFromJson(response.body);
+      return data;
+    }
+  }
+
   tournamentLeaderboard(id) async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     token = localStorage.getString('token');

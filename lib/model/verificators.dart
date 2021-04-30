@@ -95,6 +95,13 @@ class Verificators_tournament {
   }
 }
 
+List<Verificators_tournament> vertournament(jsonData) {
+  final data = json.decode(jsonData);
+  print("yadf");
+  return List<Verificators_tournament>.from(
+      data.map((item) => Verificators_tournament.fromJson(item)));
+}
+
 class Links {
   String first;
   String last;

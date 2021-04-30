@@ -20,6 +20,8 @@ import 'package:hgc/ui/pages/Tournament/TournamentInfo.dart';
 import 'package:hgc/ui/pages/Tournament/TournamentLeaderboard.dart';
 import 'package:hgc/ui/pages/Tournament/TournamentPay.dart';
 import 'package:hgc/ui/widgets/Dialog/Dialogs.dart';
+import 'package:hgc/ui/widgets/Dialog/Dialogs_player.dart';
+import 'package:hgc/ui/widgets/Dialog/Dialogs_player_waiting.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -162,15 +164,37 @@ class _TournamentDetailState extends State<TournamentDetail> {
                       Container(),
                       Column(
                         children: <Widget>[
-                          Text(
-                            'Book',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 12,
-                              color: const Color(0xff858585),
-                              fontWeight: FontWeight.w500,
-                            ),
-                            textAlign: TextAlign.center,
+                          Row(
+                            children: [
+                              Text(
+                                'Book',
+                                style: TextStyle(
+                                  fontFamily: 'Lato',
+                                  fontSize: 12,
+                                  color: const Color(0xff858585),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(
+                                width: 5.0,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        DialogsPlayerWaiting(
+                                      id_tournament: widget.tournaments.data.id,
+                                    ),
+                                  );
+                                },
+                                child: Icon(
+                                  Icons.info,
+                                  size: 18,
+                                ),
+                              ),
+                            ],
                           ),
                           SizedBox(
                             height: 8,
@@ -192,15 +216,37 @@ class _TournamentDetailState extends State<TournamentDetail> {
                       Container(),
                       Column(
                         children: <Widget>[
-                          Text(
-                            'Paid',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 12,
-                              color: const Color(0xff858585),
-                              fontWeight: FontWeight.w500,
-                            ),
-                            textAlign: TextAlign.center,
+                          Row(
+                            children: [
+                              Text(
+                                'Paid',
+                                style: TextStyle(
+                                  fontFamily: 'Lato',
+                                  fontSize: 12,
+                                  color: const Color(0xff858585),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(
+                                width: 5.0,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        DialogsPlayer(
+                                      id_tournament: widget.tournaments.data.id,
+                                    ),
+                                  );
+                                },
+                                child: Icon(
+                                  Icons.info,
+                                  size: 18,
+                                ),
+                              ),
+                            ],
                           ),
                           SizedBox(
                             height: 8,
@@ -715,6 +761,37 @@ class _TournamentDetailState extends State<TournamentDetail> {
                                                     Fluttertoast.showToast(
                                                         msg:
                                                             "Your booking already exists.",
+                                                        toastLength:
+                                                            Toast.LENGTH_SHORT,
+                                                        gravity:
+                                                            ToastGravity.BOTTOM,
+                                                        timeInSecForIosWeb: 1,
+                                                        backgroundColor:
+                                                            Colors.grey,
+                                                        textColor: Colors.white,
+                                                        fontSize: 14.0);
+                                                    Future.delayed(
+                                                        const Duration(
+                                                            milliseconds: 1500),
+                                                        () {
+                                                      Navigator.pop(context);
+                                                      Navigator.pushReplacement(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                TournamentDetail(
+                                                              tournaments: context
+                                                                  .bloc<
+                                                                      TournamentCubit>()
+                                                                  .detail_tournament,
+                                                            ),
+                                                          ));
+                                                    });
+                                                  } else if (value['message'] ==
+                                                      "The current tournament reserves or waiting list is full.") {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "The current tournament reserves or waiting list is full.",
                                                         toastLength:
                                                             Toast.LENGTH_SHORT,
                                                         gravity:

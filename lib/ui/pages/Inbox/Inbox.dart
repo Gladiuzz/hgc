@@ -120,16 +120,30 @@ class _InboxState extends State<Inbox> {
               } else if (inboxs.data.statusDisplay != "Discarded" &&
                   inboxs.data.target == "match-pair-detail") {
                 InboxAPI().matchNonApproved(inboxs.linkContext).then((value) {
-                  print(value);
+                  print("hah ${value}");
                   context.bloc<PairCubit>().getPair(value);
-                  Future.delayed(const Duration(milliseconds: 2000), () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PairSummary(),
-                        ));
-                  });
+                  if (value.data == null) {
+                    Future.delayed(const Duration(milliseconds: 2000), () {
+                      Navigator.pop(context);
+                      Fluttertoast.showToast(
+                          msg: "This match discarded",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.grey,
+                          textColor: Colors.white,
+                          fontSize: 14.0);
+                    });
+                  } else {
+                    Future.delayed(const Duration(milliseconds: 2000), () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PairSummary(),
+                          ));
+                    });
+                  }
                 });
               } else if (inboxs.data.target == "account") {
                 InboxAPI().becameMemberHGC(inboxs.linkContext).then((value) {
@@ -185,6 +199,21 @@ class _InboxState extends State<Inbox> {
                             matches: value,
                           ),
                         ));
+                  });
+                });
+              } else {
+                InboxAPI().discardMatch(inboxs.linkContext).then((value) {
+                  print(value);
+                  Future.delayed(const Duration(milliseconds: 2000), () {
+                    Navigator.pop(context);
+                    Fluttertoast.showToast(
+                        msg: "This match discarded",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.grey,
+                        textColor: Colors.white,
+                        fontSize: 14.0);
                   });
                 });
               }
