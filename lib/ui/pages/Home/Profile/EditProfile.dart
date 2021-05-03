@@ -49,17 +49,22 @@ class _EditProfileState extends State<EditProfile> {
     email = context.bloc<UserCubit>().user.email;
     company_name = context.bloc<UserCubit>().user.companyName;
     instagram = context.bloc<UserCubit>().user.socialInstagram;
+
+    _controllerFullName = TextEditingController(text: name);
+    _controllerPhoneNumber = TextEditingController(text: phone_number);
+    _controllerEmail = TextEditingController(text: email);
+    _controllerCompanyName = TextEditingController(text: company_name);
+    _controllerInstagram = TextEditingController(text: instagram);
   }
 
   @override
   void dispose() {
-    super.dispose();
     _controllerFullName.dispose();
     _controllerPhoneNumber.dispose();
     _controllerEmail.dispose();
-    _controllerAddress.dispose();
     _controllerCompanyName.dispose();
     _controllerInstagram.dispose();
+    super.dispose();
   }
 
   setSelectedRadio(int val) {
@@ -207,8 +212,7 @@ class _EditProfileState extends State<EditProfile> {
                             height: 5,
                           ),
                           txtFormField(
-                            controller: _controllerFullName
-                              ..text = context.bloc<UserCubit>().user.name,
+                            controller: _controllerFullName..text,
                             height: 45.0,
                             hint: "Full Name",
                           ),
@@ -441,8 +445,7 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           txtFormField(
                             height: 45.0,
-                            controller: _controllerPhoneNumber
-                              ..text = phone_number,
+                            controller: _controllerPhoneNumber..text,
                             hint: "0813",
                             keyboard_type: TextInputType.phone,
                           ),
@@ -470,7 +473,7 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           txtFormField(
                               enabled: false,
-                              controller: _controllerEmail..text = email,
+                              controller: _controllerEmail..text,
                               height: 45.0,
                               hint: "your@mail.com",
                               keyboard_type: TextInputType.emailAddress),
@@ -497,8 +500,7 @@ class _EditProfileState extends State<EditProfile> {
                             height: 5,
                           ),
                           txtFormField(
-                              controller: _controllerCompanyName
-                                ..text = company_name,
+                              controller: _controllerCompanyName..text,
                               height: 45.0,
                               hint: "Your Company Name",
                               keyboard_type: TextInputType.text),
@@ -526,11 +528,7 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           txtFormField(
                             height: 45.0,
-                            controller: _controllerInstagram
-                              ..text = context
-                                  .bloc<UserCubit>()
-                                  .user
-                                  .socialInstagram,
+                            controller: _controllerInstagram..text,
                             hint: "Your Instagram",
                             keyboard_type: TextInputType.text,
                           ),

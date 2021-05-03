@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "589799295793",
-    "project_id": "hgc-notification",
-    "storage_bucket": "hgc-notification.appspot.com"
+    "project_number": "426835835801",
+    "project_id": "newhgcnotif",
+    "storage_bucket": "newhgcnotif.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:589799295793:android:efc61db7eabb2b6f0a7e10",
+        "mobilesdk_app_id": "1:426835835801:android:6119e45d6b58613a81b108",
         "android_client_info": {
-          "package_name": "id.halogolfclub.dev"
+          "package_name": "id.cyberlabs.hgc"
         }
       },
       "oauth_client": [
         {
-          "client_id": "589799295793-8a64updgepk60m03qvgh79mdqvjlclt8.apps.googleusercontent.com",
+          "client_id": "426835835801-igpfcdjupafsu158d7euuhqse747gehr.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCxHwNZx9nQhf3xedHsWUEN_mX7G9aho1U"
+          "current_key": "AIzaSyBiuzkuDRmh9rqbwOM1SvwIQTwLVbTBAuU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "589799295793-8a64updgepk60m03qvgh79mdqvjlclt8.apps.googleusercontent.com",
+              "client_id": "426835835801-igpfcdjupafsu158d7euuhqse747gehr.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

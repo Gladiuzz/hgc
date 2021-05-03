@@ -1,4 +1,4 @@
-package id.halogolfclub.dev
+package id.cyberlabs.hgc
 
 import io.flutter.embedding.android.FlutterActivity
 

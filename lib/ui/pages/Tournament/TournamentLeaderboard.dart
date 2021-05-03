@@ -56,7 +56,9 @@ class _TournamentLeaderBoardState extends State<TournamentLeaderBoard> {
 
   Widget _buildListView(Tournament_Leaderboard leaderboard) {
     Size size = MediaQuery.of(context).size;
-    leaderboard.data.sort((b, a) => a.totalScore.compareTo(b.totalScore));
+    // leaderboard.data.sort((a, b) => a.totalScore.compareTo(b.totalScore));
+    leaderboard.data
+        .any((element) => element.statusDisplay.contains('Discarded'));
     return DataTable(
       showBottomBorder: false,
       columnSpacing: 30,
@@ -65,9 +67,9 @@ class _TournamentLeaderBoardState extends State<TournamentLeaderBoard> {
         return const Color(0xfff8f8f8);
       }),
       columns: const <DataColumn>[
-        DataColumn(
-          label: Text('#'),
-        ),
+        // DataColumn(
+        //   label: Text('#'),
+        // ),
         DataColumn(
           label: Text('Name'),
         ),
@@ -103,7 +105,7 @@ class _TournamentLeaderBoardState extends State<TournamentLeaderBoard> {
         ),
       ],
       rows: leaderboard.data.map((index) {
-        var value = 0;
+        var value = 1;
         value++;
         return DataRow(
           color: MaterialStateProperty.resolveWith<Color>(
@@ -119,7 +121,7 @@ class _TournamentLeaderBoardState extends State<TournamentLeaderBoard> {
                 0xfff8f8f8); // Use default value for other states and odd rows.
           }),
           cells: <DataCell>[
-            DataCell(Text('${index.id}')),
+            // DataCell(Text('${index.}')),
             DataCell(Text('${index.userName}')),
             DataCell(
               SizedBox(

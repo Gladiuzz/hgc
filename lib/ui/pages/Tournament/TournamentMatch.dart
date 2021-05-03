@@ -380,6 +380,18 @@ class _TournamentMatchState extends State<TournamentMatch> {
           .id
           .toString();
     }
+    if (context.bloc<VerificatorsCubit>().verificators.id == null) {
+      Navigator.pop(context);
+      Fluttertoast.showToast(
+          msg: "The Pair Member field is required.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey,
+          textColor: Colors.white,
+          fontSize: 14.0);
+    }
+
     var data = {
       'pair_id': context.bloc<VerificatorsCubit>().verificators.id.toString(),
       'golf_id': context
@@ -392,9 +404,9 @@ class _TournamentMatchState extends State<TournamentMatch> {
       'tees_id': gender_tees.toString(),
     };
 
-    print(data);
+    print("isi data ${data}");
 
-    if (context.bloc<VerificatorsCubit>().verificators.id == null) {
+    if (context.bloc<VerificatorsCubit>().verificators.name == null) {
       Navigator.pop(context);
       Fluttertoast.showToast(
           msg: "The Pair Member field is required.",
@@ -419,32 +431,45 @@ class _TournamentMatchState extends State<TournamentMatch> {
           .createMatchTournament(
               data, context.bloc<TournamentCubit>().detail_tournament.data.id)
           .then((value) {
-        Fluttertoast.showToast(
-            msg: "A match has been created",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.grey,
-            textColor: Colors.white,
-            fontSize: 14.0);
+        if (value['message'] ==
+            "Finish your previous match before playing other match.") {
+          Navigator.pop(context);
+          Fluttertoast.showToast(
+              msg: "Finish your previous match before playing other match.",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.grey,
+              textColor: Colors.white,
+              fontSize: 14.0);
+        } else {
+          Fluttertoast.showToast(
+              msg: "A match has been created",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.grey,
+              textColor: Colors.white,
+              fontSize: 14.0);
 
-        MatchApi().showMatchDetail(value['data']['id']).then((value) {
-          print(value);
-          context.bloc<MatchCubit>().getMatch(value);
-        });
-
-        Future.delayed(const Duration(milliseconds: 2000), () {
-          setState(() {
-            Navigator.pop(context);
+          MatchApi().showMatchDetail(value['data']['id']).then((value) {
+            print(value);
+            context.bloc<MatchCubit>().getMatch(value);
           });
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MatchScore(
-                  match_id: value['data']['id'],
-                ),
-              ));
-        });
+
+          Future.delayed(const Duration(milliseconds: 2000), () {
+            setState(() {
+              Navigator.pop(context);
+            });
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MatchScore(
+                    match_id: value['data']['id'],
+                  ),
+                ));
+          });
+        }
       });
     }
   }

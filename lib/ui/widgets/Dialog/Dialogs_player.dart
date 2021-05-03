@@ -130,7 +130,7 @@ class _DialogsPlayerState extends State<DialogsPlayer> {
   }
 
   Widget _buildListView() {
-    // filtered_member.sort((a, b) => a.name.compareTo(b.name));
+    _member.sort((a, b) => a.name.compareTo(b.name));
     Size size = MediaQuery.of(context).size;
     return RefreshIndicator(
       onRefresh: refreshData,

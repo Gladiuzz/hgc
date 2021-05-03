@@ -77,7 +77,7 @@ class _DialogsPlayerWaitingState extends State<DialogsPlayerWaiting> {
             child: Column(
               children: <Widget>[
                 Text(
-                  'User already paid',
+                  'User Already Book',
                   style: TextStyle(
                     fontFamily: 'Lato',
                     fontSize: 16,
@@ -130,7 +130,7 @@ class _DialogsPlayerWaitingState extends State<DialogsPlayerWaiting> {
   }
 
   Widget _buildListView() {
-    // filtered_member.sort((a, b) => a.name.compareTo(b.name));
+    _member.sort((a, b) => a.name.compareTo(b.name));
     Size size = MediaQuery.of(context).size;
     return RefreshIndicator(
       onRefresh: refreshData,

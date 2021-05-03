@@ -680,18 +680,46 @@ class _HomeFragmentState extends State<HomeFragment> {
                                           ),
                                           textAlign: TextAlign.left,
                                         ),
-                                        SizedBox(
-                                          width: 180.0,
-                                          child: Text(
-                                            '${context.bloc<RecordCubit>().records.data.match.pairName}',
-                                            style: TextStyle(
-                                              fontFamily: 'Lato',
-                                              fontSize: 14,
-                                              color: const Color(0xff000000),
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            textAlign: TextAlign.right,
-                                          ),
+                                        Builder(
+                                          builder: (context) {
+                                            if (context
+                                                    .bloc<RecordCubit>()
+                                                    .records
+                                                    .data
+                                                    .tournament
+                                                    .match !=
+                                                null) {
+                                              return SizedBox(
+                                                width: 180.0,
+                                                child: Text(
+                                                  '${context.bloc<RecordCubit>().records.data.tournament.match.pairName}',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Lato',
+                                                    fontSize: 14,
+                                                    color:
+                                                        const Color(0xff000000),
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  textAlign: TextAlign.right,
+                                                ),
+                                              );
+                                            } else {
+                                              return SizedBox(
+                                                width: 180.0,
+                                                child: Text(
+                                                  '-',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Lato',
+                                                    fontSize: 14,
+                                                    color:
+                                                        const Color(0xff000000),
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  textAlign: TextAlign.right,
+                                                ),
+                                              );
+                                            }
+                                          },
                                         ),
                                       ],
                                     ),
